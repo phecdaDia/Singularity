@@ -14,14 +14,15 @@ namespace SingularityTest
 	{
 		public TestScene() : base("test")
 		{
-			this.SetCamera(new Vector3(0, 0, -1), new Vector3(0, 0, -1));
+			this.SetCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 1));
 
 		}
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera().AddChild(new ModelObject("coin").SetPosition(new Vector3(0, 0, 2))));
+			AddObject(new BasicCamera());
 
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(0, -5, 0)).SetScale(0.25f));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

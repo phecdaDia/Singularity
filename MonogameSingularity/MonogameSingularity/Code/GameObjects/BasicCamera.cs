@@ -34,7 +34,7 @@ namespace Singularity.Code.GameObjects
 			Mouse.SetPosition(200, 200);
 
 
-			Vector3 target = new Vector3((float)Math.Sin(horizontalRotation), 0/*(float)Math.Sin(verticalRotation)*/, (float)Math.Cos(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Sin(horizontalRotation), (float)Math.Sin(verticalRotation), (float)Math.Cos(horizontalRotation));
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
@@ -42,6 +42,7 @@ namespace Singularity.Code.GameObjects
 			target.Normalize();
 
 			Vector3 forward = target;
+			forward.Y = 0;
 			Vector3 backwards = -forward;
 
 			Vector3 right = new Vector3(forward.Z, 0, -forward.X);
@@ -55,7 +56,7 @@ namespace Singularity.Code.GameObjects
 			if (ks.IsKeyDown(Keys.D)) movement += right;
 
 			if (movement.LengthSquared() > 0f) movement.Normalize();
-			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds;
+			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f;
 
 
 			scene.SetCamera(this.Position, target);

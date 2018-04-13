@@ -68,7 +68,7 @@ namespace Singularity.Code
 
 		public Matrix GetProjectionMatrix()
 		{
-			return Matrix.CreatePerspective(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 250f);
+			return Matrix.CreatePerspective(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 100f);
 		}
 
 		#endregion

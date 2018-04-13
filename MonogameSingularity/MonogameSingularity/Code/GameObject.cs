@@ -141,15 +141,15 @@ namespace Singularity.Code
 					               * Matrix.CreateTranslation(this.GetHierarchyPosition()) 
 					               * transformMatrices[mesh.ParentBone.Index];
 					effect.View = scene.GetViewMatrix();
-					effect.Projection = scene.GetViewMatrix();
+					effect.Projection = scene.GetProjectionMatrix();
 
-					//effect.EnableDefaultLighting();
+					effect.EnableDefaultLighting();
 					//effect.LightingEnabled = true; // Turn on the lighting subsystem.
 
 					//effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
 					//effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // coming along the x-axis
 					//effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
-					//scene.AddLightningToEffect(effect);
+					scene.AddLightningToEffect(effect);
 
 					//effect.EmissiveColor = new Vector3(1, 0, 0); // Sets some strange emmissive lighting.  This just looks weird.
 
@@ -157,8 +157,7 @@ namespace Singularity.Code
 
 				mesh.Draw();
 			}
-
-			foreach (GameObject obj in this.ChildObjects) obj.Draw(scene, spriteBatch);
+			
 		}
 
 	}

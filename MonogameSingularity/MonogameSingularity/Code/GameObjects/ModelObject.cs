@@ -21,7 +21,7 @@ namespace Singularity.Code.GameObjects
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			Console.WriteLine(this.Position);
+			//Console.WriteLine(this.Position);
 
 		} // No logic. It's only rendering the model.
 	}
