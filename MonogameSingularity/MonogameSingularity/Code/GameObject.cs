@@ -16,14 +16,14 @@ namespace Singularity.Code
 	{
 		
 		private Model Model;					// Model of the entity. Is Null if the object shall not be rendered.
-		private Vector3 Position;				// Current position of the model
-		private Vector3 Rotation;				// Current rotation of the model
-		private float Scale;					// Scale of the model
+		protected Vector3 Position;				// Current position of the model
+		protected Vector3 Rotation;				// Current rotation of the model
+		protected float Scale;					// Scale of the model
 
 		private GameObject ParentObject;		// Parent Object. This object will be in the ChildObjects of the Parent.
 		private List<GameObject> ChildObjects;	// Child Objects
 
-		private List<Action<GameScene, GameObject>> ObjectScripts;
+		private List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
 
 		public GameObject()
 		{
@@ -35,7 +35,7 @@ namespace Singularity.Code
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
 
-			this.ObjectScripts = new List<Action<GameScene, GameObject>>();
+			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
 		}
 
 		// Methods for the builder pattern
@@ -69,6 +69,20 @@ namespace Singularity.Code
 
 			return this;
 		}
+
+		public GameObject AddScript(Action<GameScene, GameObject, GameTime> script)
+		{
+			this.ObjectScripts.Add(script);
+
+			return this;
+		}
+
+		public GameObject AddChild(GameObject child)
+		{
+			this.ChildObjects.Add(child);
+			child.ParentObject = this;
+			return this;
+		}
 		#endregion
 
 		public float GetHierarchyScale()
@@ -82,11 +96,28 @@ namespace Singularity.Code
 			return this.Position + this.ParentObject.GetHierarchyPosition();
 		}
 
+		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
+		{
+			return this.ObjectScripts;
+		}
+
 		#region Abstract Methods
+
+		public void UpdateLogic(GameScene scene, GameTime gameTime)
+		{
+			Update(scene, gameTime);
+			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
+		}
 
 		public abstract void Update(GameScene scene, GameTime gameTime);
 
 		#endregion
+
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
+		{
+			Draw(scene, spriteBatch);
+			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
+		}
 
 		public void Draw(GameScene scene, SpriteBatch spriteBatch)
 		{
@@ -101,6 +132,8 @@ namespace Singularity.Code
 				foreach (BasicEffect effect in mesh.Effects)
 				{
 					// calculating the full rotation of our object.
+					Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
+
 					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
 
 					effect.World = Matrix.CreateScale(this.GetHierarchyScale()) 
@@ -110,20 +143,22 @@ namespace Singularity.Code
 					effect.View = scene.GetViewMatrix();
 					effect.Projection = scene.GetViewMatrix();
 
-					effect.EnableDefaultLighting();
+					//effect.EnableDefaultLighting();
 					//effect.LightingEnabled = true; // Turn on the lighting subsystem.
 
-					effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
-					effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // coming along the x-axis
-					effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity
+					//effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
+					//effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // coming along the x-axis
+					//effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
+					//scene.AddLightningToEffect(effect);
 
-					effect.AmbientLightColor = new Vector3(0.15f, 0.15f, 0.215f); // Add some overall ambient light.
 					//effect.EmissiveColor = new Vector3(1, 0, 0); // Sets some strange emmissive lighting.  This just looks weird.
 
 				}
 
 				mesh.Draw();
 			}
+
+			foreach (GameObject obj in this.ChildObjects) obj.Draw(scene, spriteBatch);
 		}
 
 	}

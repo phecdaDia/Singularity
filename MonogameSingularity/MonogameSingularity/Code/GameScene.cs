@@ -27,11 +27,36 @@ namespace Singularity.Code
 			this.BufferedSceneObjects = new List<GameObject>();
 		}
 
+		public void SetupScene()
+		{
+			// clear all current objects.
+			this.SceneObjects.Clear();
+
+			// Now setup the new objects
+			AddGameObjects();
+		}
+
+		protected abstract void AddGameObjects();
+
+		protected void AddObject(GameObject gameObject)
+		{
+			var type = gameObject.GetType();
+			if (!SceneObjects.ContainsKey(type))
+			{
+				var listType = typeof(List<>).MakeGenericType(gameObject.GetType());
+				var list = (IList)Activator.CreateInstance(listType);
+				SceneObjects.Add(type, list);
+			}
+
+			SceneObjects[type].Add(gameObject);
+		}
+
 		#region Getter and Setter
 
-		public void SetCameraPosition(Vector3 cameraPosition)
+		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
 			this.CameraPosition = cameraPosition;
+			this.CameraTarget = cameraPosition + cameraTarget;
 		}
 
 		// Getters
@@ -60,7 +85,13 @@ namespace Singularity.Code
 			{
 				foreach (GameObject obj in SceneObjects[type])
 				{
-					obj.Update(this, gameTime);
+					obj.UpdateLogic(this, gameTime);
+
+					// now update the scripts. 
+					foreach (Action<GameScene, GameObject, GameTime> script in obj.GetScripts())
+					{
+						script.Invoke(this, obj, gameTime);
+					}
 				}
 			}
 
@@ -86,7 +117,7 @@ namespace Singularity.Code
 			{
 				foreach (GameObject obj in SceneObjects[type])
 				{
-					obj.Draw(this, spriteBatch);
+					obj.DrawLogic(this, spriteBatch);
 				}
 
 			}

@@ -6,12 +6,16 @@ namespace Singularity.Code
 	public class SingularityGame : Game
 	{
 		protected readonly SceneManager SceneManager;
+		protected readonly ModelManager ModelManager;
+		//protected GameWindow GameWindow;
+
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
 
 		public SingularityGame()
 		{
 			this.SceneManager = new SceneManager();
+			this.ModelManager = new ModelManager(Content);
 
 			this.GraphicsDeviceManager = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -30,7 +34,7 @@ namespace Singularity.Code
 
 		}
 
-		public void ResetGraphic()
+		protected void ResetGraphic()
 		{
 			GraphicsDevice.BlendState = BlendState.AlphaBlend;
 			GraphicsDevice.DepthStencilState = DepthStencilState.None;
@@ -48,6 +52,7 @@ namespace Singularity.Code
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+			this.SceneManager.Update(gameTime);
 		}
 
 		protected override void LoadContent()
