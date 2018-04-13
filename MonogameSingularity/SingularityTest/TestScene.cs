@@ -14,7 +14,7 @@ namespace SingularityTest
 	{
 		public TestScene() : base("test")
 		{
-			this.SetCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 1));
+			this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 
 		}
 
@@ -22,7 +22,7 @@ namespace SingularityTest
 		{
 			AddObject(new BasicCamera());
 
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(0, -5, 0)).SetScale(0.25f));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(10, 0, 0)).SetScale(0.25f).SetRotation(new Vector3(1, 0, 1)));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

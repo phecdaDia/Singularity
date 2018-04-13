@@ -27,19 +27,21 @@ namespace Singularity.Code.GameObjects
 			var dx = 200 - mouseState.X;
 			var dy = 200 - mouseState.Y;
 
-			this.horizontalRotation += dx / 1000f;
-			this.verticalRotation += dy / 1000f;
+			this.horizontalRotation += dx / 100f;
+			this.verticalRotation += dy / 100f;
 
 
 			Mouse.SetPosition(200, 200);
 
 
-			Vector3 target = new Vector3((float)Math.Sin(horizontalRotation), (float)Math.Sin(verticalRotation), (float)Math.Cos(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), 0, (float)Math.Sin(horizontalRotation));
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
 
 			target.Normalize();
+
+			Console.WriteLine(target);
 
 			Vector3 forward = target;
 			forward.Y = 0;
@@ -52,11 +54,11 @@ namespace Singularity.Code.GameObjects
 			if (ks.IsKeyDown(Keys.W)) movement += forward;
 			if (ks.IsKeyDown(Keys.S)) movement += backwards;
 
-			if (ks.IsKeyDown(Keys.A)) movement += left;
-			if (ks.IsKeyDown(Keys.D)) movement += right;
+			if (ks.IsKeyDown(Keys.A)) movement += right;
+			if (ks.IsKeyDown(Keys.D)) movement += left;
 
 			if (movement.LengthSquared() > 0f) movement.Normalize();
-			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f;
+			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 1f;
 
 
 			scene.SetCamera(this.Position, target);

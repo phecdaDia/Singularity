@@ -58,17 +58,26 @@ namespace Singularity.Code
 			this.CameraPosition = cameraPosition;
 			this.CameraTarget = cameraPosition + cameraTarget;
 		}
+		public void SetCameraPosition(Vector3 cameraPosition)
+		{
+			this.CameraPosition = cameraPosition;
+		}
+
+		public void SetCameraTarget(Vector3 cameraTarget)
+		{
+			this.CameraTarget = cameraTarget;
+		}
 
 		// Getters
 
 		public Matrix GetViewMatrix()
 		{
-			return Matrix.CreateLookAt(this.CameraPosition, this.CameraTarget, Vector3.Up);
+			return Matrix.CreateLookAt(this.CameraPosition, CameraPosition + this.CameraTarget, Vector3.UnitY);
 		}
 
 		public Matrix GetProjectionMatrix()
 		{
-			return Matrix.CreatePerspective(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 100f);
+			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 10000f);
 		}
 
 		#endregion
