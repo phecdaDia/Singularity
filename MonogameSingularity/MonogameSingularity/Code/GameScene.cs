@@ -11,11 +11,13 @@ namespace Singularity.Code
 {
 	public abstract class GameScene
 	{
-		private Vector3 CameraPosition;                         // Current position of the camera
-		private Vector3 CameraTarget;							// Current view direction of the camera
-		private Dictionary<Type, IList> SceneObjects;           // all current GameObjects in the scene.
+		public Vector3 CameraPosition { get; private set; }		// Current position of the camera
+		public Vector3 CameraTarget { get; private set; }		// Current view direction of the camera
+		private Dictionary<Type, IList> SceneObjects;			// all current GameObjects in the scene.
 		private IList BufferedSceneObjects;						// This Dictionary is used when adding new GameObjects to the Scene.
 		public String SceneKey { get; }
+
+		private Boolean UseAbsoluteCameraTarget = false;
 
 		public GameScene(String sceneKey)
 		{
@@ -55,8 +57,13 @@ namespace Singularity.Code
 
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
-			this.CameraPosition = cameraPosition;
-			this.CameraTarget = cameraTarget;
+			SetCameraPosition(cameraPosition);
+			SetCameraTarget(cameraTarget);
+		}
+		public void SetAbsoluteCamera(Vector3 cameraPosition, Vector3 cameraTarget)
+		{
+			SetCameraPosition(cameraPosition);
+			SetAbsoluteCameraTarget(cameraTarget);
 		}
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
@@ -65,6 +72,13 @@ namespace Singularity.Code
 
 		public void SetCameraTarget(Vector3 cameraTarget)
 		{
+			this.UseAbsoluteCameraTarget = false;
+			this.CameraTarget = cameraTarget;
+		}
+
+		public void SetAbsoluteCameraTarget(Vector3 cameraTarget)
+		{
+			this.UseAbsoluteCameraTarget = true;
 			this.CameraTarget = cameraTarget;
 		}
 
@@ -72,8 +86,11 @@ namespace Singularity.Code
 
 		public Matrix GetViewMatrix()
 		{
-			//Console.WriteLine(this.CameraTarget);
-			return Matrix.CreateLookAt(this.CameraPosition, this.CameraPosition + 5f * this.CameraTarget, Vector3.UnitY);
+			Vector3 targetVector =
+				this.UseAbsoluteCameraTarget ? this.CameraPosition + 5f * this.CameraTarget : this.CameraTarget;
+			
+			return Matrix.CreateLookAt(this.CameraPosition, targetVector, Vector3.UnitY);
+
 		}
 
 		public Matrix GetProjectionMatrix()

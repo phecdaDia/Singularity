@@ -65,7 +65,7 @@ namespace Singularity.Code.GameObjects
 			if (ks.IsKeyDown(Keys.D)) movement += left;
 
 			if (movement.LengthSquared() > 0f) movement.Normalize();
-			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f;
+			this.AddPosition(movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f);
 
 
 			scene.SetCamera(this.Position, target);
