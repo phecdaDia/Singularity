@@ -87,8 +87,8 @@ namespace Singularity.Code
 		public Matrix GetViewMatrix()
 		{
 			Vector3 targetVector =
-				this.UseAbsoluteCameraTarget ? this.CameraPosition + 5f * this.CameraTarget : this.CameraTarget;
-			
+				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
+
 			return Matrix.CreateLookAt(this.CameraPosition, targetVector, Vector3.UnitY);
 
 		}
