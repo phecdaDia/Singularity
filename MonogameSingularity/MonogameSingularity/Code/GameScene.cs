@@ -56,7 +56,7 @@ namespace Singularity.Code
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
 			this.CameraPosition = cameraPosition;
-			this.CameraTarget = cameraPosition + cameraTarget;
+			this.CameraTarget = cameraTarget;
 		}
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
@@ -72,7 +72,8 @@ namespace Singularity.Code
 
 		public Matrix GetViewMatrix()
 		{
-			return Matrix.CreateLookAt(this.CameraPosition, CameraPosition + this.CameraTarget, Vector3.UnitY);
+			Console.WriteLine(this.CameraTarget);
+			return Matrix.CreateLookAt(this.CameraPosition, this.CameraPosition + 5f * this.CameraTarget, Vector3.UnitY);
 		}
 
 		public Matrix GetProjectionMatrix()

@@ -24,15 +24,17 @@ namespace Singularity.Code.GameObjects
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
 			MouseState mouseState = Mouse.GetState();
-			var dx = 200 - mouseState.X;
-			var dy = 200 - mouseState.Y;
+			var dx = mouseState.X - 200;
+			var dy = mouseState.Y - 200;
 
 			this.horizontalRotation += dx / 100f;
 			this.verticalRotation += dy / 100f;
 
 
 			Mouse.SetPosition(200, 200);
-
+			Console.WriteLine($"{horizontalRotation}");
+			if (horizontalRotation > MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
+			else if (horizontalRotation < 0f) horizontalRotation += MathHelper.TwoPi;
 
 			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), 0, (float)Math.Sin(horizontalRotation));
 
@@ -63,7 +65,7 @@ namespace Singularity.Code.GameObjects
 
 			scene.SetCamera(this.Position, target);
 
-			Console.WriteLine($"{this.Position.X} - {this.Position.Y} - {this.Position.Z}");
+			//Console.WriteLine($"{this.Position.X} - {this.Position.Y} - {this.Position.Z}");
 		}
 	}
 }
