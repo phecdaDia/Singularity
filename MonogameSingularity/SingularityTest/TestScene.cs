@@ -20,9 +20,36 @@ namespace SingularityTest
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera());
+			AddObject(new BasicCamera(this));
 
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(10, 0, 0)).SetScale(0.25f).SetRotation(new Vector3(1, 0, 1)));
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 0, 0)).SetScale(1f));
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 1, 0)).SetScale(1f));
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 2, 0)).SetScale(1f));
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 4, 0)).SetScale(1f));
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 5, 0)).SetScale(1f));
+
+			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(2, 0, 2)).SetScale(1f));
+
+
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(-10, 0, 10)).SetScale(1f).SetRotation(new Vector3(0, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(-7.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(-5f, 0, 10)).SetScale(1f).SetRotation(new Vector3(2 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(-2.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(3 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(0f, 0, 10)).SetScale(1f).SetRotation(new Vector3(4 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(2.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(5 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(5f, 0, 10)).SetScale(1f).SetRotation(new Vector3(6 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(7.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(7 * MathHelper.PiOver4, 0, 0)));
+			AddObject(new ModelObject("coin").SetPosition(new Vector3(10f, 0, 10)).SetScale(1f).SetRotation(new Vector3(8 * MathHelper.PiOver4, 0, 0)));
+
+
+			AddObject(new ModelObject("teapot").SetPosition(new Vector3(0, -10, 0)).SetScale(1f/25f).AddScript(
+				new Action<GameScene, GameObject, GameTime>(
+					(scene, obj, gameTime) =>
+					{
+						obj.AddRotation(new Vector3(0, 0, (float)gameTime.ElapsedGameTime.TotalSeconds));
+					}
+				)	
+			));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

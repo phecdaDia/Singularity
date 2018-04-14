@@ -23,6 +23,8 @@ namespace Singularity.Code
 		private GameObject ParentObject;		// Parent Object. This object will be in the ChildObjects of the Parent.
 		private List<GameObject> ChildObjects;	// Child Objects
 
+		private String DebugName;				// Used for debugging.
+
 		private List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
 
 		public GameObject()
@@ -46,19 +48,42 @@ namespace Singularity.Code
 			this.Model = model;
 			return this;
 		}
+
 		public GameObject SetPosition(Vector3 position)
 		{
 			this.Position = position;
 			return this;
 		}
+		public GameObject AddPosition(Vector3 position)
+		{
+			this.Position += position;
+			return this;
+		}
+
 		public GameObject SetRotation(Vector3 rotation)
 		{
 			this.Rotation = rotation;
 			return this;
 		}
+		public GameObject AddRotation(Vector3 rotation)
+		{
+			this.Rotation += rotation;
+			return this;
+		}
+
 		public GameObject SetScale(float scale)
 		{
 			this.Scale = scale;
+			return this;
+		}
+		public GameObject MultiplyScale(float scale)
+		{
+			this.Scale *= scale;
+			return this;
+		}
+		public GameObject AddScale(float scale)
+		{
+			this.Scale += scale;
 			return this;
 		}
 
@@ -81,6 +106,12 @@ namespace Singularity.Code
 		{
 			this.ChildObjects.Add(child);
 			child.ParentObject = this;
+			return this;
+		}
+
+		public GameObject SetDebugName(String name)
+		{
+			this.DebugName = name;
 			return this;
 		}
 		#endregion

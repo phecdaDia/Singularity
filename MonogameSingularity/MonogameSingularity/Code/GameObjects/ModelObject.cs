@@ -10,11 +10,11 @@ namespace Singularity.Code.GameObjects
 {
 	public class ModelObject : GameObject
 	{
-		public ModelObject(String modelPath)
+		public ModelObject(String modelPath) : base()
 		{
 			this.SetModel(ModelManager.GetModel(modelPath));
 		}
-		public ModelObject(Model model)
+		public ModelObject(Model model) : base()
 		{
 			this.SetModel(model);
 		}

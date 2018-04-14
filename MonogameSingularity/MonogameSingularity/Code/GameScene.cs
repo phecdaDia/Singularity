@@ -72,7 +72,7 @@ namespace Singularity.Code
 
 		public Matrix GetViewMatrix()
 		{
-			Console.WriteLine(this.CameraTarget);
+			//Console.WriteLine(this.CameraTarget);
 			return Matrix.CreateLookAt(this.CameraPosition, this.CameraPosition + 5f * this.CameraTarget, Vector3.UnitY);
 		}
 

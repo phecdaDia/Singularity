@@ -13,7 +13,7 @@ namespace Singularity.Code.GameObjects
 		private double horizontalRotation;
 		private double verticalRotation;
 
-		public BasicCamera() : base()
+		public BasicCamera(GameScene scene) : base()
 		{
 			this.horizontalRotation = 0.0d;
 			this.verticalRotation = 0.0d;
@@ -32,9 +32,14 @@ namespace Singularity.Code.GameObjects
 
 
 			Mouse.SetPosition(200, 200);
-			Console.WriteLine($"{horizontalRotation}");
+
 			if (horizontalRotation > MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
 			else if (horizontalRotation < 0f) horizontalRotation += MathHelper.TwoPi;
+
+			if (verticalRotation > MathHelper.Pi)
+				verticalRotation = MathHelper.Pi;
+			else if (verticalRotation < 0f)
+				verticalRotation = 0;
 
 			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), 0, (float)Math.Sin(horizontalRotation));
 
@@ -43,7 +48,7 @@ namespace Singularity.Code.GameObjects
 
 			target.Normalize();
 
-			Console.WriteLine(target);
+			//Console.WriteLine(target);
 
 			Vector3 forward = target;
 			forward.Y = 0;
@@ -60,7 +65,7 @@ namespace Singularity.Code.GameObjects
 			if (ks.IsKeyDown(Keys.D)) movement += left;
 
 			if (movement.LengthSquared() > 0f) movement.Normalize();
-			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 1f;
+			this.Position += movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f;
 
 
 			scene.SetCamera(this.Position, target);
