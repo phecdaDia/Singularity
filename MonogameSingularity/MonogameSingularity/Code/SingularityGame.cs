@@ -1,10 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.CodeDom;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Code
 {
 	public class SingularityGame : Game
 	{
+		public static readonly String SINGULARITY_VERSION = "v0.02";
+
 		protected readonly SceneManager SceneManager;
 		protected readonly ModelManager ModelManager;
 		//protected GameWindow GameWindow;
@@ -53,6 +57,7 @@ namespace Singularity.Code
 		{
 			base.Update(gameTime);
 			this.SceneManager.Update(gameTime);
+			KeyboardManager.Update();
 		}
 
 		protected override void LoadContent()

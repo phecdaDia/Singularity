@@ -12,6 +12,7 @@ namespace Singularity.Code.GameObjects
 	{
 		private double horizontalRotation;
 		private double verticalRotation;
+		public Boolean Is3DEnabled { get; private set; }
 
 		public BasicCamera(GameScene scene) : base()
 		{
@@ -21,11 +22,17 @@ namespace Singularity.Code.GameObjects
 			Mouse.SetPosition(200, 200);
 		}
 
+		public void Set3DEnabled(Boolean enable)
+		{
+			this.Is3DEnabled = enable;
+		}
+
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
+
 			MouseState mouseState = Mouse.GetState();
 			var dx = mouseState.X - 200;
-			var dy = mouseState.Y - 200;
+			var dy = 200 - mouseState.Y;
 
 			this.horizontalRotation += dx / 100f;
 			this.verticalRotation += dy / 100f;
@@ -36,12 +43,12 @@ namespace Singularity.Code.GameObjects
 			if (horizontalRotation > MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
 			else if (horizontalRotation < 0f) horizontalRotation += MathHelper.TwoPi;
 
-			if (verticalRotation > MathHelper.Pi)
-				verticalRotation = MathHelper.Pi;
-			else if (verticalRotation < 0f)
-				verticalRotation = 0;
+			if (verticalRotation > MathHelper.PiOver2)
+				verticalRotation = MathHelper.PiOver2;
+			else if (verticalRotation < -MathHelper.PiOver2)
+				verticalRotation = -MathHelper.PiOver2;
 
-			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), 0, (float)Math.Sin(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float) Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
