@@ -8,21 +8,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Code.GameObjects
 {
-	public class ModelObject : GameObject
+	public class ModelObject : EmptyGameObject
 	{
-		public ModelObject(String modelPath) : base()
-		{
-			this.SetModel(ModelManager.GetModel(modelPath));
-		}
+		public ModelObject(String modelPath) : this(ModelManager.GetModel(modelPath))
+		{}
 		public ModelObject(Model model) : base()
 		{
 			this.SetModel(model);
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)
-		{
-			//Console.WriteLine(this.Position);
-
-		} // No logic. It's only rendering the model.
+		{}
 	}
 }

@@ -11,7 +11,6 @@ namespace Singularity.Code
 	/// <summary>
 	/// A GameObject can be any object in a GameScene.
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
 	public abstract class GameObject
 	{
 		
@@ -20,10 +19,11 @@ namespace Singularity.Code
 		public Vector3 Rotation { get; private set; }// Current rotation of the model
 		public float Scale { get; private set; }// Scale of the model
 
+
 		public GameObject ParentObject { get; private set; }// Parent Object. This object will be in the ChildObjects of the Parent.
 		public List<GameObject> ChildObjects { get; private set; }// Child Objects
 
-		private String DebugName;				// Used for debugging.
+		public String DebugName { get; private set; }				// Used for debugging.
 
 		private List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
 
@@ -49,22 +49,33 @@ namespace Singularity.Code
 			return this;
 		}
 
+		public GameObject SetPosition(float x, float y) => SetPosition(new Vector3(x, y, 0));
+		public GameObject SetPosition(float x, float y, float z) => SetPosition(new Vector3(x, y, z));
 		public GameObject SetPosition(Vector3 position)
 		{
 			this.Position = position;
 			return this;
 		}
+
+		public GameObject AddPosition(float x, float y) => AddPosition(new Vector3(x, y, 0));
+		public GameObject AddPosition(float x, float y, float z) => AddPosition(new Vector3(x, y, z));
 		public GameObject AddPosition(Vector3 position)
 		{
 			this.Position += position;
 			return this;
 		}
 
+		public GameObject SetRotation(float x, float y) => SetRotation(new Vector3(x, y, 0));
+		public GameObject SetRotation(float x, float y, float z) => SetRotation(new Vector3(x, y, z));
 		public GameObject SetRotation(Vector3 rotation)
 		{
 			this.Rotation = rotation;
 			return this;
 		}
+
+
+		public GameObject AddRotation(float x, float y) => AddRotation(new Vector3(x, y, 0));
+		public GameObject AddRotation(float x, float y, float z) => AddRotation(new Vector3(x, y, z));
 		public GameObject AddRotation(Vector3 rotation)
 		{
 			this.Rotation += rotation;

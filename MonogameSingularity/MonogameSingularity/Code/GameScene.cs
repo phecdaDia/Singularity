@@ -89,7 +89,15 @@ namespace Singularity.Code
 			Vector3 targetVector =
 				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
 
-			return Matrix.CreateLookAt(this.CameraPosition, targetVector, Vector3.UnitY);
+			// transform camera position because of some black magic
+			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Z, this.CameraPosition.Y);
+			
+
+			var viewTarget = new Vector3(targetVector.X, targetVector.Z, targetVector.Y);
+
+			Console.WriteLine($"VM: {viewPosition} {viewTarget}");
+
+			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
 
 		}
 

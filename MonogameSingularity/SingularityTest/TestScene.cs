@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
 using Singularity.Code.GameObjects;
 
@@ -20,36 +21,22 @@ namespace SingularityTest
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera(this));
-
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 0, 0)).SetScale(1f));
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 1, 0)).SetScale(1f));
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 2, 0)).SetScale(1f));
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 4, 0)).SetScale(1f));
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(10, 5, 0)).SetScale(1f));
-
-			AddObject(new ModelObject("unit-cube").SetPosition(new Vector3(2, 0, 2)).SetScale(1f));
+			AddObject(new BasicCamera(this).AddScript((scene, obj, time) =>
+			{
+				if (KeyboardManager.IsKeyDown(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(-10, 0, 10)).SetScale(1f).SetRotation(new Vector3(0, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(-7.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(-5f, 0, 10)).SetScale(1f).SetRotation(new Vector3(2 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(-2.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(3 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(0f, 0, 10)).SetScale(1f).SetRotation(new Vector3(4 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(2.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(5 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(5f, 0, 10)).SetScale(1f).SetRotation(new Vector3(6 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(7.5f, 0, 5)).SetScale(1f).SetRotation(new Vector3(7 * MathHelper.PiOver4, 0, 0)));
-			AddObject(new ModelObject("coin").SetPosition(new Vector3(10f, 0, 10)).SetScale(1f).SetRotation(new Vector3(8 * MathHelper.PiOver4, 0, 0)));
+				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+			}));
+
+			AddObject(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 0)));
+
+			AddObject(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 0)));
 
 
-			AddObject(new ModelObject("teapot").SetPosition(new Vector3(0, -10, 0)).SetScale(1f/25f).AddScript(
-				new Action<GameScene, GameObject, GameTime>(
-					(scene, obj, gameTime) =>
-					{
-						obj.AddRotation(new Vector3(0, 0, (float)gameTime.ElapsedGameTime.TotalSeconds));
-					}
-				)	
-			));
+			AddObject(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
+
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

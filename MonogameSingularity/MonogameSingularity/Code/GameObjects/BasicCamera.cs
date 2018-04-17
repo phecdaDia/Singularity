@@ -35,12 +35,14 @@ namespace Singularity.Code.GameObjects
 			var dy = 200 - mouseState.Y;
 
 			this.horizontalRotation += dx / 100f;
-			this.verticalRotation += dy / 100f;
+
+			if (this.Is3DEnabled)
+				this.verticalRotation += dy / 100f;
 
 
 			Mouse.SetPosition(200, 200);
 
-			if (horizontalRotation > MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
+			if (horizontalRotation >= MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
 			else if (horizontalRotation < 0f) horizontalRotation += MathHelper.TwoPi;
 
 			if (verticalRotation > MathHelper.PiOver2)
@@ -48,20 +50,24 @@ namespace Singularity.Code.GameObjects
 			else if (verticalRotation < -MathHelper.PiOver2)
 				verticalRotation = -MathHelper.PiOver2;
 
-			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float) Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), (float)Math.Sin(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f);
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
 
 			target.Normalize();
 
-			//Console.WriteLine(target);
+			Console.WriteLine("===============");
+			Console.WriteLine(Position);
+			Console.WriteLine(target);
+			Console.WriteLine($"{horizontalRotation} {verticalRotation}");
+			Console.WriteLine("===============");
 
 			Vector3 forward = target;
-			forward.Y = 0;
+			forward.Z = 0;
 			Vector3 backwards = -forward;
 
-			Vector3 right = new Vector3(forward.Z, 0, -forward.X);
+			Vector3 right = new Vector3(forward.Y, -forward.X, 0);
 			Vector3 left = -right;
 
 

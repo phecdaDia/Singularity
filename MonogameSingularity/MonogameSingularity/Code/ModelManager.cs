@@ -13,8 +13,8 @@ namespace Singularity.Code
 	{
 		private static ModelManager Instance;
 
-		private ContentManager ContentManager;
-		private Dictionary<String, Model> ModelDictionary;
+		private readonly ContentManager ContentManager;
+		private readonly Dictionary<String, Model> ModelDictionary;
 
 
 		public ModelManager(ContentManager contentManager)
