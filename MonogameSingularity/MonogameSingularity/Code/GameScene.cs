@@ -95,7 +95,7 @@ namespace Singularity.Code
 
 			var viewTarget = new Vector3(targetVector.X, targetVector.Z, targetVector.Y);
 
-			Console.WriteLine($"VM: {viewPosition} {viewTarget}");
+			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
 
 			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
 

@@ -57,11 +57,11 @@ namespace Singularity.Code.GameObjects
 
 			target.Normalize();
 
-			Console.WriteLine("===============");
-			Console.WriteLine(Position);
-			Console.WriteLine(target);
-			Console.WriteLine($"{horizontalRotation} {verticalRotation}");
-			Console.WriteLine("===============");
+			//Console.WriteLine("===============");
+			//Console.WriteLine(Position);
+			//Console.WriteLine(target);
+			//Console.WriteLine($"{horizontalRotation} {verticalRotation}");
+			//Console.WriteLine("===============");
 
 			Vector3 forward = target;
 			forward.Z = 0;

@@ -186,7 +186,7 @@ namespace Singularity.Code
 					effect.Projection = scene.GetProjectionMatrix();
 
 					effect.EnableDefaultLighting();
-					//effect.LightingEnabled = true; // Turn on the lighting subsystem.
+					effect.LightingEnabled = true; // Turn on the lighting subsystem.
 
 					//effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
 					//effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // coming along the x-axis
