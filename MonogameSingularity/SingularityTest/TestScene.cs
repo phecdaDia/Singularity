@@ -31,8 +31,7 @@ namespace SingularityTest
 
 				if (KeyboardManager.IsKeyDown(Keys.R))
 				{
-					Console.WriteLine(obj.Position);
-					scene.SpawnGameObject(new ModelObject("unit-cube").SetPosition(obj.Position));
+					Console.WriteLine(new ModelObject("unit-cube").SetPosition(obj.Position).GetBoundingBox());
 
 				}
 			}));

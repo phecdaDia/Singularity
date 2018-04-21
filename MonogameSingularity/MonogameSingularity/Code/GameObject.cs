@@ -17,7 +17,7 @@ namespace Singularity.Code
 		public Model Model { get; private set; }// Model of the entity. Is Null if the object shall not be rendered.
 		public Vector3 Position { get; private set; }// Current position of the model
 		public Vector3 Rotation { get; private set; }// Current rotation of the model
-		public float Scale { get; private set; }// Scale of the model
+		public Vector3 Scale { get; private set; }// Scale of the model
 
 
 		public GameObject ParentObject { get; private set; }// Parent Object. This object will be in the ChildObjects of the Parent.
@@ -32,7 +32,7 @@ namespace Singularity.Code
 			// Setting default values for all members
 			this.Position = new Vector3();
 			this.Rotation = new Vector3();
-			this.Scale = 1.0f;
+			this.Scale = Vector3.One;
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
@@ -82,17 +82,23 @@ namespace Singularity.Code
 			return this;
 		}
 
-		public GameObject SetScale(float scale)
+		public GameObject SetScale(float scale) => SetScale(scale, scale, scale);
+		public GameObject SetScale(float x, float y, float z) => SetScale(new Vector3(x, y, z));
+		public GameObject SetScale(Vector3 scale)
 		{
 			this.Scale = scale;
 			return this;
 		}
-		public GameObject MultiplyScale(float scale)
+
+		public GameObject MultiplyScale(float x, float y, float z) => MultiplyScale(new Vector3(x, y, z));
+		public GameObject MultiplyScale(Vector3 scale)
 		{
 			this.Scale *= scale;
 			return this;
 		}
-		public GameObject AddScale(float scale)
+
+		public GameObject AddScale(float x, float y, float z) => AddScale(new Vector3(x, y, z));
+		public GameObject AddScale(Vector3 scale)
 		{
 			this.Scale += scale;
 			return this;
@@ -136,6 +142,52 @@ namespace Singularity.Code
 		{
 			if (this.ParentObject == null) return this.Position;
 			return this.Position + this.ParentObject.GetHierarchyPosition();
+		}
+
+		// By https://pastebin.com/47vwJWSc
+		public BoundingBox GetBoundingBox()
+		{
+			return GetBoundingBox(
+				this.Model, 
+				Matrix.CreateScale()
+				Matrix.CreateTranslation(this.GetHierarchyPosition())
+			);
+		}
+
+		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
+		{
+			if (model == null) return new BoundingBox();
+
+			// Initialize minimum and maximum corners of the bounding box to max and min values
+			Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+			Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+			// For each mesh of the model
+			foreach (ModelMesh mesh in model.Meshes)
+			{
+				foreach (ModelMeshPart meshPart in mesh.MeshParts)
+				{
+					// Vertex buffer parameters
+					int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+					int vertexBufferSize = meshPart.NumVertices * vertexStride;
+
+					// Get vertex data as float
+					float[] vertexData = new float[vertexBufferSize / sizeof(float)];
+					meshPart.VertexBuffer.GetData<float>(vertexData);
+
+					// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
+					for (int i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
+					{
+						Vector3 transformedPosition = Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]), worldTransformation);
+
+						min = Vector3.Min(min, transformedPosition);
+						max = Vector3.Max(max, transformedPosition);
+					}
+				}
+			}
+
+			// Create and return bounding box
+			return new BoundingBox(min, max);
 		}
 
 		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
