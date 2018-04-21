@@ -38,6 +38,11 @@ namespace Singularity.Code
 			AddGameObjects();
 		}
 
+		public void SpawnGameObject(GameObject gameObject)
+		{
+			this.BufferedSceneObjects.Add(gameObject);
+		}
+
 		protected abstract void AddGameObjects();
 
 		protected void AddObject(GameObject gameObject)
@@ -83,6 +88,26 @@ namespace Singularity.Code
 		}
 
 		// Getters
+
+		public IList<T> GetObjects<T>(Func<T, bool> predicate = null)
+		{
+			// filter all elements with the predicate via linq
+			if (predicate != null) return (IList<T>) GetObjects<T>().Where(predicate);
+
+			// if no predicate is given, just return all elements of that type
+			var type = typeof(T);
+			if (!this.SceneObjects.ContainsKey(type)) return new List<T>();
+
+			return (IList<T>) this.SceneObjects[type];
+
+		}
+
+		public Dictionary<Type, IList> GetAllObjects(Func<KeyValuePair<Type, IList>, bool> predicate = null)
+		{
+			if (predicate == null) return this.SceneObjects;
+
+			return (Dictionary<Type, IList>) GetAllObjects().Where(predicate);
+		}
 
 		public Matrix GetViewMatrix()
 		{
