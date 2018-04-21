@@ -28,6 +28,8 @@ namespace SingularityTest
 
 				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
 				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+
+				if (KeyboardManager.IsKeyDown(Keys.R)) obj.SetPosition(0, 0, 0);
 			}));
 
 			AddObject(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 0)));
