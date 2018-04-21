@@ -14,7 +14,7 @@ namespace Singularity.Code
 	public abstract class GameObject
 	{
 		
-		private Model Model;// Model of the entity. Is Null if the object shall not be rendered.
+		public Model Model { get; private set; }// Model of the entity. Is Null if the object shall not be rendered.
 		public Vector3 Position { get; private set; }// Current position of the model
 		public Vector3 Rotation { get; private set; }// Current rotation of the model
 		public float Scale { get; private set; }// Scale of the model
