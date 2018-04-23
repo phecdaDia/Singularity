@@ -14,7 +14,7 @@ namespace Singularity.Code.GameObjects
 		private double verticalRotation;
 		public Boolean Is3DEnabled { get; private set; }
 
-		public BasicCamera(GameScene scene) : base()
+		public BasicCamera() : base()
 		{
 			this.horizontalRotation = 0.0d;
 			this.verticalRotation = 0.0d;
