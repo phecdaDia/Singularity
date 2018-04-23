@@ -97,6 +97,7 @@ namespace Singularity.Code
 			return this;
 		}
 
+		public GameObject AddScale(float scale) => AddScale(new Vector3(scale));
 		public GameObject AddScale(float x, float y, float z) => AddScale(new Vector3(x, y, z));
 		public GameObject AddScale(Vector3 scale)
 		{
