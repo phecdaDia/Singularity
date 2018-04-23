@@ -133,7 +133,7 @@ namespace Singularity.Code
 		}
 		#endregion
 
-		public float GetHierarchyScale()
+		public Vector3 GetHierarchyScale()
 		{
 			if (this.ParentObject == null) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
@@ -149,7 +149,7 @@ namespace Singularity.Code
 		{
 			return GetBoundingBox(
 				this.Model, 
-				Matrix.CreateScale()
+				Matrix.CreateScale(this.GetHierarchyScale()) * 
 				Matrix.CreateTranslation(this.GetHierarchyPosition())
 			);
 		}
