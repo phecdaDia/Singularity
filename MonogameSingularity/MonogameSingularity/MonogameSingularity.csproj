@@ -43,6 +43,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Code\Enum\CollisionMode.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />

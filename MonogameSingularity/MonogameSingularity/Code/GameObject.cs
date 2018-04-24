@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Code.Enum;
 
 namespace Singularity.Code
 {
@@ -27,6 +28,8 @@ namespace Singularity.Code
 
 		private List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
 
+		public CollisionMode CollisionMode { get; private set; }
+
 		public GameObject()
 		{
 			// Setting default values for all members
@@ -38,6 +41,8 @@ namespace Singularity.Code
 			this.ChildObjects = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
+
+			this.CollisionMode = CollisionMode.BoundingSphere;
 		}
 
 		// Methods for the builder pattern
@@ -127,6 +132,12 @@ namespace Singularity.Code
 			return this;
 		}
 
+		public GameObject SetCollisionMode(CollisionMode collisionMode)
+		{
+			this.CollisionMode = collisionMode;
+			return this;
+		}
+
 		public GameObject SetDebugName(String name)
 		{
 			this.DebugName = name;
@@ -148,6 +159,9 @@ namespace Singularity.Code
 		// By https://pastebin.com/47vwJWSc
 		public BoundingBox GetBoundingBox()
 		{
+
+			if (this.CollisionMode != CollisionMode.BoundingBox) return new BoundingBox();
+
 			return GetBoundingBox(
 				this.Model, 
 				Matrix.CreateScale(this.GetHierarchyScale()) * 
@@ -157,6 +171,7 @@ namespace Singularity.Code
 
 		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
 		{
+
 			if (model == null) return new BoundingBox();
 
 			// Initialize minimum and maximum corners of the bounding box to max and min values

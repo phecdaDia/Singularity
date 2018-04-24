@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Code.Enum;
 using Singularity.Code.Utilities;
 
 namespace Singularity.Code
@@ -22,6 +23,9 @@ namespace Singularity.Code
 		public String SceneKey { get; }
 
 		private Boolean UseAbsoluteCameraTarget = false;
+
+		private float MinimumCullingDistance = 0.05f;
+		private float MaximumCullingDistance = 100.0f;
 
 
 
@@ -86,6 +90,7 @@ namespace Singularity.Code
 
 		public Boolean DoesCollide(Vector3 position, float radius)
 		{
+			//return false;
 			// get some colliders from the octree
 			//this.ColliderObjects.GetObjects(position)
 
@@ -93,18 +98,32 @@ namespace Singularity.Code
 
 			List<GameObject> collidables = this.ColliderObjects.GetObjects(position);
 
+
 			foreach (GameObject go in collidables)
 			{
-				foreach (ModelMesh mm in go.Model.Meshes)
-				{
-					if (mm.BoundingSphere.Transform(Matrix.CreateScale(go.GetHierarchyScale()) * Matrix.CreateTranslation(go.GetHierarchyPosition())).Intersects(bs))
-					{
-						// collision
-						Console.WriteLine($"Collision with {mm.BoundingSphere}");
+				// copy the scale of bones from the model to apply it later.
+				var transformMatrices = new Matrix[go.Model.Bones.Count];
+				go.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
+				var bb = go.GetBoundingBox(); // don't use bounding box with high vertex bodies. Uncomment this to see yourself. FPS take a dip even for small objects. 
 
-						return true;
+				if (go.CollisionMode == CollisionMode.BoundingBox)
+				{
+					if (bs.Intersects(go.GetBoundingBox())) return true;
+				}
+				else if (go.CollisionMode ==  CollisionMode.BoundingSphere)
+				{
+					foreach (ModelMesh mm in go.Model.Meshes)
+					{
+						if (mm.BoundingSphere.Transform(Matrix.CreateScale(go.GetHierarchyScale()) * Matrix.CreateTranslation(go.GetHierarchyPosition())).Intersects(bs))
+						{
+							// collision
+							Console.WriteLine($"Collision with {mm.BoundingSphere}");
+
+							return true;
+						}
 					}
 				}
+				
 			}
 
 			return false;
@@ -136,6 +155,12 @@ namespace Singularity.Code
 		{
 			this.UseAbsoluteCameraTarget = true;
 			this.CameraTarget = cameraTarget;
+		}
+
+		public void SetCullingDistance(float c1, float c2)
+		{
+			this.MinimumCullingDistance = c1;
+			this.MaximumCullingDistance = c2;
 		}
 
 		// Getters
@@ -176,7 +201,7 @@ namespace Singularity.Code
 
 		public Matrix GetProjectionMatrix()
 		{
-			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 10000f);
+			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance, this.MaximumCullingDistance);
 		}
 
 		public abstract void AddLightningToEffect(BasicEffect effect);
