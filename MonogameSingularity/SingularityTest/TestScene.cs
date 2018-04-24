@@ -28,6 +28,8 @@ namespace SingularityTest
 
 				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
 				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+
+				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnCollider(new ModelObject("unit-cube-small").SetPosition(obj.Position + new Vector3(0, 0, -5)));
 				
 			}));
 
@@ -36,7 +38,7 @@ namespace SingularityTest
 			AddCollider(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 0)));
 
 
-			AddCollider(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
+			//AddCollider(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
 
 		}
 

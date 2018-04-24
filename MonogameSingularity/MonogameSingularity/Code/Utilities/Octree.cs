@@ -76,6 +76,7 @@ namespace Singularity.Code.Utilities
 				else
 				{
 					// this is the smallest Octree we may create, add as leaf
+					Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 					this.Leafs.Add(obj);
 
 					return;
@@ -92,6 +93,7 @@ namespace Singularity.Code.Utilities
 				else
 				{
 					// this quad is small enough for this object
+					Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 					this.Leafs.Add(obj);
 				}
 			}
@@ -126,6 +128,7 @@ namespace Singularity.Code.Utilities
 
 			if (!canPartition || this.CurrentSize <= this.MinimumSize)
 			{
+				Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 				this.Leafs.Add(obj);
 				return;
 			}
@@ -249,10 +252,28 @@ namespace Singularity.Code.Utilities
 			if (Children == null) return this.Leafs;
 
 			List<T> output = new List<T>();
+
+			output.AddRange(this.Leafs.ToArray());
+
 			foreach (Octree<T> tree in Children)
 			{
 				output.AddRange(tree.GetAllObjects());
 			}
+
+			return output;
+		}
+
+		public List<T> GetObjects(Vector3 position, Func<T, bool> predicate = null)
+		{
+			if (predicate != null) return (List<T>)GetAllObjects().Where(predicate);
+
+			if (Children == null) return this.Leafs;
+
+			List<T> output = new List<T>();
+
+			output.AddRange(this.Leafs.ToArray());
+			
+			output.AddRange(Children[GetQuadrantNumber(position)].GetObjects(position));
 
 			return output;
 		}

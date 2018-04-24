@@ -81,17 +81,17 @@ namespace UnitTests
 			};
 
 			// Generate Octree
-			Octree<int> octree1 = new Octree<int>(0, -5);
+			Octree<int> octree1 = new Octree<int>(16, -5);
 
 			foreach (var v in values)
 			{
 				int t = v;
 
-				float x = (t % 16) / 4.0f;
+				float x = (t % 16) ;
 				t /= 16;
-				float y = (t % 16) / 4.0f;
+				float y = (t % 16) ;
 				t /= 16;
-				float z = (t % 16) / 4.0f;
+				float z = (t % 16);
 
 				octree1.AddObject(v, 0.0f, new Vector3(x, y, z));
 			}

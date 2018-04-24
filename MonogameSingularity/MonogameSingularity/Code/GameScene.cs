@@ -17,7 +17,8 @@ namespace Singularity.Code
 		private Octree<GameObject> ColliderObjects;               // all current GameObjects in the scene.
 		private List<GameObject> ActorObjects;
 
-		private IList BufferedSceneObjects;                     // This Dictionary is used when adding new GameObjects to the Scene.
+		private IList<GameObject> BufferedActors;                     // This Dictionary is used when adding new GameObjects to the Scene.
+		private IList<GameObject> BufferedColliders;                     // This Dictionary is used when adding new GameObjects to the Scene.
 		public String SceneKey { get; }
 
 		private Boolean UseAbsoluteCameraTarget = false;
@@ -31,7 +32,8 @@ namespace Singularity.Code
 			// Setting default values for all members
 			this.CameraPosition = new Vector3();
 			//this.ColliderObjects = new Dictionary<Type, IList>();
-			this.BufferedSceneObjects = new List<GameObject>();
+			this.BufferedActors = new List<GameObject>();
+			this.BufferedColliders = new List<GameObject>();
 
 			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition);
 			this.ActorObjects = new List<GameObject>();
@@ -48,7 +50,12 @@ namespace Singularity.Code
 
 		public void SpawnActor(GameObject gameObject)
 		{
-			this.BufferedSceneObjects.Add(gameObject);
+			this.BufferedActors.Add(gameObject);
+		}
+
+		public void SpawnCollider(GameObject gameObject)
+		{
+			this.BufferedColliders.Add(gameObject);
 		}
 
 		protected abstract void AddGameObjects();
@@ -75,6 +82,33 @@ namespace Singularity.Code
 			Vector3 scale = gameObject.GetHierarchyScale();
 
 			this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
+		}
+
+		public Boolean DoesCollide(Vector3 position, float radius)
+		{
+			// get some colliders from the octree
+			//this.ColliderObjects.GetObjects(position)
+
+			BoundingSphere bs = new BoundingSphere(position, radius);
+
+			List<GameObject> collidables = this.ColliderObjects.GetObjects(position);
+
+			foreach (GameObject go in collidables)
+			{
+				foreach (ModelMesh mm in go.Model.Meshes)
+				{
+					if (mm.BoundingSphere.Transform(Matrix.CreateScale(go.GetHierarchyScale()) * Matrix.CreateTranslation(go.GetHierarchyPosition())).Intersects(bs))
+					{
+						// collision
+						Console.WriteLine($"Collision with {mm.BoundingSphere}");
+
+						return true;
+					}
+				}
+			}
+
+			return false;
+
 		}
 
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
@@ -153,6 +187,14 @@ namespace Singularity.Code
 
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.UpdateLogic(this, gameTime);
 			foreach (GameObject obj in ActorObjects) obj.UpdateLogic(this, gameTime);
+
+			// add our buffered objects
+			this.ActorObjects.AddRange(this.BufferedActors);
+			foreach (GameObject obj in BufferedColliders) this.AddCollider(obj);
+
+			// clear buffers
+			this.BufferedActors.Clear();
+			this.BufferedColliders.Clear();
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
