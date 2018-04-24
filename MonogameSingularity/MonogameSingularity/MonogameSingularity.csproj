@@ -43,6 +43,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Code\Enum\CollisionMode.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
@@ -50,7 +51,9 @@
     <Compile Include="Code\GameScene.cs" />
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
+    <Compile Include="Code\OctreeGameScene.cs" />
     <Compile Include="Code\SceneManager.cs" />
+    <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\SingularityGame.cs" />
   </ItemGroup>
