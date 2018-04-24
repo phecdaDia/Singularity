@@ -201,6 +201,10 @@ namespace Singularity.Code
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
 			Update(scene, gameTime);
+			// execute scripts
+			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
+
+
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
 		}
 
@@ -210,6 +214,7 @@ namespace Singularity.Code
 
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
 		{
+			//Console.WriteLine($"Drawing, Position: {this.Position}");
 			Draw(scene, spriteBatch);
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
 		}

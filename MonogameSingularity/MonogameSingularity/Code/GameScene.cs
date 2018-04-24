@@ -6,59 +6,76 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Code.Utilities;
 
 namespace Singularity.Code
 {
 	public abstract class GameScene
 	{
-		public Vector3 CameraPosition { get; private set; }		// Current position of the camera
-		public Vector3 CameraTarget { get; private set; }		// Current view direction of the camera
-		private Dictionary<Type, IList> SceneObjects;			// all current GameObjects in the scene.
-		private IList BufferedSceneObjects;						// This Dictionary is used when adding new GameObjects to the Scene.
+		public Vector3 CameraPosition { get; private set; }     // Current position of the camera
+		public Vector3 CameraTarget { get; private set; }       // Current view direction of the camera
+		private Octree<GameObject> ColliderObjects;               // all current GameObjects in the scene.
+		private List<GameObject> ActorObjects;
+
+		private IList BufferedSceneObjects;                     // This Dictionary is used when adding new GameObjects to the Scene.
 		public String SceneKey { get; }
 
 		private Boolean UseAbsoluteCameraTarget = false;
 
-		public GameScene(String sceneKey)
+
+
+		public GameScene(String sceneKey, int sceneSize = 16, int minPartition = -2)
 		{
 			this.SceneKey = sceneKey;
 
 			// Setting default values for all members
 			this.CameraPosition = new Vector3();
-			this.SceneObjects = new Dictionary<Type, IList>();
+			//this.ColliderObjects = new Dictionary<Type, IList>();
 			this.BufferedSceneObjects = new List<GameObject>();
+
+			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition);
+			this.ActorObjects = new List<GameObject>();
 		}
 
 		public void SetupScene()
 		{
 			// clear all current objects.
-			this.SceneObjects.Clear();
+			this.ColliderObjects.Clear();
 
 			// Now setup the new objects
 			AddGameObjects();
 		}
 
-		public void SpawnGameObject(GameObject gameObject)
+		public void SpawnActor(GameObject gameObject)
 		{
 			this.BufferedSceneObjects.Add(gameObject);
 		}
 
 		protected abstract void AddGameObjects();
 
-		protected void AddObject(GameObject gameObject)
+		protected void AddActor(GameObject gameObject)
 		{
-			var type = gameObject.GetType();
-			if (!SceneObjects.ContainsKey(type))
-			{
-				var listType = typeof(List<>).MakeGenericType(gameObject.GetType());
-				var list = (IList)Activator.CreateInstance(listType);
-				SceneObjects.Add(type, list);
-			}
-
-			SceneObjects[type].Add(gameObject);
+			this.ActorObjects.Add(gameObject);
 		}
 
-		#region Getter and Setter
+		protected void AddCollider(GameObject gameObject)
+		{
+			if (gameObject.Model == null)
+			{
+				this.ColliderObjects.AddObject(gameObject, 0.0f, gameObject.Position);
+				return;
+			}
+
+			BoundingSphere[] spheres = new BoundingSphere[gameObject.Model.Meshes.Count];
+			for (int i = 0; i < gameObject.Model.Meshes.Count; i++)
+			{
+				spheres[i] = gameObject.Model.Meshes[i].BoundingSphere;
+			}
+
+			Vector3 scale = gameObject.GetHierarchyScale();
+
+			this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
+		}
 
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
@@ -89,24 +106,21 @@ namespace Singularity.Code
 
 		// Getters
 
-		public IList<T> GetObjects<T>(Func<T, bool> predicate = null)
+		[Obsolete]
+		public IList<T> GetObjects<T>(Func<GameObject, bool> predicate = null) where T : GameObject
 		{
-			// filter all elements with the predicate via linq
-			if (predicate != null) return (IList<T>) GetObjects<T>().Where(predicate);
+			Dictionary<Type, IList<GameObject>> dict = GetAllObjects(predicate);
 
-			// if no predicate is given, just return all elements of that type
-			var type = typeof(T);
-			if (!this.SceneObjects.ContainsKey(type)) return new List<T>();
+			if (!dict.ContainsKey(typeof(T))) return new List<T>();
 
-			return (IList<T>) this.SceneObjects[type];
+			return (IList<T>)dict[typeof(T)];
 
 		}
 
-		public Dictionary<Type, IList> GetAllObjects(Func<KeyValuePair<Type, IList>, bool> predicate = null)
+		[Obsolete]
+		public Dictionary<Type, IList<GameObject>> GetAllObjects(Func<GameObject, bool> predicate = null)
 		{
-			if (predicate == null) return this.SceneObjects;
-
-			return (Dictionary<Type, IList>) GetAllObjects().Where(predicate);
+			return this.ColliderObjects.GetAllObjectsAsTypeDictionary(predicate);
 		}
 
 		public Matrix GetViewMatrix()
@@ -116,7 +130,7 @@ namespace Singularity.Code
 
 			// transform camera position because of some black magic
 			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Z, this.CameraPosition.Y);
-			
+
 
 			var viewTarget = new Vector3(targetVector.X, targetVector.Z, targetVector.Y);
 
@@ -131,56 +145,20 @@ namespace Singularity.Code
 			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 10000f);
 		}
 
-		#endregion
-
-		#region Abstract methods
-
 		public abstract void AddLightningToEffect(BasicEffect effect);
-		#endregion
+
 
 		public void Update(GameTime gameTime)
 		{
-			// now update all objects.
-			foreach (var type in SceneObjects.Keys)
-			{
-				foreach (GameObject obj in SceneObjects[type])
-				{
-					obj.UpdateLogic(this, gameTime);
 
-					// now update the scripts. 
-					foreach (Action<GameScene, GameObject, GameTime> script in obj.GetScripts())
-					{
-						script.Invoke(this, obj, gameTime);
-					}
-				}
-			}
-
-			// add the scheduled GameObjects
-			foreach (GameObject obj in BufferedSceneObjects)
-			{
-				var type = obj.GetType();
-				if (!SceneObjects.ContainsKey(type))
-				{
-					var listType = typeof(List<>).MakeGenericType(obj.GetType());
-					var list = (IList)Activator.CreateInstance(listType);
-					SceneObjects.Add(type, list);
-				}
-
-				SceneObjects[type].Add(obj);
-			}
-
+			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.UpdateLogic(this, gameTime);
+			foreach (GameObject obj in ActorObjects) obj.UpdateLogic(this, gameTime);
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			foreach (Type type in SceneObjects.Keys)
-			{
-				foreach (GameObject obj in SceneObjects[type])
-				{
-					obj.DrawLogic(this, spriteBatch);
-				}
-
-			}
+			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.DrawLogic(this, spriteBatch);
+			foreach (GameObject obj in this.ActorObjects) obj.DrawLogic(this, spriteBatch);
 		}
 
 	}

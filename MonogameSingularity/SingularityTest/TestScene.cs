@@ -21,27 +21,22 @@ namespace SingularityTest
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera(this).AddScript((scene, obj, time) =>
+			AddActor(new BasicCamera().AddScript((scene, obj, time) =>
 			{
 				if (KeyboardManager.IsKeyDown(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 
 				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
 				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
-
-				if (KeyboardManager.IsKeyDown(Keys.R))
-				{
-					Console.WriteLine(new ModelObject("unit-cube").SetPosition(obj.Position).GetBoundingBox());
-
-				}
+				
 			}));
 
-			AddObject(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 0)));
+			AddCollider(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 0)));
 
-			AddObject(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 0)));
+			AddCollider(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 0)));
 
 
-			AddObject(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
+			AddCollider(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
 
 		}
 
