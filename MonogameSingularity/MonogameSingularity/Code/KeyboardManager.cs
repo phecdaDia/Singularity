@@ -25,18 +25,26 @@ namespace Singularity.Code
 		}
 
 		// Keyboardstate is just used for the extension method. 
-		public static bool IsKeyDown(Keys key)
+		public static bool IsKeyPressed(Keys key)
 		{
 			return CurrentPressedKeys.Contains(key) && !LastPressedKeys.Contains(key);
 		}
 
-		public static bool IsKeyDown(this KeyboardState _, Keys key) => IsKeyDown(key);
+		public static bool IsKeyPressed(this KeyboardState _, Keys key) => IsKeyPressed(key);
+
+	    // Keyboardstate is just used for the extension method. 
+		public static bool IsKeyReleased(Keys key)
+	    {
+	        return !CurrentPressedKeys.Contains(key) && LastPressedKeys.Contains(key);
+	    }
+
+	    public static bool IsKeyReleased(this KeyboardState _, Keys key) => IsKeyReleased(key);
 
 		// Keyboardstate is just used for the extension method. 
-		public static bool IsKeyPressed(Keys key)
+		public static bool IsKeyDown(Keys key)
 		{
 			return CurrentPressedKeys.Contains(key);
 		}
-		public static bool IsKeyPressed(this KeyboardState _, Keys key) => IsKeyPressed(key);
+		public static bool IsKeyDown(this KeyboardState _, Keys key) => IsKeyDown(key);
 	}
 }

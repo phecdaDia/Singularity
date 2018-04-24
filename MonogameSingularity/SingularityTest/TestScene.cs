@@ -24,16 +24,15 @@ namespace SingularityTest
 		{
 			AddActor(new BasicCamera().SetPosition(0, 0, 50).AddScript((scene, obj, time) =>
 			{
-				if (KeyboardManager.IsKeyDown(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
+				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 
-				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
 
 				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnCollider(new ModelObject("unit-cube-small")
 					.SetPosition(obj.Position + new Vector3(0, 0, -5))
 					.SetCollisionMode(CollisionMode.BoundingBox));
-				
 			}));
 
 			AddCollider(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 50)));
