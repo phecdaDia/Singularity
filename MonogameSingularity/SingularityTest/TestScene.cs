@@ -23,13 +23,13 @@ namespace SingularityTest
 		{
 			AddObject(new BasicCamera(this).AddScript((scene, obj, time) =>
 			{
-				if (KeyboardManager.IsKeyDown(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
+				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 
-				if (KeyboardManager.IsKeyPressed(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyPressed(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
 
-				if (KeyboardManager.IsKeyDown(Keys.R))
+				if (KeyboardManager.IsKeyPressed(Keys.R))
 				{
 					Console.WriteLine(new ModelObject("unit-cube").SetPosition(obj.Position).GetBoundingBox());
 
