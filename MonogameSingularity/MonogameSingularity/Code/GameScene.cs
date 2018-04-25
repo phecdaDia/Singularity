@@ -27,7 +27,13 @@ namespace Singularity.Code
 		private float MaximumCullingDistance = 100.0f;
 
 
-
+		/// <summary>
+		/// Creates a new <see cref="GameScene"/>
+		/// </summary>
+		/// <param name="sceneKey">Unique key for <seealso cref="SceneManager"/></param>
+		/// <param name="sceneSize">Size of the scene in 2^x</param>
+		/// <param name="minPartition">Minimum size of <seealso cref="Octree{T}"/> partitioning</param>
+		/// <param name="precision">Buffer radius for <seealso cref="Octree{T}"/></param>
 		public GameScene(String sceneKey, int sceneSize = 16, int minPartition = 2, float precision = 0.0f)
 		{
 			this.SceneKey = sceneKey;
@@ -40,6 +46,9 @@ namespace Singularity.Code
 			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition, precision);
 		}
 
+		/// <summary>
+		/// Clears all <seealso cref="GameObject"/> and calls <see cref="AddGameObjects"/>
+		/// </summary>
 		public void SetupScene()
 		{
 			// clear all current objects.
@@ -49,11 +58,21 @@ namespace Singularity.Code
 			AddGameObjects();
 		}
 
+		/// <summary>
+		/// Spawns a new <seealso cref="GameObject"/> on the next frame.
+		/// </summary>
+		/// <param name="gameObject"></param>
 		public void SpawnObject(GameObject gameObject)
 		{
 			this.BufferedObjects.Add(gameObject);
 		}
 
+		/// <summary>
+		/// Moves an <seealso cref="GameObject"/>
+		/// This is required for proper collision detection!
+		/// </summary>
+		/// <param name="gameObject"></param>
+		/// <param name="previousPosition"></param>
 		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
 		{
 			if (gameObject.Model == null)
@@ -73,8 +92,15 @@ namespace Singularity.Code
 			this.ColliderObjects.MoveObject(gameObject, previousPosition, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
 		}
 
+		/// <summary>
+		/// Adds all <seealso cref="GameObject"/>
+		/// </summary>
 		protected abstract void AddGameObjects();
 
+		/// <summary>
+		/// Adds a <seealso cref="GameObject"/>
+		/// </summary>
+		/// <param name="gameObject"></param>
 		protected void AddObject(GameObject gameObject)
 		{
 			if (gameObject.Model == null)
@@ -94,6 +120,12 @@ namespace Singularity.Code
 			this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
 		}
 
+		/// <summary>
+		/// Checks if <paramref name="position"/> collides with any <seealso cref="GameObject"/>
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
 		public Boolean DoesCollide(Vector3 position, float radius)
 		{
 			//return false;
@@ -118,58 +150,90 @@ namespace Singularity.Code
 
 		}
 
+		/// <summary>
+		/// Sets relative <see cref="CameraPosition"/> and <see cref="CameraTarget"/>
+		/// Calls <seealso cref="SetCamera"/> and <seealso cref="SetCameraTarget"/>
+		/// </summary>
+		/// <param name="cameraPosition"></param>
+		/// <param name="cameraTarget"></param>
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
 			SetCameraPosition(cameraPosition);
 			SetCameraTarget(cameraTarget);
 		}
+
+		/// <summary>
+		/// Sets absolute <see cref="CameraPosition"/> and <see cref="CameraTarget"/>
+		/// Calls <seealso cref="SetCamera"/> and <seealso cref="SetAbsoluteCameraTarget"/>
+		/// </summary>
+		/// <param name="cameraPosition"></param>
+		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
 			SetCameraPosition(cameraPosition);
 			SetAbsoluteCameraTarget(cameraTarget);
 		}
+
+		/// <summary>
+		/// Sets <see cref="CameraPosition"/>
+		/// </summary>
+		/// <param name="cameraPosition"></param>
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
 			this.CameraPosition = cameraPosition;
 		}
 
+		/// <summary>
+		/// Sets relative <see cref="CameraTarget"/>
+		/// </summary>
+		/// <param name="cameraTarget"></param>
 		public void SetCameraTarget(Vector3 cameraTarget)
 		{
 			this.UseAbsoluteCameraTarget = false;
 			this.CameraTarget = cameraTarget;
 		}
 
+		/// <summary>
+		/// Sets absolute <see cref="CameraTarget"/>
+		/// </summary>
+		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCameraTarget(Vector3 cameraTarget)
 		{
 			this.UseAbsoluteCameraTarget = true;
 			this.CameraTarget = cameraTarget;
 		}
 
+		/// <summary>
+		/// Sets <see cref="MinimumCullingDistance"/> and <see cref="MaximumCullingDistance"/>
+		/// </summary>
+		/// <param name="c1"></param>
+		/// <param name="c2"></param>
 		public void SetCullingDistance(float c1, float c2)
 		{
 			this.MinimumCullingDistance = c1;
 			this.MaximumCullingDistance = c2;
 		}
+		
 
-		// Getters
+		// removed
+		//[Obsolete]
+		//public IList<T> GetObjects<T>(Func<GameObject, bool> predicate = null) where T : GameObject
+		//{
+		//	Dictionary<Type, IList<GameObject>> dict = GetAllObjects(predicate);
+		//	if (!dict.ContainsKey(typeof(T))) return new List<T>();
+		//	return (IList<T>)dict[typeof(T)];
+		//}
 
-		[Obsolete]
-		public IList<T> GetObjects<T>(Func<GameObject, bool> predicate = null) where T : GameObject
-		{
-			Dictionary<Type, IList<GameObject>> dict = GetAllObjects(predicate);
+		//[Obsolete]
+		//public Dictionary<Type, IList<GameObject>> GetAllObjects(Func<GameObject, bool> predicate = null)
+		//{
+		//	return this.ColliderObjects.GetAllObjectsAsTypeDictionary(predicate);
+		//}
 
-			if (!dict.ContainsKey(typeof(T))) return new List<T>();
-
-			return (IList<T>)dict[typeof(T)];
-
-		}
-
-		[Obsolete]
-		public Dictionary<Type, IList<GameObject>> GetAllObjects(Func<GameObject, bool> predicate = null)
-		{
-			return this.ColliderObjects.GetAllObjectsAsTypeDictionary(predicate);
-		}
-
+		/// <summary>
+		/// Creates a <seealso cref="Matrix"/> with all camera options set.
+		/// </summary>
+		/// <returns></returns>
 		public Matrix GetViewMatrix()
 		{
 			Vector3 targetVector =
@@ -187,14 +251,26 @@ namespace Singularity.Code
 
 		}
 
+		/// <summary>
+		/// Creates a <seealso cref="Matrix"/>
+		/// </summary>
+		/// <returns></returns>
 		public Matrix GetProjectionMatrix()
 		{
 			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance, this.MaximumCullingDistance);
 		}
 
+		/// <summary>
+		/// Adds lightning to the <seealso cref="GameObject"/>
+		/// </summary>
+		/// <param name="effect"></param>
 		public abstract void AddLightningToEffect(BasicEffect effect);
 
 
+		/// <summary>
+		/// Updates all <seealso cref="GameObject"/> and adds <see cref="BufferedObjects"/>
+		/// </summary>
+		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
 
@@ -207,6 +283,10 @@ namespace Singularity.Code
 			this.BufferedObjects.Clear();
 		}
 
+		/// <summary>
+		/// Draws all <seealso cref="GameObject"/>
+		/// </summary>
+		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.DrawLogic(this, spriteBatch);
