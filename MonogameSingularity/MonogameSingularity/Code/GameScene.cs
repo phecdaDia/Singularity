@@ -17,10 +17,8 @@ namespace Singularity.Code
 		public Vector3 CameraPosition { get; private set; }     // Current position of the camera
 		public Vector3 CameraTarget { get; private set; }       // Current view direction of the camera
 		private Octree<GameObject> ColliderObjects;               // all current GameObjects in the scene.
-		private List<GameObject> ActorObjects;
 
-		private IList<GameObject> BufferedActors;                     // This Dictionary is used when adding new GameObjects to the Scene.
-		private IList<GameObject> BufferedColliders;                     // This Dictionary is used when adding new GameObjects to the Scene.
+		private IList<GameObject> BufferedObjects;                     // This Dictionary is used when adding new GameObjects to the Scene.
 		public String SceneKey { get; }
 
 		private Boolean UseAbsoluteCameraTarget = false;
@@ -37,11 +35,9 @@ namespace Singularity.Code
 			// Setting default values for all members
 			this.CameraPosition = new Vector3();
 			//this.ColliderObjects = new Dictionary<Type, IList>();
-			this.BufferedActors = new List<GameObject>();
-			this.BufferedColliders = new List<GameObject>();
+			this.BufferedObjects = new List<GameObject>();
 
 			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition, precision);
-			this.ActorObjects = new List<GameObject>();
 		}
 
 		public void SetupScene()
@@ -53,14 +49,9 @@ namespace Singularity.Code
 			AddGameObjects();
 		}
 
-		public void SpawnActor(GameObject gameObject)
+		public void SpawnObject(GameObject gameObject)
 		{
-			this.BufferedActors.Add(gameObject);
-		}
-
-		public void SpawnCollider(GameObject gameObject)
-		{
-			this.BufferedColliders.Add(gameObject);
+			this.BufferedObjects.Add(gameObject);
 		}
 
 		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
@@ -84,12 +75,7 @@ namespace Singularity.Code
 
 		protected abstract void AddGameObjects();
 
-		protected void AddActor(GameObject gameObject)
-		{
-			this.ActorObjects.Add(gameObject);
-		}
-
-		protected void AddCollider(GameObject gameObject)
+		protected void AddObject(GameObject gameObject)
 		{
 			if (gameObject.Model == null)
 			{
@@ -120,7 +106,7 @@ namespace Singularity.Code
 			
 			foreach (var go in collidables)
 			{
-				Console.WriteLine($"Testing {go.GetHierarchyPosition()}");
+				
 
 				CollidableGameObject cgo = (CollidableGameObject) go;
 
@@ -213,21 +199,17 @@ namespace Singularity.Code
 		{
 
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.UpdateLogic(this, gameTime);
-			foreach (GameObject obj in ActorObjects) obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
-			this.ActorObjects.AddRange(this.BufferedActors);
-			foreach (GameObject obj in BufferedColliders) this.AddCollider(obj);
+			foreach (GameObject obj in BufferedObjects) this.AddObject(obj);
 
 			// clear buffers
-			this.BufferedActors.Clear();
-			this.BufferedColliders.Clear();
+			this.BufferedObjects.Clear();
 		}
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.DrawLogic(this, spriteBatch);
-			foreach (GameObject obj in this.ActorObjects) obj.DrawLogic(this, spriteBatch);
 		}
 
 	}

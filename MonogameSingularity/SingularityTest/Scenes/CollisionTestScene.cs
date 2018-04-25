@@ -18,11 +18,11 @@ namespace SingularityTest.Scenes
 
 		protected override void AddGameObjects()
 		{
-			AddCollider(new BasicCamera());
+			AddObject(new BasicCamera());
 
 			for (int x = -10; x <= 10; x++)
 			{
-				AddCollider(new ModelObject("unit-cube-small").SetPosition(x, -2, -2));
+				AddObject(new ModelObject("unit-cube-small").SetPosition(x, -2, -2));
 			}
 
 
