@@ -30,10 +30,13 @@ namespace Singularity.Code.Utilities
 
 		private int MinimumSize;
 
-		public Octree(int currentSize, int minimumSize)
+		private float Precision;
+
+		public Octree(int currentSize, int minimumSize, float precision = 0.0f)
 		{
 			this.CurrentSize = currentSize;
 			this.MinimumSize = minimumSize;
+			this.Precision = precision;
 
 			this.Max = new Vector3((float)Math.Pow(2, currentSize));
 			this.Min = -this.Max;
@@ -45,7 +48,7 @@ namespace Singularity.Code.Utilities
 
 		}
 
-		private Octree(Octree<T> parent, Vector3 corner1, Vector3 corner2) : this(parent.CurrentSize - 1, parent.MinimumSize)
+		private Octree(Octree<T> parent, Vector3 corner1, Vector3 corner2) : this(parent.CurrentSize - 1, parent.MinimumSize, parent.Precision)
 		{
 			this.Parent = parent;
 
@@ -60,7 +63,7 @@ namespace Singularity.Code.Utilities
 		public void AddObject(T obj, float radius, Vector3 position)
 		{
 			// we just have a point, therefor we have to create as many octrees as possible
-			if (radius <= 0.0f)
+			if (radius + this.Precision <= 0.0f)
 			{
 				// we don't need any axis testing 
 				if (this.CurrentSize > this.MinimumSize)
@@ -140,6 +143,35 @@ namespace Singularity.Code.Utilities
 			}
 		}
 
+		public Boolean RemoveObject(T obj, Vector3 position)
+		{
+			if (this.Leafs.Remove(obj))
+			{
+				// removed object, we can return.
+				return true;
+			} 
+
+			// it's not in this part, get the children.
+
+			// if there are none however, we have a problem
+			if (this.Children == null) return false;
+
+			var id = this.GetQuadrantNumber(position);
+			return this.Children[id].RemoveObject(obj, position);
+		}
+
+		public void MoveObject(T obj, float scale, Vector3 position1, Vector3 position2)
+		{
+			RemoveObject(obj, position1);
+			AddObject(obj, scale, position2);
+		}
+
+		public void MoveObject(T obj, Vector3 position1, Vector3 position2, float maxScale, params BoundingSphere[] spheres)
+		{
+			RemoveObject(obj, position1);
+			AddObject(obj, position2, maxScale, spheres);
+		}
+
 		private int GetQuadrantNumber(Vector3 position)
 		{
 			// assuming this objects center
@@ -186,7 +218,7 @@ namespace Singularity.Code.Utilities
 			float y = (quadrant & 0b010) > 0 ? 1 : -1;
 			float z = (quadrant & 0b001) > 0 ? 1 : -1;
 
-			return quadrant == GetQuadrantNumber(position - radius * new Vector3(x, y, z));
+			return quadrant == GetQuadrantNumber(position - (radius + this.Precision) * new Vector3(x, y, z));
 		}
 
 		private void PopulateChildrenNodes()

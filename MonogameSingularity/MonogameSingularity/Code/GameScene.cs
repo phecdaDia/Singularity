@@ -29,7 +29,7 @@ namespace Singularity.Code
 
 
 
-		public GameScene(String sceneKey, int sceneSize = 16, int minPartition = -2)
+		public GameScene(String sceneKey, int sceneSize = 16, int minPartition = 2, float precision = 0.0f)
 		{
 			this.SceneKey = sceneKey;
 
@@ -39,7 +39,7 @@ namespace Singularity.Code
 			this.BufferedActors = new List<GameObject>();
 			this.BufferedColliders = new List<GameObject>();
 
-			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition);
+			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition, precision);
 			this.ActorObjects = new List<GameObject>();
 		}
 
@@ -60,6 +60,25 @@ namespace Singularity.Code
 		public void SpawnCollider(GameObject gameObject)
 		{
 			this.BufferedColliders.Add(gameObject);
+		}
+
+		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
+		{
+			if (gameObject.Model == null)
+			{
+				this.ColliderObjects.MoveObject(gameObject, 0.0f, previousPosition, gameObject.Position);
+				return;
+			}
+
+			BoundingSphere[] spheres = new BoundingSphere[gameObject.Model.Meshes.Count];
+			for (int i = 0; i < gameObject.Model.Meshes.Count; i++)
+			{
+				spheres[i] = gameObject.Model.Meshes[i].BoundingSphere;
+			}
+
+			Vector3 scale = gameObject.GetHierarchyScale();
+
+			this.ColliderObjects.MoveObject(gameObject, previousPosition, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
 		}
 
 		protected abstract void AddGameObjects();

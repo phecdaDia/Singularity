@@ -260,6 +260,8 @@ namespace Singularity.Code
 
 		public Boolean DoesCollide(BoundingSphere bs)
 		{
+			if (this.Model == null) return false;
+
 			var world = Matrix.CreateScale(this.GetHierarchyScale()) * 
 						Matrix.CreateRotationX(this.Rotation.X) *
 			            Matrix.CreateRotationY(this.Rotation.Y) *
@@ -295,9 +297,20 @@ namespace Singularity.Code
 
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
+			// get a copy of the position
+			var position = this.GetHierarchyPosition();
+
 			Update(scene, gameTime);
+			
 			// execute scripts
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
+
+			// did we move?
+			if (this.GetHierarchyPosition() != position)
+			{
+				// we have to talk to the scene about the movement. 
+				scene.MoveOctree(this, position);
+			} 
 
 
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
