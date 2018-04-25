@@ -16,17 +16,39 @@ namespace Singularity.Code
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
 
+	    protected RenderTarget2D RenderTarget;
+
 		public SingularityGame()
 		{
 			this.SceneManager = new SceneManager();
 			this.ModelManager = new ModelManager(Content);
 
-			this.GraphicsDeviceManager = new GraphicsDeviceManager(this);
+			this.GraphicsDeviceManager = new GraphicsDeviceManager(this)
+			{
+                PreferredBackBufferWidth = 1280,
+                PreferredBackBufferHeight = 720,
+			};
 			Content.RootDirectory = "Content";
 		}
 
-		protected override void Draw(GameTime gameTime)
+	    public SingularityGame(int width, int height) : base()
+	    {
+	        GraphicsDeviceManager.PreferredBackBufferHeight = height;
+	        GraphicsDeviceManager.PreferredBackBufferWidth = width;
+            GraphicsDeviceManager.ApplyChanges();
+	    }
+
+	    protected override void Initialize()
+	    {
+            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080);
+
+	        base.Initialize();
+	    }
+
+	    protected override void Draw(GameTime gameTime)
 		{
+            //Draw everything to RenderTarget instead of the Screen
+            GraphicsDevice.SetRenderTarget(RenderTarget);
 
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			ResetGraphic();
@@ -35,7 +57,16 @@ namespace Singularity.Code
 			// Add Drawing stuff here!
 			SceneManager.Draw(this.SpriteBatch);
 			
+            //Draw RenderTarget to Screen to add effects later
+            GraphicsDevice.SetRenderTarget(null);
 
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
+
+			//TODO: Add Class/Method/Posibility to easily change how this is drawn
+
+		    SpriteBatch.Draw(RenderTarget, new Rectangle(new Point(0,0), new Point(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight)), Color.White);
+
+            SpriteBatch.End();
 		}
 
 		protected void ResetGraphic()
