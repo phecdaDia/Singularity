@@ -46,7 +46,7 @@
     <Compile Include="TestGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestScene.cs" />
+    <Compile Include="Scenes\TestScene.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

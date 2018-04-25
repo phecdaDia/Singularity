@@ -10,7 +10,7 @@ using Singularity.Code;
 using Singularity.Code.Enum;
 using Singularity.Code.GameObjects;
 
-namespace SingularityTest
+namespace SingularityTest.Scenes
 {
 	public class TestScene : GameScene
 	{
