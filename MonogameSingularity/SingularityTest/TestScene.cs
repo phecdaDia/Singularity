@@ -30,18 +30,18 @@ namespace SingularityTest
 				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
 				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
 
-				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnCollider(new ModelObject("unit-cube-small")
-					.SetPosition(obj.Position + new Vector3(0, 0, -5))
-					.SetCollisionMode(CollisionMode.BoundingBox));
+				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnCollider(new CollidableModelObject("unit-cube-small")
+					.SetCollisionMode(CollisionMode.BoundingBox)
+					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
 			}));
 
-			AddCollider(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 50)).SetCollisionMode(CollisionMode.BoundingBox).AddScript(
+			AddCollider(new CollidableModelObject("sphere").SetCollisionMode(CollisionMode.BoundingBox).SetPosition(new Vector3(5, 20, 50)).AddScript(
 				(scene, obj, time) =>
 				{
 					obj.AddPosition((float) -time.ElapsedGameTime.TotalSeconds / 2.0f, 0, 0);
 				}));
 
-			AddCollider(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 50)).SetCollisionMode(CollisionMode.BoundingBox));
+			AddCollider(new CollidableModelObject("unit-cube-small").SetCollisionMode(CollisionMode.BoundingBox).SetPosition(new Vector3(5, 3, 50)));
 
 
 			//AddCollider(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));

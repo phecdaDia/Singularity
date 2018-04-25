@@ -46,6 +46,8 @@
     <Compile Include="Code\Enum\CollisionMode.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
+    <Compile Include="Code\GameObjects\CollidableGameObject.cs" />
+    <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameScene.cs" />

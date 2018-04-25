@@ -279,7 +279,7 @@ namespace Singularity.Code.Utilities
 		}
 		public List<T> GetAllObjects(Func<T, bool> predicate = null)
 		{
-			if (predicate != null) return (List<T>)GetAllObjects().Where(predicate);
+			if (predicate != null) return GetAllObjects().Where(predicate).ToList();
 
 			if (Children == null) return this.Leafs;
 
@@ -297,7 +297,7 @@ namespace Singularity.Code.Utilities
 
 		public List<T> GetObjects(Vector3 position, Func<T, bool> predicate = null)
 		{
-			if (predicate != null) return (List<T>)GetAllObjects().Where(predicate);
+			if (predicate != null) return GetAllObjects().Where<T>(predicate).ToList();
 
 			if (Children == null) return this.Leafs;
 

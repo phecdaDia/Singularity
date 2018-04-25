@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Code.Enum;
+using Singularity.Code.GameObjects;
 using Singularity.Code.Utilities;
 
 namespace Singularity.Code
@@ -115,12 +116,15 @@ namespace Singularity.Code
 
 			BoundingSphere bs = new BoundingSphere(position, radius);
 
-			List<GameObject> collidables = this.ColliderObjects.GetObjects(position);
-
-
+			List<GameObject> collidables = this.ColliderObjects.GetObjects(position, go => go.GetType().IsSubclassOf(typeof(CollidableGameObject)));
+			
 			foreach (var go in collidables)
 			{
-				if (go.DoesCollide(bs)) return true;
+				Console.WriteLine($"Testing {go.GetHierarchyPosition()}");
+
+				CollidableGameObject cgo = (CollidableGameObject) go;
+
+				if (cgo.DoesCollide(bs)) return true;
 
 			}
 
