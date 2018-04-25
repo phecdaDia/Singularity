@@ -27,8 +27,12 @@ namespace Singularity.Code
 
 		public String DebugName { get; private set; } // Used for debugging.
 
-		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
+		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
 
+		/// <summary>
+		/// Initializing Constructor
+		/// Sets default values for all properties
+		/// </summary>
 		protected GameObject()
 		{
 			// Setting default values for all members
@@ -43,71 +47,241 @@ namespace Singularity.Code
 
 		}
 
-		// Methods for the builder pattern
-
 		#region Builder Pattern
+
+		#region SetModel
+
+		/// <summary>
+		/// Sets the <see cref="Model"/> for the <see cref="GameObject"/>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		public GameObject SetModel(Model model)
 		{
 			this.Model = model;
 			return this;
 		}
 
+		#endregion
+
+		#region SetPosition
+
+		/// <summary>
+		/// Sets the <see cref="Position"/> by calling <seealso cref="SetPosition(Vector3)"/> with the specified values.
+		/// The Z part of the <see cref="Vector3"/> will be 0.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public GameObject SetPosition(float x, float y) => SetPosition(new Vector3(x, y, 0));
+		
+		/// <summary>
+		/// Sets the <see cref="Position"/> by calling <seealso cref="SetPosition(Vector3)"/> with the specified values
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject SetPosition(float x, float y, float z) => SetPosition(new Vector3(x, y, z));
+
+		/// <summary>
+		/// Sets the <see cref="Position"/>
+		/// </summary>
+		/// <param name="position"></param>
+		/// <returns></returns>
 		public GameObject SetPosition(Vector3 position)
 		{
 			this.Position = position;
 			return this;
 		}
 
+		#endregion
+
+		#region AddPosition
+
+		/// <summary>
+		/// Modifies the <see cref="Position"/> by calling <seealso cref="AddPosition(Vector3)"/> with the specified values.
+		/// The Z part of the <see cref="Vector3"/> will be 0.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public GameObject AddPosition(float x, float y) => AddPosition(new Vector3(x, y, 0));
+
+		/// <summary>
+		/// Modifies the <see cref="Position"/> by calling <seealso cref="AddPosition(Vector3)"/> with the specified values
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject AddPosition(float x, float y, float z) => AddPosition(new Vector3(x, y, z));
+
+		/// <summary>
+		/// Modifies the <see cref="Position"/> by adding the Vectors
+		/// </summary>
+		/// <param name="position"></param>
+		/// <returns></returns>
 		public GameObject AddPosition(Vector3 position)
 		{
 			this.Position += position;
 			return this;
 		}
 
+		#endregion
+
+		#region SetRotation
+
+		/// <summary>
+		/// Sets the <see cref="Rotation"/> by calling <seealso cref="SetPosition(Vector3)"/>
+		/// The Z value of the <see cref="Vector3"/> will be 0.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public GameObject SetRotation(float x, float y) => SetRotation(new Vector3(x, y, 0));
+
+		/// <summary>
+		/// Sets the <see cref="Rotation"/> by calling <seealso cref="SetPosition(Vector3)"/>
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject SetRotation(float x, float y, float z) => SetRotation(new Vector3(x, y, z));
+		/// <summary>
+		/// Sets the <see cref="Rotation"/>
+		/// </summary>
+		/// <param name="rotation"></param>
+		/// <returns></returns>
 		public GameObject SetRotation(Vector3 rotation)
 		{
 			this.Rotation = rotation;
 			return this;
 		}
 
+		#endregion
 
+		#region AddRotation
+
+
+		/// <summary>
+		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
+		/// The Z value of the <see cref="Vector3"/> will be 0.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public GameObject AddRotation(float x, float y) => AddRotation(new Vector3(x, y, 0));
+		/// <summary>
+		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject AddRotation(float x, float y, float z) => AddRotation(new Vector3(x, y, z));
+		/// <summary>
+		/// Modifies the <see cref="Rotation"/> by adding both <see cref="Vector3"/>
+		/// </summary>
+		/// <param name="rotation"></param>
+		/// <returns></returns>
 		public GameObject AddRotation(Vector3 rotation)
 		{
 			this.Rotation += rotation;
 			return this;
 		}
 
+		#endregion
+
+		#region SetScale
+
+		/// <summary>
+		/// Sets the <see cref="Scale"/> by calling <seealso cref="SetScale(Vector3)"/>
+		/// All dimensions are set to the parameter.
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public GameObject SetScale(float scale) => SetScale(scale, scale, scale);
+
+		/// <summary>
+		/// Sets the <see cref="Scale"/> by calling <seealso cref="SetScale(Vector3)"/>
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject SetScale(float x, float y, float z) => SetScale(new Vector3(x, y, z));
+		/// <summary>
+		/// Sets the <see cref="Scale"/>
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public GameObject SetScale(Vector3 scale)
 		{
 			this.Scale = scale;
 			return this;
 		}
 
+		#endregion
+
+		#region MultiplyScale
+		/// <summary>
+		/// Multiplies <see cref="Scale"/> by calling <seealso cref="MultiplyScale(Vector3)"/>
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject MultiplyScale(float x, float y, float z) => MultiplyScale(new Vector3(x, y, z));
+		/// <summary>
+		/// Multiplies <see cref="Scale"/> with <paramref name="scale"/>
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale)
 		{
 			this.Scale *= scale;
 			return this;
 		}
+		#endregion
 
+		#region AddScale
+
+		/// <summary>
+		/// Modifies <see cref="Scale"/> by calling <seealso cref="AddScale(Vector3)"/>
+		/// All dimension of the <see cref="Vector3"/> will be set to <paramref name="scale"/>
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public GameObject AddScale(float scale) => AddScale(new Vector3(scale));
+		/// <summary>
+		/// Modifies <see cref="Scale"/> by calling <seealso cref="AddScale(Vector3)"/>
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns></returns>
 		public GameObject AddScale(float x, float y, float z) => AddScale(new Vector3(x, y, z));
+		/// <summary>
+		/// Adds <paramref name="scale"/> to the <see cref="Scale"/>
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <returns></returns>
 		public GameObject AddScale(Vector3 scale)
 		{
 			this.Scale += scale;
 			return this;
 		}
 
+		#endregion
+
+		#region SetParent
+		/// <summary>
+		/// Sets the <see cref="ParentObject"/>
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <returns></returns>
 		public GameObject SetParent(GameObject parent)
 		{
 			this.ParentObject = parent;
@@ -115,7 +289,15 @@ namespace Singularity.Code
 
 			return this;
 		}
+		#endregion
 
+		#region AddScript
+
+		/// <summary>
+		/// Adds a <see cref="Action"/> to the Scripts, which will be executes after <seealso cref="Update"/> is called.
+		/// </summary>
+		/// <param name="script"></param>
+		/// <returns></returns>
 		public GameObject AddScript(Action<GameScene, GameObject, GameTime> script)
 		{
 			this.ObjectScripts.Add(script);
@@ -123,13 +305,29 @@ namespace Singularity.Code
 			return this;
 		}
 
+		#endregion
+
+		#region AddChild
+
+		/// <summary>
+		/// Adds a Childobject which will move relative to this <see cref="GameObject"/>
+		/// </summary>
+		/// <param name="child"></param>
+		/// <returns></returns>
 		public GameObject AddChild(GameObject child)
 		{
 			this.ChildObjects.Add(child);
 			child.ParentObject = this;
 			return this;
 		}
+		#endregion
 
+		#region SetDebugName
+		/// <summary>
+		/// Sets the <see cref="DebugName"/> for testing.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		public GameObject SetDebugName(String name)
 		{
 			this.DebugName = name;
@@ -137,11 +335,22 @@ namespace Singularity.Code
 		}
 		#endregion
 
+		#endregion
+
+		/// <summary>
+		/// Return the multiplies <see cref="Scale"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyScale()"/>
+		/// </summary>
+		/// <returns></returns>
 		public Vector3 GetHierarchyScale()
 		{
 			if (this.ParentObject == null) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
+		
+		/// <summary>
+		/// Return the added <see cref="Position"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyPosition()"/>
+		/// </summary>
+		/// <returns></returns>
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
@@ -149,7 +358,10 @@ namespace Singularity.Code
 		}
 
 		
-
+		/// <summary>
+		/// Gets all <see cref="Action"/>scripts set to this <see cref="GameObject"/>
+		/// </summary>
+		/// <returns></returns>
 		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
 		{
 			return this.ObjectScripts;
@@ -157,7 +369,13 @@ namespace Singularity.Code
 
 		#region Abstract Methods
 
-		public virtual void UpdateLogic(GameScene scene, GameTime gameTime)
+		/// <summary>
+		/// Calls <seealso cref="Update"/>, and calls back to the scene. 
+		/// After that all <see cref="ChildObjects"/> will be updated.
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="gameTime"></param>
+		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
 			// get a copy of the position
 			var position = this.GetHierarchyPosition();
@@ -178,17 +396,31 @@ namespace Singularity.Code
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
 		}
 
+		/// <summary>
+		/// Updates the <see cref="GameObject"/>
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="gameTime"></param>
 		public abstract void Update(GameScene scene, GameTime gameTime);
 
-		#endregion
-
-		public virtual void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
+		/// <summary>
+		/// Calls <seealso cref="Draw"/>
+		/// After that draws all <see cref="ChildObjects"/>
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="spriteBatch"></param>
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
 		{
 			//Console.WriteLine($"Drawing, Position: {this.Position}");
 			Draw(scene, spriteBatch);
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
 		}
 
+		/// <summary>
+		/// Checks if there is a <see cref="Model"/> to draw and draws it.
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="spriteBatch"></param>
 		public void Draw(GameScene scene, SpriteBatch spriteBatch)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
@@ -210,9 +442,9 @@ namespace Singularity.Code
 					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
 
 					effect.World = Matrix.CreateScale(this.GetHierarchyScale())
-					               * totalRotation
-					               * Matrix.CreateTranslation(position)
-					               * transformMatrices[mesh.ParentBone.Index];
+								   * totalRotation
+								   * Matrix.CreateTranslation(position)
+								   * transformMatrices[mesh.ParentBone.Index];
 					effect.View = scene.GetViewMatrix();
 					effect.Projection = scene.GetProjectionMatrix();
 
@@ -230,8 +462,10 @@ namespace Singularity.Code
 
 				mesh.Draw();
 			}
-			
+
 		}
+
+		#endregion
 
 	}
 }
