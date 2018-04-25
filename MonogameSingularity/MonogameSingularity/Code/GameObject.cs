@@ -16,20 +16,20 @@ namespace Singularity.Code
 	public abstract class GameObject
 	{
 		
-		public Model Model { get; private set; }// Model of the entity. Is Null if the object shall not be rendered.
-		public Vector3 Position { get; private set; }// Current position of the model
-		public Vector3 Rotation { get; private set; }// Current rotation of the model
-		public Vector3 Scale { get; private set; }// Scale of the model
+		public Model Model { get; private set; } // Model of the entity. Is Null if the object shall not be rendered.
+		public Vector3 Position { get; private set; } // Current position of the model
+		public Vector3 Rotation { get; private set; } // Current rotation of the model
+		public Vector3 Scale { get; private set; } // Scale of the model
 
 
-		public GameObject ParentObject { get; private set; }// Parent Object. This object will be in the ChildObjects of the Parent.
-		public List<GameObject> ChildObjects { get; private set; }// Child Objects
+		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
-		public String DebugName { get; private set; }				// Used for debugging.
+		public String DebugName { get; private set; } // Used for debugging.
 
-		private List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
+		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts;
 
-		public GameObject()
+		protected GameObject()
 		{
 			// Setting default values for all members
 			this.Position = new Vector3();

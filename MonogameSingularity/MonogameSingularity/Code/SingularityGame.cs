@@ -7,7 +7,7 @@ namespace Singularity.Code
 {
 	public class SingularityGame : Game
 	{
-		public static readonly String SINGULARITY_VERSION = "v0.04";
+		public static readonly String SINGULARITY_VERSION = "v0.06";
 
 		protected readonly SceneManager SceneManager;
 		protected readonly ModelManager ModelManager;
