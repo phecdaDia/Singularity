@@ -99,31 +99,10 @@ namespace Singularity.Code
 			List<GameObject> collidables = this.ColliderObjects.GetObjects(position);
 
 
-			foreach (GameObject go in collidables)
+			foreach (var go in collidables)
 			{
-				// copy the scale of bones from the model to apply it later.
-				var transformMatrices = new Matrix[go.Model.Bones.Count];
-				go.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
-				var bb = go.GetBoundingBox(); // don't use bounding box with high vertex bodies. Uncomment this to see yourself. FPS take a dip even for small objects. 
+				if (go.DoesCollide(bs)) return true;
 
-				if (go.CollisionMode == CollisionMode.BoundingBox)
-				{
-					if (bs.Intersects(go.GetBoundingBox())) return true;
-				}
-				else if (go.CollisionMode ==  CollisionMode.BoundingSphere)
-				{
-					foreach (ModelMesh mm in go.Model.Meshes)
-					{
-						if (mm.BoundingSphere.Transform(Matrix.CreateScale(go.GetHierarchyScale()) * Matrix.CreateTranslation(go.GetHierarchyPosition())).Intersects(bs))
-						{
-							// collision
-							Console.WriteLine($"Collision with {mm.BoundingSphere}");
-
-							return true;
-						}
-					}
-				}
-				
 			}
 
 			return false;

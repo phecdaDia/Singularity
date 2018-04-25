@@ -35,7 +35,7 @@ namespace SingularityTest
 					.SetCollisionMode(CollisionMode.BoundingBox));
 			}));
 
-			AddCollider(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 50)));
+			AddCollider(new ModelObject("sphere").SetPosition(new Vector3(5, 20, 50)).SetCollisionMode(CollisionMode.BoundingBox));
 
 			AddCollider(new ModelObject("unit-cube-small").SetPosition(new Vector3(5, 3, 50)).SetCollisionMode(CollisionMode.BoundingBox));
 
