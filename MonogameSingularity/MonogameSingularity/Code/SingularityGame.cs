@@ -7,11 +7,13 @@ namespace Singularity.Code
 {
 	public class SingularityGame : Game
 	{
+		/// <summary>
+		/// Current Version of Singularity
+		/// </summary>
 		public static readonly String SINGULARITY_VERSION = "v0.06";
-
+		
 		protected readonly SceneManager SceneManager;
 		protected readonly ModelManager ModelManager;
-		//protected GameWindow GameWindow;
 
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
@@ -24,8 +26,12 @@ namespace Singularity.Code
 			this.GraphicsDeviceManager = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 		}
-
-		protected override void Draw(GameTime gameTime)
+		
+		/// <summary>
+		/// Basic Draw loop
+		/// </summary>
+		/// <param name="gameTime">DeltaTime</param>
+		protected sealed override void Draw(GameTime gameTime)
 		{
 
 			GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -34,10 +40,22 @@ namespace Singularity.Code
 
 			// Add Drawing stuff here!
 			SceneManager.Draw(this.SpriteBatch);
-			
-
 		}
 
+		/// <summary>
+		/// Basic Update loop.
+		/// </summary>
+		/// <param name="gameTime">DeltaTime</param>
+		protected sealed override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			this.SceneManager.Update(gameTime);
+			KeyboardManager.Update();
+		}
+
+		/// <summary>
+		/// Resets graphics
+		/// </summary>
 		protected void ResetGraphic()
 		{
 			GraphicsDevice.BlendState = BlendState.AlphaBlend;
@@ -47,19 +65,19 @@ namespace Singularity.Code
 
 		}
 
+		/// <summary>
+		/// Sets up BlendState and DepthStencilState for 3d rendering
+		/// </summary>
 		public void BeginRender3D()
 		{
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 		}
 
-		protected override void Update(GameTime gameTime)
-		{
-			base.Update(gameTime);
-			this.SceneManager.Update(gameTime);
-			KeyboardManager.Update();
-		}
-
+		/// <summary>
+		/// Loads content
+		/// Automatically initialized the SpriteBatch
+		/// </summary>
 		protected override void LoadContent()
 		{
 			base.LoadContent();
