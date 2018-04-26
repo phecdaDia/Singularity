@@ -21,7 +21,13 @@ namespace Singularity.Code.GameObjects
 			this.CollisionMode = CollisionMode.BoundingSphere;
 		}
 
-
+		/// <summary>
+		/// Sets the current collision mode <para/>
+		/// When setting to <seealso cref="BoundingBox"/> it will be calculated <para/>
+		/// It's not recommended to change this during runtime
+		/// </summary>
+		/// <param name="collisionMode"></param>
+		/// <returns></returns>
 		public GameObject SetCollisionMode(CollisionMode collisionMode)
 		{
 			this.CollisionMode = collisionMode;
@@ -35,6 +41,11 @@ namespace Singularity.Code.GameObjects
 		}
 		
 		// By https://pastebin.com/47vwJWSc
+
+		/// <summary>
+		/// Calculate <seealso cref="BoundingBox"/> for this <seealso cref="CollidableGameObject"/>
+		/// </summary>
+		/// <returns></returns>
 		public BoundingBox GetBoundingBox()
 		{
 
@@ -48,6 +59,9 @@ namespace Singularity.Code.GameObjects
 			);
 		}
 
+		/// <summary>
+		/// Calculates <seealso cref="BoundingBox"/> and sets it.
+		/// </summary>
 		private void SetBoundingBox()
 		{
 			if (this.Model == null) return;
@@ -89,6 +103,12 @@ namespace Singularity.Code.GameObjects
 
 		}
 
+		/// <summary>
+		/// Calculate <seealso cref="BoundingBox"/> for <seealso cref="Model"/>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="worldTransformation"></param>
+		/// <returns></returns>
 		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
 		{
 
@@ -126,6 +146,11 @@ namespace Singularity.Code.GameObjects
 			return new BoundingBox(min, max);
 		}
 
+		/// <summary>
+		/// Does a <seealso cref="BoundingSphere"/> collide with this object?
+		/// </summary>
+		/// <param name="bs"></param>
+		/// <returns></returns>
 		public Boolean DoesCollide(BoundingSphere bs)
 		{
 			if (this.Model == null) return false;
@@ -154,12 +179,6 @@ namespace Singularity.Code.GameObjects
 				return false;
 			}
 			return false;
-		}
-
-
-		public override void Update(GameScene scene, GameTime gameTime)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
