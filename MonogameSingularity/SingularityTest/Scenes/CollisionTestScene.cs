@@ -11,6 +11,11 @@ namespace SingularityTest.Scenes
 {
 	public class CollisionTestScene : GameScene
 	{
+		public CollisionTestScene(SingularityGame game) : base(game, "collision", 10, -2, 0.1f)
+		{
+
+		}
+
 		public override void AddLightningToEffect(BasicEffect effect)
 		{
 			effect.EnableDefaultLighting();
@@ -25,11 +30,6 @@ namespace SingularityTest.Scenes
 				AddObject(new ModelObject("unit-cube-small").SetPosition(x, -2, -2));
 			}
 
-
-		}
-
-		public CollisionTestScene() : base("collision", 10, -2, 0.1f)
-		{
 
 		}
 	}

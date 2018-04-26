@@ -14,7 +14,7 @@ namespace SingularityTest.Scenes
 {
 	public class TestScene : GameScene
 	{
-		public TestScene() : base("test")
+		public TestScene(SingularityGame game) : base(game, "test")
 		{
 			this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 

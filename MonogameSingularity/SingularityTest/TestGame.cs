@@ -35,7 +35,7 @@ namespace SingularityTest
         /// </summary>
         protected override void LoadContent()
 		{
-			this.SceneManager.AddSceneToStack(new TestScene());
+			this.SceneManager.AddSceneToStack(new TestScene(this));
 		}
 
         /// <summary>

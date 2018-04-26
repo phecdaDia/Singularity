@@ -29,7 +29,7 @@ namespace UnitTests
 				// add TestValues to octree
 				octree1.AddObject(obj, 0.0f, obj);
 			}
-
+			
 			foreach (Vector3 obj in TestValues)
 			{
 				// add TestValues to octree
