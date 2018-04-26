@@ -27,6 +27,7 @@ namespace Singularity.Code
 			{
                 PreferredBackBufferWidth = 1280,
                 PreferredBackBufferHeight = 720,
+                PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
 			};
 			Content.RootDirectory = "Content";
 		}
@@ -40,9 +41,9 @@ namespace Singularity.Code
 
 	    protected override void Initialize()
 	    {
-            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080);
-
-	        base.Initialize();
+            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+	        this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+			base.Initialize();
 	    }
 
 	    protected override void Draw(GameTime gameTime)
@@ -60,11 +61,15 @@ namespace Singularity.Code
             //Draw RenderTarget to Screen to add effects later
             GraphicsDevice.SetRenderTarget(null);
 
-            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
+            SpriteBatch.Begin();
 
 			//TODO: Add Class/Method/Posibility to easily change how this is drawn
 
-		    SpriteBatch.Draw(RenderTarget, new Rectangle(new Point(0,0), new Point(GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight)), Color.White);
+		    SpriteBatch.Draw(texture: RenderTarget,
+		                     destinationRectangle: new Rectangle(new Point(0, 0),
+		                                                         new Point(GraphicsDeviceManager.PreferredBackBufferWidth,
+		                                                                   GraphicsDeviceManager.PreferredBackBufferHeight)),
+		                     color: Color.White);
 
             SpriteBatch.End();
 		}
