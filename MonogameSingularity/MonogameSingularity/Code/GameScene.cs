@@ -14,6 +14,8 @@ namespace Singularity.Code
 {
 	public abstract class GameScene
 	{
+		public SingularityGame Game { get; private set; }
+
 		public Vector3 CameraPosition { get; private set; }     // Current position of the camera
 		public Vector3 CameraTarget { get; private set; }       // Current view direction of the camera
 		private Octree<GameObject> ColliderObjects;               // all current GameObjects in the scene.
@@ -34,8 +36,10 @@ namespace Singularity.Code
 		/// <param name="sceneSize">Size of the scene in 2^x</param>
 		/// <param name="minPartition">Minimum size of <seealso cref="Octree{T}"/> partitioning</param>
 		/// <param name="precision">Buffer radius for <seealso cref="Octree{T}"/></param>
-		public GameScene(String sceneKey, int sceneSize = 16, int minPartition = 2, float precision = 0.0f)
+		public GameScene(SingularityGame game, String sceneKey, int sceneSize = 16, int minPartition = 2, float precision = 0.0f)
 		{
+			this.Game = game;
+
 			this.SceneKey = sceneKey;
 
 			// Setting default values for all members
