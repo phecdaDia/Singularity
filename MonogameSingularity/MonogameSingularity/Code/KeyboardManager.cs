@@ -15,6 +15,9 @@ namespace Singularity.Code
 		private static List<Keys> CurrentPressedKeys = new List<Keys>();
 		private static List<Keys> LastPressedKeys = new List<Keys>();
 
+		/// <summary>
+		/// Updates
+		/// </summary>
 		public static void Update()
 		{
 			var ks = Keyboard.GetState();
@@ -24,27 +27,54 @@ namespace Singularity.Code
 			CurrentPressedKeys = ks.GetPressedKeys().ToList();
 		}
 
-		// Keyboardstate is just used for the extension method. 
+		#region IsKeyPressed
+		
+		/// <summary>
+		/// Returns true, if the <seealso cref="Keys"/> have been pressed this frame, but not last one.
+		/// Only returns true, if the <seealso cref="Keys"/> have been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static bool IsKeyPressed(Keys key)
 		{
 			return CurrentPressedKeys.Contains(key) && !LastPressedKeys.Contains(key);
 		}
-
+		
 		public static bool IsKeyPressed(this KeyboardState _, Keys key) => IsKeyPressed(key);
 
-	    // Keyboardstate is just used for the extension method. 
+		#endregion
+
+		#region IsKeyReleased
+
+		/// <summary>
+		/// Returns true, if the <seealso cref="Keys"/> have been released this frame, but not last one.
+		/// Only returns true, if the <seealso cref="Keys"/> have been released this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static bool IsKeyReleased(Keys key)
-	    {
-	        return !CurrentPressedKeys.Contains(key) && LastPressedKeys.Contains(key);
-	    }
+		{
+			return !CurrentPressedKeys.Contains(key) && LastPressedKeys.Contains(key);
+		}
 
-	    public static bool IsKeyReleased(this KeyboardState _, Keys key) => IsKeyReleased(key);
+		public static bool IsKeyReleased(this KeyboardState _, Keys key) => IsKeyReleased(key);
 
-		// Keyboardstate is just used for the extension method. 
+		#endregion
+
+		#region IsKeyDown
+		
+		/// <summary>
+		/// Returns true, if the <seealso cref="Keys"/> have been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public static bool IsKeyDown(Keys key)
 		{
 			return CurrentPressedKeys.Contains(key);
 		}
 		public static bool IsKeyDown(this KeyboardState _, Keys key) => IsKeyDown(key);
+
+		#endregion
+
 	}
 }
