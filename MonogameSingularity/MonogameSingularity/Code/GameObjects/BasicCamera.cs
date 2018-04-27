@@ -34,6 +34,9 @@ namespace Singularity.Code.GameObjects
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
+			if (!scene.Game.IsActive) return;
+
+
 			// Capture Mouse
 			MouseState mouseState = Mouse.GetState();
 			var dx = mouseState.X - 200;
