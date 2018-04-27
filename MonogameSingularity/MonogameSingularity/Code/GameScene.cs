@@ -278,7 +278,7 @@ namespace Singularity.Code
 		public void Update(GameTime gameTime)
 		{
 
-			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.UpdateLogic(this, gameTime);
+			foreach (GameObject obj in this.ColliderObjects.GetAllObjects().ToArray()) obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
 			foreach (GameObject obj in BufferedObjects) this.AddObject(obj);

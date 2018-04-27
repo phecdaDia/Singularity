@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SingularityTest", "Singular
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{9CA9C142-7495-4A60-9CD9-D56E99C57A51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMarble", "ExampleMarble\ExampleMarble.csproj", "{A14E2530-14E5-4C31-8E90-198A6F9E9BCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9CA9C142-7495-4A60-9CD9-D56E99C57A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CA9C142-7495-4A60-9CD9-D56E99C57A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CA9C142-7495-4A60-9CD9-D56E99C57A51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A14E2530-14E5-4C31-8E90-198A6F9E9BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A14E2530-14E5-4C31-8E90-198A6F9E9BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A14E2530-14E5-4C31-8E90-198A6F9E9BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A14E2530-14E5-4C31-8E90-198A6F9E9BCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
