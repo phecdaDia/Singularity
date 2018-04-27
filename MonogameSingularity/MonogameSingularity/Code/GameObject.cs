@@ -62,6 +62,17 @@ namespace Singularity.Code
 			return this;
 		}
 
+		/// <summary>
+		/// Sets the <see cref="Model"/> for the <see cref="GameObject"/>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public GameObject SetModel(String model)
+		{
+			this.Model = ModelManager.GetModel(model);
+			return this;
+		}
+
 		#endregion
 
 		#region SetPosition
