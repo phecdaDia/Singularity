@@ -76,6 +76,14 @@ namespace Singularity.Code.GameObjects
 			Vector3 right = new Vector3(forward.Y, -forward.X, 0);
 			Vector3 left = -right;
 
+			// normalize vectors
+
+			forward.Normalize();
+			backwards.Normalize();
+
+			right.Normalize();
+			left.Normalize();
+
 			// Buffer movement
 			if (ks.IsKeyDown(Keys.W)) movement += forward;
 			if (ks.IsKeyDown(Keys.S)) movement += backwards;
