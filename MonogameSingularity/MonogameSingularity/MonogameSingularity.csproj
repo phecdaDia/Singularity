@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Code\Enum\CollisionMode.cs" />
+    <Compile Include="Code\Events\GameObjectCollisionEvent.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\CollidableGameObject.cs" />
@@ -70,8 +71,8 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="app.manifest" />
-	<None Include="packages.config" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -130,6 +130,7 @@ namespace Singularity.Code
 		/// <param name="position"></param>
 		/// <param name="radius"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public Boolean DoesCollide(Vector3 position, float radius)
 		{
 			//return false;
@@ -152,6 +153,40 @@ namespace Singularity.Code
 
 			return false;
 
+		}
+
+		/// <summary>
+		/// Checks if <paramref name="gameObject"/> collides with any <seealso cref="GameObject"/>
+		/// </summary>
+		/// <param name="gameObject"></param>
+		/// <param name="movement"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
+		public Boolean DoesCollide(GameObject gameObject, Vector3 movement, float radius)
+		{
+			var position = gameObject.GetHierarchyPosition();
+
+
+			BoundingSphere bs = new BoundingSphere(position + movement, radius);
+
+			List<GameObject> collidables = this.ColliderObjects.GetObjects(position, go => go.GetType().IsSubclassOf(typeof(CollidableGameObject)));
+
+			foreach (var go in collidables)
+			{
+
+
+				CollidableGameObject cgo = (CollidableGameObject)go;
+
+				if (cgo.DoesCollide(bs)) 
+				{
+					gameObject.OnGameObjectCollision(cgo, this, movement);
+
+					return true;
+				}
+
+			}
+
+			return false;
 		}
 
 		/// <summary>

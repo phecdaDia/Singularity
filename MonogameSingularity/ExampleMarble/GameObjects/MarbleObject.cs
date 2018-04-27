@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
+using Singularity.Code.Events;
 
 namespace ExampleMarble.GameObjects
 {
@@ -20,9 +21,7 @@ namespace ExampleMarble.GameObjects
 			this.SetModel(ModelManager.GetModel("sphere"));
 
 			this.Inertia = new Vector3(0, 0, 0);
-
 		}
-
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
 			CaptureMouse(scene.Game);
@@ -77,6 +76,9 @@ namespace ExampleMarble.GameObjects
 			this.Inertia += movement;
 
 			
+
+			// Inertia decay
+			this.Inertia *= 0.9f;
 
 			scene.SetCameraPosition(this.GetHierarchyPosition() + backwards * 5f + new Vector3(0, 0, 5f));
 			scene.SetAbsoluteCameraTarget(this.GetHierarchyPosition());

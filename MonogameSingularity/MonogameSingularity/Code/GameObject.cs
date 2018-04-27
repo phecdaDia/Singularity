@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Code.Enum;
+using Singularity.Code.Events;
+using Singularity.Code.GameObjects;
 
 namespace Singularity.Code
 {
@@ -475,6 +478,18 @@ namespace Singularity.Code
 			}
 
 		}
+
+		#endregion
+
+		#region Events
+
+		protected event EventHandler<GameObjectCollisionEvent> OnCollision;
+
+		public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
+			OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
+
+		public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) => 
+			OnCollision?.Invoke(this, e);
 
 		#endregion
 

@@ -94,7 +94,7 @@ namespace Singularity.Code.GameObjects
 			if (movement.LengthSquared() > 0f) movement.Normalize();
 
 			// test collision
-			if (!scene.DoesCollide(this.Position + movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f, 0.125f))
+			if (!scene.DoesCollide(this, movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f, 0.125f))
 				this.AddPosition(movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f);
 
 			// update relative camera
