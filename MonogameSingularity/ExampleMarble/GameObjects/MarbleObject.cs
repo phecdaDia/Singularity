@@ -7,12 +7,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
 using Singularity.Code.Events;
+using Singularity.Code.GameObjects;
 
 namespace ExampleMarble.GameObjects
 {
 	public class MarbleObject : GameObject
 	{
 		private float verticalRotation, horizontalRotation;
+		private float distance = 5.0f;
 
 		private Vector3 Inertia;
 
@@ -39,6 +41,13 @@ namespace ExampleMarble.GameObjects
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
+
+			if (KeyboardManager.IsKeyPressed(Keys.R))
+			{
+				this.Inertia = new Vector3();
+				this.SetPosition(new Vector3(0, 0, 10));
+			}
+
 
 			target.Normalize();
 
@@ -75,13 +84,64 @@ namespace ExampleMarble.GameObjects
 			// add movement to inertia
 			this.Inertia += movement;
 
-			
+			TryMove(scene);
 
 			// Inertia decay
-			this.Inertia *= 0.9f;
+			this.Inertia = new Vector3(0.9f * this.Inertia.X, 0.9f * this.Inertia.Y, this.Inertia.Z);
 
-			scene.SetCameraPosition(this.GetHierarchyPosition() + backwards * 5f + new Vector3(0, 0, 5f));
+			scene.SetCameraPosition(this.GetHierarchyPosition() + this.distance * (backwards + new Vector3(0, 0, 1f)));
 			scene.SetAbsoluteCameraTarget(this.GetHierarchyPosition());
+		}
+
+		public void TryMove(GameScene scene)
+		{
+			float[] testPoints = new[] {0.1f, 0.25f, 0.5f, 0.75f, 1.0f};
+
+			var x = testPoints.Length;
+			while (--x >= 0)
+			{
+				var mov = new Vector3(this.Inertia.X * testPoints[x], 0, 0);
+				if (scene.DoesCollide(this, mov, 1.0f))
+				{
+					this.Inertia.X = 0.0f;
+					continue;
+				}
+
+				this.AddPosition(mov);
+
+				break;
+			}
+
+			var y = testPoints.Length;
+			while (--y >= 0)
+			{
+				var mov = new Vector3(0, this.Inertia.Y * testPoints[y], 0);
+				if (scene.DoesCollide(this, mov, 1.0f))
+				{
+					this.Inertia.Y = 0.0f;
+					continue;
+				}
+
+				this.AddPosition(mov);
+
+				break;
+			}
+
+			var z = testPoints.Length;
+			while (--z >= 0)
+			{
+				var mov = new Vector3(0, 0, this.Inertia.Z * testPoints[z]);
+				if (scene.DoesCollide(this, mov, 1.0f))
+				{
+					this.Inertia.Z = 0.0f;
+					continue;
+				}
+
+				this.AddPosition(mov);
+
+				break;
+			}
+
 		}
 
 		private void CaptureMouse(SingularityGame game)
@@ -94,6 +154,8 @@ namespace ExampleMarble.GameObjects
 
 			this.horizontalRotation += (ms.X - pos) / 100.0f;
 			this.verticalRotation += (ms.Y - pos) / 100.0f;
+
+			this.distance = 5.0f + ms.ScrollWheelValue / 1200f;
 
 			Mouse.SetPosition(pos, pos);
 			

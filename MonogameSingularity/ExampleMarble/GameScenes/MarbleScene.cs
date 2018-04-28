@@ -25,15 +25,17 @@ namespace ExampleMarble.GameScenes
 			AddObject(new MarbleObject().SetPosition(0, 0, 10)); // adds player
 
 			AddObject(new CollidableModelObject("unit-cube").SetCollisionMode(CollisionMode.BoundingBox).SetScale(10, 10, 0.5f));
+			AddObject(new CollidableModelObject("unit-cube").SetCollisionMode(CollisionMode.BoundingBox).SetScale(10, 0.5f, 0.5f).SetPosition(0, 9.5f, 1));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)
 		{
-			effect.DirectionalLight0.Enabled = true;
-			effect.DirectionalLight0.DiffuseColor = new Vector3(0.55f, 0.55f, 0.75f); // a bit more blue than the other.
-			effect.DirectionalLight0.Direction = new Vector3(0, -1, 0); // from y axis, is this up??
-			effect.SpecularPower = 0.1f;
-			effect.SpecularColor = new Vector3(0.15f, 0.15f, 0.2f);
+			//effect.DirectionalLight0.Enabled = true;
+			//effect.DirectionalLight0.DiffuseColor = new Vector3(0.55f, 0.55f, 0.75f); // a bit more blue than the other.
+			//effect.DirectionalLight0.Direction = new Vector3(0, -1, 0);
+			//effect.SpecularPower = 0.05f;
+			//effect.SpecularColor = new Vector3(0.05f, 0.05f, 0.1f);
+			effect.EnableDefaultLighting(); 
 
 		}
 	}
