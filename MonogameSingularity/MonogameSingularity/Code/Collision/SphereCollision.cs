@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Singularity.Code.Collision
 {
-	public class SphereCollision
+	public class SphereCollision : Collision
 	{
 		public Vector3 Position { get; private set; }
 
