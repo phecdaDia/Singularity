@@ -43,6 +43,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Code\Collision\SphereCollision.cs" />
+    <Compile Include="Code\Collision\Types\SphereOnSphereCollision.cs" />
     <Compile Include="Code\Enum\CollisionMode.cs" />
     <Compile Include="Code\Events\GameObjectCollisionEvent.cs" />
     <Compile Include="Code\GameObject.cs" />
