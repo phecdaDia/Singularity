@@ -455,10 +455,10 @@ namespace Singularity.Code
 
 					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
 
-					effect.World = Matrix.CreateScale(this.GetHierarchyScale())
-								   * totalRotation
-								   * Matrix.CreateTranslation(position)
-								   * transformMatrices[mesh.ParentBone.Index];
+					effect.World = transformMatrices[mesh.ParentBone.Index] 
+					               * Matrix.CreateTranslation(position)
+					               * totalRotation
+					               * Matrix.CreateScale(this.GetHierarchyScale());
 					effect.View = scene.GetViewMatrix();
 					effect.Projection = scene.GetProjectionMatrix();
 

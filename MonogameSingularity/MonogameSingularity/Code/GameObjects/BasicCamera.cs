@@ -61,7 +61,7 @@ namespace Singularity.Code.GameObjects
 				verticalRotation = -MathHelper.PiOver2;
 
 			// calculate forward vector
-			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), (float)Math.Sin(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f);
+			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
@@ -70,10 +70,10 @@ namespace Singularity.Code.GameObjects
 
 			// Calculate orthagonal vectors
 			Vector3 forward = target;
-			forward.Z = 0;
+			forward.Y = 0;
 			Vector3 backwards = -forward;
 
-			Vector3 right = new Vector3(forward.Y, -forward.X, 0);
+			Vector3 right = new Vector3(forward.Z, 0, -forward.X);
 			Vector3 left = -right;
 
 			// normalize vectors

@@ -9,8 +9,6 @@ namespace Singularity.Code.Collision
 {
 	public class SphereCollision : Collision
 	{
-		public Vector3 Position { get; private set; }
-
 		public float Radius { get; private set; }
 
 		public SphereCollision(Vector3 position, float radius)

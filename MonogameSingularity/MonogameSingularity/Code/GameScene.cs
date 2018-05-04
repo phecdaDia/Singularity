@@ -279,10 +279,10 @@ namespace Singularity.Code
 				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
 
 			// transform camera position because of some black magic
-			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Z, this.CameraPosition.Y);
+			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Y, this.CameraPosition.Z);
 
 
-			var viewTarget = new Vector3(targetVector.X, targetVector.Z, targetVector.Y);
+			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
 
 			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
 

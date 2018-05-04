@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Code\Collision\Collision.cs" />
     <Compile Include="Code\Collision\CollisionManager.cs" />
+    <Compile Include="Code\Collision\PlaneCollision.cs" />
     <Compile Include="Code\Collision\SphereCollision.cs" />
     <Compile Include="Code\Collision\Types\SphereOnSphereCollision.cs" />
     <Compile Include="Code\Enum\CollisionMode.cs" />
