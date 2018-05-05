@@ -12,7 +12,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 		public static Boolean GetCollision(SphereCollision collidableA, SphereCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
-			var radiusDist = collidableA.Radius + collidableB.Radius;
+			var radiusDist = collidableA.Radius * collidableA.Parent.Scale.X + collidableB.Radius * collidableB.Parent.Scale.X;
 			var dist = collidableA.Position - collidableB.Position;
 
 			if (dist.LengthSquared() >= radiusDist * radiusDist)
@@ -28,7 +28,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			normal = dist;
 			normal.Normalize();
 
-			position = collidableB.Position + normal * collidableB.Radius;
+			position = collidableB.Position + normal * collidableB.Radius * collidableB.Parent.Scale.X;
 
 			return true;
 		}

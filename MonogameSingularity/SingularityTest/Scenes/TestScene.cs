@@ -33,28 +33,19 @@ namespace SingularityTest.Scenes
 					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
 			}));
 
-			AddObject(new CollidableModelObject("sphere"));
 
-			//AddObject(new CollidableModelObject("longplayer").SetPosition(5, 0, 10));
-
-			//for (int i = -10; i <= 10; i++)
-			//{
-			//	AddObject(new ModelObject("cube-025").SetPosition(30, 0, 5 * i));
-			//	AddObject(new CollidableModelObject("cube-100").SetPosition(30, 0, 5 * i));
-			//}
-
-			//AddObject(new CollidableModelObject("player").SetPosition(5, 0, 10).SetScale(0.5f, 0.5f, 0.5f));
-
-			//AddObject(new CollidableModelObject("sphere").SetCollisionMode(CollisionMode.BoundingBox).SetPosition(new Vector3(5, 20, 50)).AddScript(
-			//	(scene, obj, time) =>
-			//	{
-			//		obj.AddPosition((float) -time.ElapsedGameTime.TotalSeconds / 2.0f, 0, 0);
-			//	}));
-
-			//AddObject(new CollidableModelObject("unit-cube-small").SetCollisionMode(CollisionMode.BoundingBox).SetPosition(new Vector3(5, 3, 50)));
+			float elapsedTime = 0.0f;
+			AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));
 
 
-			//AddObject(new ModelObject("wood_table").SetPosition(new Vector3(0, 0, -2f)));
+			AddObject(new ModelObject("slopes/slope1").SetPosition(0, 0, -4));
+			AddObject(new ModelObject("slopes/slope2").SetPosition(0, 0, -2));
+			AddObject(new ModelObject("slopes/slope3").SetPosition(0, 0, 0));
+			AddObject(new ModelObject("slopes/slope4").SetPosition(0, 0, 2));
+			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0, 4));
+
+			AddObject(new CollidableModelObject("sphere").SetPosition(10, 0, 0).SetScale(2));
+			
 
 		}
 
