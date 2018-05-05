@@ -517,16 +517,19 @@ namespace Singularity.Code
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
 		{
 			//Console.WriteLine($"Drawing, Position: {this.Position}");
-			Draw(scene, spriteBatch);
+			Draw(scene);
+			Draw2D(spriteBatch);
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
 		}
+
+		protected virtual void Draw2D(SpriteBatch spriteBatch) { }
 
 		/// <summary>
 		/// Checks if there is a <see cref="Model"/> to draw and draws it.
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public void Draw(GameScene scene, SpriteBatch spriteBatch)
+		private void Draw(GameScene scene)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 

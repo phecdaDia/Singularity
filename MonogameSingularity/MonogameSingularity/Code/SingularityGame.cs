@@ -22,6 +22,7 @@ namespace Singularity.Code
 		{
 			this.SceneManager = new SceneManager();
 			this.ModelManager = new ModelManager(Content);
+			ImageManager.SetContentManager(Content);
 
 			this.GraphicsDeviceManager = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
@@ -38,8 +39,14 @@ namespace Singularity.Code
 			ResetGraphic();
 			BeginRender3D();
 
+			if (this.SpriteBatch == null) return;
+
 			// Add Drawing stuff here!
+			SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+
 			SceneManager.Draw(this.SpriteBatch);
+
+			SpriteBatch.End();
 		}
 
 		/// <summary>
