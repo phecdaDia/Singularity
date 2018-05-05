@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Enum;
+using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
 using Singularity.Code.Utilities;
 
@@ -79,21 +79,8 @@ namespace Singularity.Code
 		/// <param name="previousPosition"></param>
 		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
 		{
-			if (gameObject.Model == null)
-			{
-				this.ColliderObjects.MoveObject(gameObject, 0.0f, previousPosition, gameObject.Position);
-				return;
-			}
-
-			BoundingSphere[] spheres = new BoundingSphere[gameObject.Model.Meshes.Count];
-			for (int i = 0; i < gameObject.Model.Meshes.Count; i++)
-			{
-				spheres[i] = gameObject.Model.Meshes[i].BoundingSphere;
-			}
-
-			Vector3 scale = gameObject.GetHierarchyScale();
-
-			this.ColliderObjects.MoveObject(gameObject, previousPosition, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
+			this.ColliderObjects.RemoveObject(gameObject, previousPosition);
+			this.AddObject(gameObject);
 		}
 
 		/// <summary>
@@ -107,86 +94,20 @@ namespace Singularity.Code
 		/// <param name="gameObject"></param>
 		protected void AddObject(GameObject gameObject)
 		{
-			if (gameObject.Model == null)
+			if (gameObject.Collision == null)
 			{
-				this.ColliderObjects.AddObject(gameObject, 0.0f, gameObject.Position);
+				this.ColliderObjects.AddObject(gameObject, gameObject.Position, 0.0f);
 				return;
 			}
 
-			BoundingSphere[] spheres = new BoundingSphere[gameObject.Model.Meshes.Count];
-			for (int i = 0; i < gameObject.Model.Meshes.Count; i++)
-			{
-				spheres[i] = gameObject.Model.Meshes[i].BoundingSphere;
-			}
-
 			Vector3 scale = gameObject.GetHierarchyScale();
-
-			this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), Math.Max(Math.Max(scale.X, scale.Y), scale.Z), spheres);
-		}
-
-		/// <summary>
-		/// Checks if <paramref name="position"/> collides with any <seealso cref="GameObject"/>
-		/// </summary>
-		/// <param name="position"></param>
-		/// <param name="radius"></param>
-		/// <returns></returns>
-		[Obsolete]
-		public Boolean DoesCollide(Vector3 position, float radius)
-		{
-			//return false;
-			// get some colliders from the octree
-			//this.ColliderObjects.GetObjects(position)
-
-			BoundingSphere bs = new BoundingSphere(position, radius);
-
-			List<GameObject> collidables = this.ColliderObjects.GetObjects(position, go => go.GetType().IsSubclassOf(typeof(CollidableGameObject)));
+			float maxScale = Math.Max(Math.Max(scale.X, scale.Y), scale.Z);
 			
-			foreach (var go in collidables)
-			{
-				
-
-				CollidableGameObject cgo = (CollidableGameObject) go;
-
-				if (cgo.DoesCollide(bs)) return true;
-
-			}
-
-			return false;
-
-		}
-
-		/// <summary>
-		/// Checks if <paramref name="gameObject"/> collides with any <seealso cref="GameObject"/>
-		/// </summary>
-		/// <param name="gameObject"></param>
-		/// <param name="movement"></param>
-		/// <param name="radius"></param>
-		/// <returns></returns>
-		public Boolean DoesCollide(GameObject gameObject, Vector3 movement, float radius)
-		{
-			var position = gameObject.GetHierarchyPosition();
-
-
-			BoundingSphere bs = new BoundingSphere(position + movement, radius);
-
-			List<GameObject> collidables = this.ColliderObjects.GetObjects(position, go => go.GetType().IsSubclassOf(typeof(CollidableGameObject)));
-
-			foreach (var go in collidables)
-			{
-
-
-				CollidableGameObject cgo = (CollidableGameObject)go;
-
-				if (cgo.DoesCollide(bs)) 
-				{
-					gameObject.OnGameObjectCollision(cgo, this, movement);
-
-					return true;
-				}
-
-			}
-
-			return false;
+			if (gameObject.Collision.GetType() == typeof(SphereCollision))
+				this.ColliderObjects.AddObject(gameObject, gameObject.Position, maxScale * (gameObject.Collision as SphereCollision).Radius);
+			else
+				this.ColliderObjects.AddObject(gameObject, gameObject.Position, maxScale * gameObject.ModelRadius);
+			return;
 		}
 
 		/// <summary>
@@ -252,22 +173,24 @@ namespace Singularity.Code
 			this.MinimumCullingDistance = c1;
 			this.MaximumCullingDistance = c2;
 		}
-		
 
-		// removed
-		//[Obsolete]
-		//public IList<T> GetObjects<T>(Func<GameObject, bool> predicate = null) where T : GameObject
-		//{
-		//	Dictionary<Type, IList<GameObject>> dict = GetAllObjects(predicate);
-		//	if (!dict.ContainsKey(typeof(T))) return new List<T>();
-		//	return (IList<T>)dict[typeof(T)];
-		//}
+		public void HandleCollision(GameObject gameObject)
+		{
+			if (!(gameObject is ICollider)) return; // if it's not supposed to collide with anything we won't do anything
 
-		//[Obsolete]
-		//public Dictionary<Type, IList<GameObject>> GetAllObjects(Func<GameObject, bool> predicate = null)
-		//{
-		//	return this.ColliderObjects.GetAllObjectsAsTypeDictionary(predicate);
-		//}
+			// get a list of objects that it can collide with
+			var gos = this.ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+			foreach (var go in gos)
+			{
+				
+
+				if (gameObject.Collision.DoesCollide(go.Collision, out var position, out var normal))
+				{
+					CollisionManager.HandleCollision(gameObject, go, position, normal);
+				}
+			}
+
+		}
 
 		/// <summary>
 		/// Creates a <seealso cref="Matrix"/> with all camera options set.
@@ -279,10 +202,10 @@ namespace Singularity.Code
 				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
 
 			// transform camera position because of some black magic
-			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Z, this.CameraPosition.Y);
+			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Y, this.CameraPosition.Z);
 
 
-			var viewTarget = new Vector3(targetVector.X, targetVector.Z, targetVector.Y);
+			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
 
 			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
 
