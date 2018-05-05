@@ -7,8 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Enum;
-using Singularity.Code.Events;
+using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
 
 namespace Singularity.Code
@@ -23,12 +22,14 @@ namespace Singularity.Code
 		public Vector3 Position { get; private set; } // Current position of the model
 		public Vector3 Rotation { get; private set; } // Current rotation of the model
 		public Vector3 Scale { get; private set; } // Scale of the model
-
+		public Collision Collision { get; private set; }
 
 		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
 		public String DebugName { get; private set; } // Used for debugging.
+
+		public float ModelRadius { get; private set; }
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
 
@@ -62,6 +63,24 @@ namespace Singularity.Code
 		public GameObject SetModel(Model model)
 		{
 			this.Model = model;
+
+			var center = this.GetHierarchyPosition();
+
+			// now get max(r + r(v))
+			float rm = 0.0f;
+			foreach (var mesh in this.Model.Meshes)
+			{
+				// get distance
+				var bs = mesh.BoundingSphere;
+				var dist = (bs.Center - center).Length() + bs.Radius;
+
+				if (dist > rm) rm = dist;
+			}
+
+			this.ModelRadius = rm;
+
+			if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
+				this.Collision = new SphereCollision(this);
 			return this;
 		}
 
@@ -72,8 +91,7 @@ namespace Singularity.Code
 		/// <returns></returns>
 		public GameObject SetModel(String model)
 		{
-			this.Model = ModelManager.GetModel(model);
-			return this;
+			return this.SetModel(ModelManager.GetModel(model));
 		}
 
 		#endregion
@@ -106,6 +124,7 @@ namespace Singularity.Code
 		public GameObject SetPosition(Vector3 position)
 		{
 			this.Position = position;
+			
 			return this;
 		}
 
@@ -349,6 +368,16 @@ namespace Singularity.Code
 		}
 		#endregion
 
+		#region SetCollision
+
+		public GameObject SetCollision(Collision collision)
+		{
+			this.Collision = collision;
+			return this;
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>
@@ -381,6 +410,64 @@ namespace Singularity.Code
 			return this.ObjectScripts;
 		}
 
+		// By https://pastebin.com/47vwJWSc
+
+		/// <summary>
+		/// Calculate <seealso cref="BoundingBox"/> for this 
+		/// </summary>
+		/// <returns></returns>
+		public BoundingBox GetBoundingBox()
+		{
+			return GetBoundingBox(
+				this.Model,
+				Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z)
+				* Matrix.CreateScale(this.GetHierarchyScale())
+			);
+		}
+
+		/// <summary>
+		/// Calculate <seealso cref="BoundingBox"/> for <seealso cref="Microsoft.Xna.Framework.Graphics.Model"/>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="worldTransformation"></param>
+		/// <returns></returns>
+		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
+		{
+
+			if (model == null) return new BoundingBox();
+
+			// Initialize minimum and maximum corners of the bounding box to max and min values
+			Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+			Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+			// For each mesh of the model
+			foreach (ModelMesh mesh in model.Meshes)
+			{
+				foreach (ModelMeshPart meshPart in mesh.MeshParts)
+				{
+					// Vertex buffer parameters
+					int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+					int vertexBufferSize = meshPart.NumVertices * vertexStride;
+
+					// Get vertex data as float
+					float[] vertexData = new float[vertexBufferSize / sizeof(float)];
+					meshPart.VertexBuffer.GetData<float>(vertexData);
+
+					// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
+					for (int i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
+					{
+						Vector3 transformedPosition = Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]), worldTransformation);
+
+						min = Vector3.Min(min, transformedPosition);
+						max = Vector3.Max(max, transformedPosition);
+					}
+				}
+			}
+
+			// Create and return bounding box
+			return new BoundingBox(min, max);
+		}
+
 		#region Abstract Methods
 
 		/// <summary>
@@ -396,8 +483,12 @@ namespace Singularity.Code
 
 			Update(scene, gameTime);
 			
+			// check if we are even able to stay here.
+			scene.HandleCollision(this);
+
 			// execute scripts
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
+
 
 			// did we move?
 			if (this.GetHierarchyPosition() != position)
@@ -483,13 +574,14 @@ namespace Singularity.Code
 
 		#region Events
 
-		protected event EventHandler<GameObjectCollisionEvent> OnCollision;
+		// currently unused.
+		//protected event EventHandler<GameObjectCollisionEvent> OnCollision;
 
-		public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
-			OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
+		//public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
+		//	OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
 
-		public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) => 
-			OnCollision?.Invoke(this, e);
+		//public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) => 
+		//	OnCollision?.Invoke(this, e);
 
 		#endregion
 

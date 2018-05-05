@@ -7,7 +7,6 @@ using ExampleMarble.GameObjects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Code;
-using Singularity.Code.Enum;
 using Singularity.Code.GameObjects;
 
 namespace ExampleMarble.GameScenes
@@ -23,9 +22,6 @@ namespace ExampleMarble.GameScenes
 		{
 			// build a nice maze and add a player. 
 			AddObject(new MarbleObject().SetPosition(0, 0, 10)); // adds player
-
-			AddObject(new CollidableModelObject("unit-cube").SetCollisionMode(CollisionMode.BoundingBox).SetScale(10, 10, 0.5f));
-			AddObject(new CollidableModelObject("unit-cube").SetCollisionMode(CollisionMode.BoundingBox).SetScale(10, 0.5f, 0.5f).SetPosition(0, 9.5f, 1));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

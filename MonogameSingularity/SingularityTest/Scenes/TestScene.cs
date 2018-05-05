@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
-using Singularity.Code.Enum;
 using Singularity.Code.GameObjects;
 
 namespace SingularityTest.Scenes
@@ -27,21 +26,22 @@ namespace SingularityTest.Scenes
 				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 
-				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 0, 1) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, 0, -1) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
 
 				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnObject(new CollidableModelObject("unit-cube-small")
-					.SetCollisionMode(CollisionMode.BoundingBox)
 					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
 			}));
 
-			AddObject(new CollidableModelObject("longplayer").SetPosition(5, 0, 10));
+			AddObject(new CollidableModelObject("sphere"));
 
-			for (int i = -10; i <= 10; i++)
-			{
-				AddObject(new ModelObject("cube-025").SetPosition(30, 0, 5 * i));
-				AddObject(new CollidableModelObject("cube-100").SetPosition(30, 0, 5 * i));
-			}
+			//AddObject(new CollidableModelObject("longplayer").SetPosition(5, 0, 10));
+
+			//for (int i = -10; i <= 10; i++)
+			//{
+			//	AddObject(new ModelObject("cube-025").SetPosition(30, 0, 5 * i));
+			//	AddObject(new CollidableModelObject("cube-100").SetPosition(30, 0, 5 * i));
+			//}
 
 			//AddObject(new CollidableModelObject("player").SetPosition(5, 0, 10).SetScale(0.5f, 0.5f, 0.5f));
 

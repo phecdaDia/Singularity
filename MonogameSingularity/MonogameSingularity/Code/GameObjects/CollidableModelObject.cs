@@ -8,16 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Code.GameObjects
 {
-	public class CollidableModelObject : CollidableGameObject
+	public class CollidableModelObject : ModelObject, ICollidable
 	{
-		public CollidableModelObject(String modelPath) : this(ModelManager.GetModel(modelPath))
-		{ }
-		public CollidableModelObject(Model model) : base()
-		{
-			this.SetModel(model);
-		}
+		public CollidableModelObject(string modelPath) : this(ModelManager.GetModel(modelPath))
+		{}
 
-		public override void Update(GameScene scene, GameTime gameTime)
-		{ }
+		public CollidableModelObject(Model model) : base(model)
+		{
+			
+		}
 	}
 }

@@ -86,10 +86,17 @@ namespace Singularity.Code.Utilities
 				{
 					// we are not at the final octree yet
 					// create children if they don't exist already.
-					PopulateChildrenNodes();
-					this.Children[this.GetQuadrantNumber(position)].AddObject(obj, radius, position);
+					var quadrant = this.GetQuadrantNumber(position);
 
-					// recursively add object.
+					if (this.Children == null)
+						this.Children = new Octree<T>[8];
+
+					if (this.Children[quadrant] == null)
+						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+
+
+					this.Children[quadrant].AddObject(obj, radius, position);
+					
 					return;
 				}
 				else
@@ -106,7 +113,14 @@ namespace Singularity.Code.Utilities
 				// we have to check if we should subpartition it
 				if (ShouldSubpartition(position, radius))
 				{
-					PopulateChildrenNodes();
+					var quadrant = this.GetQuadrantNumber(position);
+
+					if (this.Children == null)
+						this.Children = new Octree<T>[8];
+
+					if (this.Children[quadrant] == null)
+						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+
 					this.Children[GetQuadrantNumber(position)].AddObject(obj, radius, position);
 				}
 				else
@@ -118,52 +132,30 @@ namespace Singularity.Code.Utilities
 			}
 		}
 
-		public void AddObject(T obj, Vector3 position, params BoundingSphere[] spheres) => AddObject(obj, position, 1.0f, spheres);
-
 		/// <summary>
 		/// Adds an <paramref name="obj"/> at <paramref name="position"/>
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="position"></param>
 		/// <param name="maxScale"></param>
-		/// <param name="spheres"></param>
-		public void AddObject(T obj, Vector3 position, float maxScale, params BoundingSphere[] spheres)
+		public void AddObject(T obj, Vector3 position, float maxScale)
 		{
-
-			// check if we should subpartition. 
-			Boolean canPartition = true;
-			int quadrant = GetQuadrantNumber(spheres[0].Center + position);
-
-			foreach (BoundingSphere bs in spheres)
-			{
-				// if one of them is outside the quadrant, we can't subpartition
-				int quad = GetQuadrantNumber(bs.Center + position);
-				if (quad != quadrant) // we can't subpartition
-				{
-					canPartition = false;
-					break;
-				}
-
-				if (!ShouldSubpartition(position + bs.Center, bs.Radius * maxScale))
-				{
-					// we can't subpartition for one of the bs, then we can't for the object
-					canPartition = false;
-					break;
-				}
-			}
-
-			if (!canPartition || this.CurrentSize <= this.MinimumSize)
+			if (!ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
 			{
 				Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 				this.Leafs.Add(obj);
 				return;
 			}
-			else
-			{
-				// create children and try again
-				PopulateChildrenNodes();
-				this.Children[quadrant].AddObject(obj, position, maxScale, spheres);
-			}
+
+			var quadrant = GetQuadrantNumber(position);
+			// create children and try again
+			//PopulateChildrenNodes();
+			if (this.Children == null)
+				this.Children = new Octree<T>[8];
+
+			if (this.Children[quadrant] == null)
+				this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+			this.Children[quadrant].AddObject(obj, position, maxScale);
 		}
 
 		/// <summary>
@@ -201,20 +193,6 @@ namespace Singularity.Code.Utilities
 		{
 			RemoveObject(obj, position1);
 			AddObject(obj, scale, position2);
-		}
-
-		/// <summary>
-		/// Moves an <paramref name="obj"/> from <paramref name="position1"/> to <paramref name="position2"/>
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="position1"></param>
-		/// <param name="position2"></param>
-		/// <param name="maxScale"></param>
-		/// <param name="spheres"></param>
-		public void MoveObject(T obj, Vector3 position1, Vector3 position2, float maxScale, params BoundingSphere[] spheres)
-		{
-			RemoveObject(obj, position1);
-			AddObject(obj, position2, maxScale, spheres);
 		}
 
 		/// <summary>
@@ -367,6 +345,8 @@ namespace Singularity.Code.Utilities
 
 			foreach (Octree<T> tree in Children)
 			{
+				if (tree == null) continue;
+
 				output.AddRange(tree.GetAllObjects());
 			}
 

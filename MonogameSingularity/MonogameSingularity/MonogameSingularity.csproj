@@ -43,13 +43,16 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Code\Enum\CollisionMode.cs" />
-    <Compile Include="Code\Events\GameObjectCollisionEvent.cs" />
+    <Compile Include="Code\Collisions\Collision.cs" />
+    <Compile Include="Code\Collisions\CollisionManager.cs" />
+    <Compile Include="Code\Collisions\CollisionTypes\SphereOnSphereCollision.cs" />
+    <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
-    <Compile Include="Code\GameObjects\CollidableGameObject.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
+    <Compile Include="Code\GameObjects\ICollidable.cs" />
+    <Compile Include="Code\GameObjects\ICollider.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameScene.cs" />
     <Compile Include="Code\KeyboardManager.cs" />
@@ -74,9 +77,7 @@
     <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Code\Collision\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
+using Singularity.Code.GameObjects;
 
 namespace UnitTests.Collision
 {
@@ -10,7 +11,7 @@ namespace UnitTests.Collision
 		[TestMethod]
 		public void SphereOnSphereTest()
 		{
-			
+
 
 		}
 	}

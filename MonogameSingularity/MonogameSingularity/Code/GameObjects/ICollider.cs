@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Singularity.Code.Enum
+namespace Singularity.Code.GameObjects
 {
-	public enum CollisionMode
-	{
-		BoundingBox, BoundingSphere, None
-	}
+	interface ICollider
+	{}
 }

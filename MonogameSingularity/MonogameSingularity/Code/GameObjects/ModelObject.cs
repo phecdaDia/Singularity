@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Code.GameObjects
 {
-	public class ModelObject : EmptyGameObject
+	public class ModelObject : GameObject
 	{
 		public ModelObject(String modelPath) : this(ModelManager.GetModel(modelPath))
 		{}

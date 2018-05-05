@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Singularity.Code.Collisions;
 
 namespace Singularity.Code.GameObjects
 {
-	public class BasicCamera : GameObject
+	public class BasicCamera : GameObject, ICollider
 	{
 		private double horizontalRotation;	// rotation around the z axis
 		private double verticalRotation;	// rotation up and down
@@ -20,6 +21,8 @@ namespace Singularity.Code.GameObjects
 			this.verticalRotation = 0.0d;
 
 			Mouse.SetPosition(200, 200); // capture the mouse
+
+			this.SetCollision(new SphereCollision(this, 0.25f));
 		}
 
 
@@ -94,7 +97,7 @@ namespace Singularity.Code.GameObjects
 			if (movement.LengthSquared() > 0f) movement.Normalize();
 
 			// test collision
-			if (!scene.DoesCollide(this, movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f, 0.125f))
+			//if (!scene.DoesCollide(this, movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f, 0.125f))
 				this.AddPosition(movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f);
 
 			// update relative camera
