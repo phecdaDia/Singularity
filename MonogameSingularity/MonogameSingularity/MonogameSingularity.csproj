@@ -43,14 +43,20 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Code\Enum\CollisionMode.cs" />
+    <Compile Include="Code\Collisions\Collision.cs" />
+    <Compile Include="Code\Collisions\CollisionManager.cs" />
+    <Compile Include="Code\Collisions\CollisionTypes\SphereOnSphereCollision.cs" />
+    <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
-    <Compile Include="Code\GameObjects\CollidableGameObject.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
+    <Compile Include="Code\GameObjects\ICollidable.cs" />
+    <Compile Include="Code\GameObjects\ICollider.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
+    <Compile Include="Code\GameObjects\SpriteObject.cs" />
     <Compile Include="Code\GameScene.cs" />
+    <Compile Include="Code\ImageManager.cs" />
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />

@@ -11,11 +11,13 @@ namespace Singularity.Code
 
 	public class SingularityGame : Game
 	{
+		/// <summary>
+		/// Current Version of Singularity
+		/// </summary>
 		public static readonly String SINGULARITY_VERSION = "v0.06";
-
+		
 		protected readonly SceneManager SceneManager;
 		protected readonly ModelManager ModelManager;
-		//protected GameWindow GameWindow;
 
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
@@ -28,6 +30,7 @@ namespace Singularity.Code
 		{
 			this.SceneManager = new SceneManager();
 			this.ModelManager = new ModelManager(Content);
+			ImageManager.SetContentManager(Content);
 
 			this.GraphicsDeviceManager = new GraphicsDeviceManager(this)
 			{
@@ -53,7 +56,12 @@ namespace Singularity.Code
 			base.Initialize();
 	    }
 
-	    protected override void Draw(GameTime gameTime)
+		
+		/// <summary>
+		/// Basic Draw loop
+		/// </summary>
+		/// <param name="gameTime">DeltaTime</param>
+		protected sealed override void Draw(GameTime gameTime)
 		{
             //Draw everything to RenderTarget instead of the Screen
             GraphicsDevice.SetRenderTarget(RenderTarget);
@@ -63,8 +71,12 @@ namespace Singularity.Code
 			BeginRender3D();
 
 			// Add Drawing stuff here!
+			SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+
 			SceneManager.Draw(this.SpriteBatch);
 
+      SpriteBatch.End();
+      
 			//Apply each function for 2D Screenwide effects
 			foreach (var func in ScreenEffectList)
 			{
@@ -101,6 +113,20 @@ namespace Singularity.Code
             SpriteBatch.End();
 		}
 
+		/// <summary>
+		/// Basic Update loop.
+		/// </summary>
+		/// <param name="gameTime">DeltaTime</param>
+		protected sealed override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			this.SceneManager.Update(gameTime);
+			KeyboardManager.Update();
+		}
+
+		/// <summary>
+		/// Resets graphics
+		/// </summary>
 		protected void ResetGraphic()
 		{
 			GraphicsDevice.BlendState = BlendState.AlphaBlend;
@@ -110,19 +136,19 @@ namespace Singularity.Code
 
 		}
 
+		/// <summary>
+		/// Sets up BlendState and DepthStencilState for 3d rendering
+		/// </summary>
 		public void BeginRender3D()
 		{
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 		}
 
-		protected override void Update(GameTime gameTime)
-		{
-			base.Update(gameTime);
-			this.SceneManager.Update(gameTime);
-			KeyboardManager.Update();
-		}
-
+		/// <summary>
+		/// Loads content
+		/// Automatically initialized the SpriteBatch
+		/// </summary>
 		protected override void LoadContent()
 		{
 			base.LoadContent();

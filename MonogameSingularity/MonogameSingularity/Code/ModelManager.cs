@@ -26,11 +26,20 @@ namespace Singularity.Code
 			this.ModelDictionary = new Dictionary<string, Model>();
 		}
 
+		/// <summary>
+		/// Gets the singleton instance
+		/// </summary>
+		/// <returns></returns>
 		public static ModelManager GetInstance()
 		{
 			return Instance;
 		}
 
+		/// <summary>
+		/// Gets <seealso cref="Model"/> cached.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		private Model _GetModel(String path)
 		{
 			if (this.ModelDictionary.ContainsKey(path)) return this.ModelDictionary[path];
@@ -41,6 +50,11 @@ namespace Singularity.Code
 			return model;
 		}
 
+		/// <summary>
+		/// Gets <seealso cref="Model"/> cached.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		public static Model GetModel(String path)
 		{
 			return GetInstance()._GetModel(path);

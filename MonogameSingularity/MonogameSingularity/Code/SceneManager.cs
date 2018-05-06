@@ -21,17 +21,30 @@ namespace Singularity.Code
 			this.SceneStack = new Stack<GameScene>();
 		}
 
+		/// <summary>
+		/// Returns the current <seealso cref="GameScene"/> from the <see cref="SceneStack"/>
+		/// </summary>
+		/// <returns></returns>
 		public GameScene GetCurrentScene()
 		{
 			return SceneStack.Peek();
 		}
 
+		/// <summary>
+		/// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/>
+		/// </summary>
+		/// <param name="scene"></param>
 		public void AddSceneToStack(GameScene scene)
 		{
 			scene.SetupScene();
 			this.SceneStack.Push(scene);
 		}
 
+		/// <summary>
+		/// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/><para />
+		/// Requires that the <seealso cref="GameScene"/> has been registered. <seealso cref="RegisterScene"/>
+		/// </summary>
+		/// <param name="sceneKey"></param>
 		public void AddSceneToStack(String sceneKey)
 		{
 			if (!GameScenes.ContainsKey(sceneKey))
@@ -45,12 +58,21 @@ namespace Singularity.Code
 			AddSceneToStack(GameScenes[sceneKey]);
 		}
 
+		/// <summary>
+		/// Removed a <seealso cref="GameScene"/> from the <see cref="SceneStack"/>
+		/// </summary>
 		public void CloseScene()
 		{
 			GameScene scene = this.SceneStack.Pop();
 			
 		}
 
+		/// <summary>
+		/// Registers a <seealso cref="GameScene"/> so it can be added to the <see cref="SceneStack"/><para/>
+		/// Required before using <seealso cref="AddSceneToStack(String)"/>
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <returns></returns>
 		public Boolean RegisterScene(GameScene scene)
 		{
 			if (GameScenes.ContainsKey(scene.SceneKey)) return false; // Scene is either already registered or the key is double. 
@@ -58,11 +80,19 @@ namespace Singularity.Code
 			return true;
 		}
 
+		/// <summary>
+		/// Updates the upper <seealso cref="GameScene"/>
+		/// </summary>
+		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
 			this.GetCurrentScene().Update(gameTime);
 		}
 
+		/// <summary>
+		/// Draws the upper <seealso cref="GameScene"/>
+		/// </summary>
+		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
 			this.GetCurrentScene().Draw(spriteBatch);

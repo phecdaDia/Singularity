@@ -32,6 +32,12 @@ namespace Singularity.Code.Utilities
 
 		private float Precision;
 
+		/// <summary>
+		/// Creates a new Octree
+		/// </summary>
+		/// <param name="currentSize">Size of the Octree</param>
+		/// <param name="minimumSize">Smallest partition of the Octree</param>
+		/// <param name="precision"></param>
 		public Octree(int currentSize, int minimumSize, float precision = 0.0f)
 		{
 			this.CurrentSize = currentSize;
@@ -48,6 +54,12 @@ namespace Singularity.Code.Utilities
 
 		}
 
+		/// <summary>
+		/// Creates a child Octree
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="corner1"></param>
+		/// <param name="corner2"></param>
 		private Octree(Octree<T> parent, Vector3 corner1, Vector3 corner2) : this(parent.CurrentSize - 1, parent.MinimumSize, parent.Precision)
 		{
 			this.Parent = parent;
@@ -57,9 +69,13 @@ namespace Singularity.Code.Utilities
 
 			this.Center = 0.5f * (this.Min + this.Max);
 		}
-
-		//
-
+		
+		/// <summary>
+		/// Adds an <paramref name="obj"/> at <paramref name="position"/>
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="radius"></param>
+		/// <param name="position"></param>
 		public void AddObject(T obj, float radius, Vector3 position)
 		{
 			// we just have a point, therefor we have to create as many octrees as possible
@@ -70,10 +86,17 @@ namespace Singularity.Code.Utilities
 				{
 					// we are not at the final octree yet
 					// create children if they don't exist already.
-					PopulateChildrenNodes();
-					this.Children[this.GetQuadrantNumber(position)].AddObject(obj, radius, position);
+					var quadrant = this.GetQuadrantNumber(position);
 
-					// recursively add object.
+					if (this.Children == null)
+						this.Children = new Octree<T>[8];
+
+					if (this.Children[quadrant] == null)
+						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+
+
+					this.Children[quadrant].AddObject(obj, radius, position);
+					
 					return;
 				}
 				else
@@ -90,7 +113,14 @@ namespace Singularity.Code.Utilities
 				// we have to check if we should subpartition it
 				if (ShouldSubpartition(position, radius))
 				{
-					PopulateChildrenNodes();
+					var quadrant = this.GetQuadrantNumber(position);
+
+					if (this.Children == null)
+						this.Children = new Octree<T>[8];
+
+					if (this.Children[quadrant] == null)
+						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+
 					this.Children[GetQuadrantNumber(position)].AddObject(obj, radius, position);
 				}
 				else
@@ -102,47 +132,38 @@ namespace Singularity.Code.Utilities
 			}
 		}
 
-		public void AddObject(T obj, Vector3 position, params BoundingSphere[] spheres) => AddObject(obj, position, 1.0f, spheres);
-
-		public void AddObject(T obj, Vector3 position, float maxScale, params BoundingSphere[] spheres)
+		/// <summary>
+		/// Adds an <paramref name="obj"/> at <paramref name="position"/>
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="position"></param>
+		/// <param name="maxScale"></param>
+		public void AddObject(T obj, Vector3 position, float maxScale)
 		{
-
-			// check if we should subpartition. 
-			Boolean canPartition = true;
-			int quadrant = GetQuadrantNumber(spheres[0].Center + position);
-
-			foreach (BoundingSphere bs in spheres)
-			{
-				// if one of them is outside the quadrant, we can't subpartition
-				int quad = GetQuadrantNumber(bs.Center + position);
-				if (quad != quadrant) // we can't subpartition
-				{
-					canPartition = false;
-					break;
-				}
-
-				if (!ShouldSubpartition(position + bs.Center, bs.Radius * maxScale))
-				{
-					// we can't subpartition for one of the bs, then we can't for the object
-					canPartition = false;
-					break;
-				}
-			}
-
-			if (!canPartition || this.CurrentSize <= this.MinimumSize)
+			if (!ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
 			{
 				Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 				this.Leafs.Add(obj);
 				return;
 			}
-			else
-			{
-				// create children and try again
-				PopulateChildrenNodes();
-				this.Children[quadrant].AddObject(obj, position, maxScale, spheres);
-			}
+
+			var quadrant = GetQuadrantNumber(position);
+			// create children and try again
+			//PopulateChildrenNodes();
+			if (this.Children == null)
+				this.Children = new Octree<T>[8];
+
+			if (this.Children[quadrant] == null)
+				this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+			this.Children[quadrant].AddObject(obj, position, maxScale);
 		}
 
+		/// <summary>
+		/// Removed an <paramref name="obj"/> at <paramref name="position"/>
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="position"></param>
+		/// <returns></returns>
 		public Boolean RemoveObject(T obj, Vector3 position)
 		{
 			if (this.Leafs.Remove(obj))
@@ -160,18 +181,25 @@ namespace Singularity.Code.Utilities
 			return this.Children[id].RemoveObject(obj, position);
 		}
 
+
+		/// <summary>
+		/// Moves an <paramref name="obj"/> from <paramref name="position1"/> to <paramref name="position2"/>
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="scale"></param>
+		/// <param name="position1"></param>
+		/// <param name="position2"></param>
 		public void MoveObject(T obj, float scale, Vector3 position1, Vector3 position2)
 		{
 			RemoveObject(obj, position1);
 			AddObject(obj, scale, position2);
 		}
 
-		public void MoveObject(T obj, Vector3 position1, Vector3 position2, float maxScale, params BoundingSphere[] spheres)
-		{
-			RemoveObject(obj, position1);
-			AddObject(obj, position2, maxScale, spheres);
-		}
-
+		/// <summary>
+		/// Gets Quadrant number
+		/// </summary>
+		/// <param name="position"></param>
+		/// <returns></returns>
 		private int GetQuadrantNumber(Vector3 position)
 		{
 			// assuming this objects center
@@ -189,6 +217,11 @@ namespace Singularity.Code.Utilities
 		}
 		// decide if we should save these corners, although that probably wouldn't save that much 
 		// time and memory
+
+		/// <summary>
+		/// Gets all 8 Corners of the current Octree.
+		/// </summary>
+		/// <returns></returns>
 		private Vector3[] GetPartitionCorners() 
 		{
 			return new Vector3[]
@@ -204,6 +237,12 @@ namespace Singularity.Code.Utilities
 			};
 		}
 
+		/// <summary>
+		/// Decides if we should subpartition this Octree
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
 		private Boolean ShouldSubpartition(Vector3 position, float radius)
 		{
 
@@ -221,6 +260,9 @@ namespace Singularity.Code.Utilities
 			return quadrant == GetQuadrantNumber(position - (radius + this.Precision) * new Vector3(x, y, z));
 		}
 
+		/// <summary>
+		/// Adds children Octrees
+		/// </summary>
 		private void PopulateChildrenNodes()
 		{
 			if (this.Children != null) return; // we already have children.
@@ -237,6 +279,9 @@ namespace Singularity.Code.Utilities
 
 		}
 
+		/// <summary>
+		/// Removes all leafs and children recursively
+		/// </summary>
 		public void Clear()
 		{
 			// cleanup
@@ -257,6 +302,11 @@ namespace Singularity.Code.Utilities
 
 		// please don't use this method. It has a horrible complexity.
 		// this function only exists for compatibility. 
+		/// <summary>
+		/// GetAllObjectsAsTypeDictionary
+		/// </summary>
+		/// <param name="predicate"></param>
+		/// <returns></returns>
 		public Dictionary<Type, IList<T>> GetAllObjectsAsTypeDictionary(Func<T, bool> predicate = null)
 		{
 			List<T> list = GetAllObjects(predicate);
@@ -277,6 +327,12 @@ namespace Singularity.Code.Utilities
 
 			return output;
 		}
+
+		/// <summary>
+		/// Gets all objects that match <paramref name="predicate"/>
+		/// </summary>
+		/// <param name="predicate"></param>
+		/// <returns></returns>
 		public List<T> GetAllObjects(Func<T, bool> predicate = null)
 		{
 			if (predicate != null) return GetAllObjects().Where(predicate).ToList();
@@ -289,12 +345,20 @@ namespace Singularity.Code.Utilities
 
 			foreach (Octree<T> tree in Children)
 			{
+				if (tree == null) continue;
+
 				output.AddRange(tree.GetAllObjects());
 			}
 
 			return output;
 		}
 
+		/// <summary>
+		/// Gets all objects that match <paramref name="predicate"/> at <paramref name="position"/>
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="predicate"></param>
+		/// <returns></returns>
 		public List<T> GetObjects(Vector3 position, Func<T, bool> predicate = null)
 		{
 			if (predicate != null) return GetAllObjects().Where<T>(predicate).ToList();
