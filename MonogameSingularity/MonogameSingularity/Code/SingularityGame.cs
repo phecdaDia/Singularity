@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,8 +10,6 @@ using Singularity.Code.Utilities;
 
 namespace Singularity.Code
 {
-	using System.IO;
-	using System.Threading.Tasks;
 
 	public class SingularityGame : Game
 	{
@@ -57,7 +57,6 @@ namespace Singularity.Code
 	    protected override void Initialize()
 	    {
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
-			
 	        this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 			base.Initialize();
 	    }
@@ -82,7 +81,7 @@ namespace Singularity.Code
 			SceneManager.Draw(this.SpriteBatch);
 
 			SpriteBatch.End();
-      
+			
 			//Apply each function for 2D Screenwide effects
 			foreach (var func in ScreenEffectList)
 			{
@@ -108,20 +107,25 @@ namespace Singularity.Code
 			}
 
 			_lastFrame = RenderTarget;
+			
 
             //Draw RenderTarget to Screen
             GraphicsDevice.SetRenderTarget(null);
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
 
 		    SpriteBatch.Draw(texture: RenderTarget,
 		                     destinationRectangle: new Rectangle(new Point(0, 0),
 		                                                         new Point(GraphicsDeviceManager.PreferredBackBufferWidth,
 		                                                                   GraphicsDeviceManager.PreferredBackBufferHeight)),
+							 sourceRectangle: new Rectangle(new Point(0,0),
+															new Point(RenderTarget.Width, RenderTarget.Height)),
 		                     color: Color.White);
 
             SpriteBatch.End();
+
+			base.Draw(gameTime);
 		}
 
 		/// <summary>
