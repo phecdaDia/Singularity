@@ -25,9 +25,13 @@ namespace SingularityTest.Scenes
 		{
 			AddObject(new BasicCamera());
 
-			for (int x = -10; x <= 10; x++)
+			for (int x = 0; x < 15; x++)
 			{
-				AddObject(new ModelObject("unit-cube-small").SetPosition(x, -2, -2));
+				for (int y = 0; y < 15; y++)
+				{
+					for (int z = 0; z < 15; z++)
+						AddObject(new ModelObject("cubes/cube1").SetPosition(x * 2, y * 2, z * 2));
+				}
 			}
 
 
