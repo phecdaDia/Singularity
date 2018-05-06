@@ -26,7 +26,5 @@ namespace Singularity.Code.Collisions
 			return CollisionManager.DoesCollide(this, collidable, out position, out normal);
 		}
 
-		public abstract void ExitCollision(Vector3 position, Vector3 normal);
-
 	}
 }

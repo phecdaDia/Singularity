@@ -20,10 +20,5 @@ namespace Singularity.Code.Collisions
 		{
 			this.Radius = radius;
 		}
-
-		public override void ExitCollision(Vector3 position, Vector3 normal)
-		{
-			this.Parent.SetPosition(position + normal * Radius);
-		}
 	}
 }

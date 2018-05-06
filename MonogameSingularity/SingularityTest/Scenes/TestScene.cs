@@ -63,6 +63,10 @@ namespace SingularityTest.Scenes
                 if(KeyboardManager.IsKeyPressed(Keys.Escape))
                     Game.Exit();
 		    }));
+
+
+			AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
+			AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

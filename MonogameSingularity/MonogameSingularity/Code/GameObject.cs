@@ -484,7 +484,7 @@ namespace Singularity.Code
 			Update(scene, gameTime);
 			
 			// check if we are even able to stay here.
-			scene.HandleCollision(this);
+			scene.HandleCollision(this, position);
 
 			// execute scripts
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);

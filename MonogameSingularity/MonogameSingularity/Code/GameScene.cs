@@ -174,21 +174,44 @@ namespace Singularity.Code
 			this.MaximumCullingDistance = c2;
 		}
 
-		public void HandleCollision(GameObject gameObject)
+		public void HandleCollision(GameObject gameObject, Vector3 safePosition)
 		{
-			if (!(gameObject is ICollider)) return; // if it's not supposed to collide with anything we won't do anything
+			if (!(gameObject is ICollider)) return;
 
-			// get a list of objects that it can collide with
-			var gos = this.ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
-			foreach (var go in gos)
+			List<GameObject> colliders = new List<GameObject>();
+
+			int collisionFixes = 0;
+
+			Boolean DidCollide = false;
+
+			do
 			{
-				
+				DidCollide = false;
+				//if (++collisionFixes >= 2)
+				//{
+				//	// couldn't escape collision after n tries. Escaping to a safe position
+				//	gameObject.SetPosition(safePosition);
+				//	return;
 
-				if (gameObject.Collision.DoesCollide(go.Collision, out var position, out var normal))
+				//}
+				// get list of collidables.
+				
+				colliders = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+
+				foreach (var go in colliders)
 				{
-					CollisionManager.HandleCollision(gameObject, go, position, normal);
+
+					if (CollisionManager.DoesCollide(gameObject.Collision, go.Collision, out var position, out var normal))
+					{
+						gameObject.SetPosition(CollisionManager.HandleCollision(gameObject, go, position, normal));
+						DidCollide = true;
+					}
+
 				}
-			}
+
+
+
+			} while (DidCollide);
 
 		}
 

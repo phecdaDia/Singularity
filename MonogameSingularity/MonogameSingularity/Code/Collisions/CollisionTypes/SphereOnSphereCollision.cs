@@ -12,10 +12,13 @@ namespace Singularity.Code.Collisions.CollisionTypes
 		public static Boolean GetCollision(SphereCollision collidableA, SphereCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
+
 			var radiusDist = collidableA.Radius * collidableA.Parent.Scale.X + collidableB.Radius * collidableB.Parent.Scale.X;
 			var dist = collidableA.Position - collidableB.Position;
+			var rd2 = radiusDist * radiusDist;
+			var dist2 = dist.LengthSquared();
 
-			if (dist.LengthSquared() >= radiusDist * radiusDist)
+			if (dist2 >= rd2 - 0.001f)
 			{
 				// no collision
 				position = new Vector3();
@@ -33,9 +36,9 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			return true;
 		}
 
-		public static void HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
 		{
-			collider.SetPosition(position + normal * ((SphereCollision) collider.Collision).Radius);
+			return position + normal * ((SphereCollision) collider.Collision).Radius;
 		}
 	}
 }

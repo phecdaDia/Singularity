@@ -33,7 +33,7 @@ namespace Singularity.Code.Collisions
 			return false;
 		}
 
-		public static void HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
 		{
 			// check for the different types.
 			// the normal vector should ALWAYS be from collidableA to collidableB
@@ -45,9 +45,11 @@ namespace Singularity.Code.Collisions
 			var sphereCollision = typeof(SphereCollision);
 
 			if (typeA == sphereCollision && typeB == sphereCollision)
-				SphereOnSphereCollision.HandleCollision(collider, collidable, position, normal);
+				return SphereOnSphereCollision.HandleCollision(collider, collidable, position, normal);
 
 
+
+			return collider.Position;
 		}
 	}
 }
