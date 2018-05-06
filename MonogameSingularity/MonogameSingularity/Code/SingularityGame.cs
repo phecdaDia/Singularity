@@ -184,16 +184,13 @@ namespace Singularity.Code
 		public Texture2D GetScreenShot() => _lastFrame;
 
 		public void SaveScreenshot(string location) =>
-			SaveScreenshot(location, DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss.png"));
+			SaveScreenshot(location, DateTime.Now.ToString("yyy_MM_dd_hh_mm_ss"));
 
 		public void SaveScreenshot(string location, string name)
 		{
-			Task.Run(() =>
-			{
-				Stream stream = File.Create(location + name);
+				Stream stream = File.Create(location + "\\" + name + ".png");
 				_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
 				stream.Dispose();
-			});
 		}
 	}
 }

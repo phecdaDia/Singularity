@@ -37,6 +37,8 @@ namespace SingularityTest.Scenes
                     Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
                 if(KeyboardManager.IsKeyPressed(Keys.X))
                     Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
+                if(KeyboardManager.IsKeyPressed(Keys.C))
+                    Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 			}));
 
 
