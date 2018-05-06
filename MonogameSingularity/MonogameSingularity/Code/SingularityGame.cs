@@ -1,13 +1,15 @@
 ﻿using System;
-using System.CodeDom;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+
+using Singularity.Code.Utilities;
 
 namespace Singularity.Code
 {
-	using System.Collections.Generic;
-
-	using Utilities;
+	using System.IO;
+	using System.Threading.Tasks;
 
 	public class SingularityGame : Game
 	{
@@ -23,7 +25,8 @@ namespace Singularity.Code
 		protected SpriteBatch SpriteBatch;
 
 	    protected RenderTarget2D RenderTarget;
-		private RenderTarget2D tempRenderTarget;
+		private RenderTarget2D _tempRenderTarget;
+		private Texture2D _lastFrame;
 		public List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
 		public SingularityGame()
@@ -48,10 +51,13 @@ namespace Singularity.Code
             GraphicsDeviceManager.ApplyChanges();
 	    }
 
+		/// <summary>
+		/// Initialize Basic Structures
+		/// </summary>
 	    protected override void Initialize()
 	    {
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
-			tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+			
 	        this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 			base.Initialize();
 	    }
@@ -75,13 +81,15 @@ namespace Singularity.Code
 
 			SceneManager.Draw(this.SpriteBatch);
 
-      SpriteBatch.End();
+			SpriteBatch.End();
       
 			//Apply each function for 2D Screenwide effects
 			foreach (var func in ScreenEffectList)
 			{
 				var data = func.Invoke(gameTime, RenderTarget);
-				GraphicsDevice.SetRenderTarget(tempRenderTarget);
+
+				_tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+				GraphicsDevice.SetRenderTarget(_tempRenderTarget);
 				GraphicsDevice.Clear(Color.CornflowerBlue);
 
 				SpriteBatch.Begin();
@@ -95,8 +103,11 @@ namespace Singularity.Code
 					layerDepth: 0);
 				SpriteBatch.End();
 
-				RenderTarget = tempRenderTarget;
+				RenderTarget.Dispose();
+				RenderTarget = _tempRenderTarget;
 			}
+
+			_lastFrame = RenderTarget;
 
             //Draw RenderTarget to Screen
             GraphicsDevice.SetRenderTarget(null);
@@ -155,6 +166,21 @@ namespace Singularity.Code
 
 			// Create a new SpriteBatch, which can be used to draw textures.
 			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+		}
+
+		public Texture2D GetScreenShot() => _lastFrame;
+
+		public void SaveScreenshot(string location) =>
+			SaveScreenshot(location, DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss.png"));
+
+		public void SaveScreenshot(string location, string name)
+		{
+			Task.Run(() =>
+			{
+				Stream stream = File.Create(location + name);
+				_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
+				stream.Dispose();
+			});
 		}
 	}
 }
