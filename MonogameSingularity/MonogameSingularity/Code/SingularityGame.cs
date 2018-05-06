@@ -28,6 +28,7 @@ namespace Singularity.Code
 		private RenderTarget2D _tempRenderTarget;
 		private Texture2D _lastFrame;
 		public List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
+        private List<Func<GameTime, Texture2D, ScreenEffectData>> _removalList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
 		public SingularityGame()
 		{
@@ -89,22 +90,25 @@ namespace Singularity.Code
 				var data = func.Invoke(gameTime, RenderTarget);
 
 				GraphicsDevice.SetRenderTarget(_tempRenderTarget);
-				GraphicsDevice.Clear(Color.CornflowerBlue);
+				GraphicsDevice.Clear(Color.Black);
 
 				SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
 				SpriteBatch.Draw(texture: RenderTarget, 
-					destinationRectangle: new Rectangle(), 
-					sourceRectangle: new Rectangle(), 
-					color: data.Color, 
-					rotation: data.Rotation, 
+					destinationRectangle: data.Destination, 
+					sourceRectangle: data.Source, 
+					color: data.Color ?? Color.White, 
+					rotation: data.Rotation ?? 0, 
 					origin:data.Origin, 
-					effects: data.Effect, 
+					effects: data.Effect ?? SpriteEffects.None, 
 					layerDepth: 0);
 				SpriteBatch.End();
 
 			    var tempRenderSwitchHelper = RenderTarget;
 				RenderTarget = _tempRenderTarget;
 			    _tempRenderTarget = tempRenderSwitchHelper;
+
+                if(data.IsDone)
+                    _removalList.Add(func);
 			}
 
 			_lastFrame = RenderTarget;
@@ -112,7 +116,7 @@ namespace Singularity.Code
 
             //Draw RenderTarget to Screen
             GraphicsDevice.SetRenderTarget(null);
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			GraphicsDevice.Clear(Color.Black);
 
             SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
 
@@ -135,6 +139,10 @@ namespace Singularity.Code
 		/// <param name="gameTime">DeltaTime</param>
 		protected sealed override void Update(GameTime gameTime)
 		{
+            //Remove finished ScreenEffects
+		    ScreenEffectList.RemoveAll(f => _removalList.Contains(f));
+		    _removalList.Clear();
+
 			base.Update(gameTime);
 			this.SceneManager.Update(gameTime);
 			KeyboardManager.Update();

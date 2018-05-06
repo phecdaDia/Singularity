@@ -5,26 +5,25 @@ namespace Singularity.Code.Utilities
 {
 	public struct ScreenEffectData
 	{
-		public Rectangle Desitnation;
+		public Rectangle Destination;
 		public Rectangle Source;
 		public Vector2 Origin;
-		public float Rotation;
-		public SpriteEffects Effect;
-		public Color Color;
+		public float? Rotation;
+		public SpriteEffects? Effect;
+		public Color? Color;
+	    public bool IsDone;
+	    public object Caller;
 
-		public ScreenEffectData(Rectangle destinationRectangle, Rectangle sourceRectangle, Vector2 origin, float rotation, SpriteEffects effect, Color color)
+		public ScreenEffectData(Rectangle destinationRectangle, Rectangle sourceRectangle, Vector2 origin, float rotation, SpriteEffects effect, Color color, bool isDone, object caller)
 		{
-			Desitnation = destinationRectangle;
+			Destination = destinationRectangle;
 			Source = sourceRectangle;
 			Origin = origin;
 			Rotation = rotation;
 			Effect = effect;
 			Color = color;
+		    IsDone = isDone;
+		    Caller = caller;
 		}
-
-		public ScreenEffectData(Vector2 position, Vector2 size, SpriteEffects effect, Color color, Vector2 origin,
-			float rotation = 0) : this(new Rectangle(position.ToPoint(), size.ToPoint()),
-			new Rectangle(Vector2.Zero.ToPoint(), size.ToPoint()), origin, rotation, effect, color)
-		{ }
 	}
 }
