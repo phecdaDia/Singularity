@@ -180,7 +180,7 @@ namespace Singularity.Code
 
 			List<GameObject> colliders = new List<GameObject>();
 
-			int collisionFixes = 0;
+			//int collisionFixes = 0;
 
 			Boolean DidCollide = false;
 

@@ -7,7 +7,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
+using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
+using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
@@ -45,11 +47,11 @@ namespace SingularityTest.Scenes
 			//AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));
 			//AddObject(new CollidableModelObject("sphere").SetPosition(10, 1, 0).SetScale(2));
 
-			AddObject(new ModelObject("slopes/slope1").SetPosition(-1, 1.0f, -4));
-			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, 1.0f, -2));
-			AddObject(new ModelObject("slopes/slope3").SetPosition(0, 1.0f, 0));
-			AddObject(new ModelObject("slopes/slope4").SetPosition(0, 0.5f, 2));
-			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0, 4));
+			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, 0.85f, -4));
+			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, 0.85f, -2));
+			AddObject(new ModelObject("slopes/slope3").SetPosition(0, 0.85f, 0));
+			AddObject(new ModelObject("slopes/slope4").SetPosition(0, 0.35f, 2));
+			AddObject(new ModelObject("slopes/slope5").SetPosition(0, -0.65f, 4));
 			
 			AddObject(new ModelObject("cubes/cube5").SetPosition(0, 9, 0).AddScript((scene, go, time) =>
 			{
@@ -65,17 +67,20 @@ namespace SingularityTest.Scenes
 		    }));
 
 
-			AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
-			AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
+			//AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
+			//AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
+
+			AddObject(new CollidableTestObject().SetPosition(10, 0, 0));
+
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)
 		{
-			effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
-			effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // 
+			effect.DirectionalLight0.DiffuseColor = new Vector3(0.15f, 0.15f, 0.15f); // some diffuse light
+			effect.DirectionalLight0.Direction = new Vector3(1, -2, 1);  // 
 			effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
 			//effect.AmbientLightColor = new Vector3(1f, 1f, 1f); // Add some overall ambient light.
-			effect.AmbientLightColor = new Vector3(0.15f, 0.15f, 0.215f); // Add some overall ambient light.
+			effect.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.315f); // Add some overall ambient light.
 		}
 	}
 }

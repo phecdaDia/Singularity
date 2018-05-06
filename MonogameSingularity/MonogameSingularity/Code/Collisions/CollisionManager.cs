@@ -25,9 +25,15 @@ namespace Singularity.Code.Collisions
 
 			// get the different collision types.
 			var sphereCollision = typeof(SphereCollision);
+			var planeCollision = typeof(PlaneCollision);
 
 			if (typeA == sphereCollision && typeB == sphereCollision)
 				return SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision, out position, out normal);
+
+			else if (typeA == sphereCollision && typeB == planeCollision)
+				return SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision, out position, out normal);
+			else if (typeA == planeCollision && typeB == sphereCollision)
+				return SphereOnPlaneCollision.GetCollision(collidableB as SphereCollision, collidableA as PlaneCollision, out position, out normal);
 
 
 			return false;
@@ -43,9 +49,15 @@ namespace Singularity.Code.Collisions
 
 			// get the different collision types.
 			var sphereCollision = typeof(SphereCollision);
+			var planeCollision = typeof(PlaneCollision);
 
 			if (typeA == sphereCollision && typeB == sphereCollision)
 				return SphereOnSphereCollision.HandleCollision(collider, collidable, position, normal);
+
+			else if (typeA == sphereCollision && typeB == planeCollision)
+				return SphereOnPlaneCollision.HandleCollision(collider, collidable, position, normal);
+			//else if (typeA == planeCollision && typeB == sphereCollision)
+			//	return SphereOnPlaneCollision.GetCollision(collidableB as SphereCollision, collidableA as PlaneCollision, out position, out normal);
 
 
 

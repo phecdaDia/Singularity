@@ -102,7 +102,7 @@ namespace Singularity.Code.Utilities
 				else
 				{
 					// this is the smallest Octree we may create, add as leaf
-					Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 					this.Leafs.Add(obj);
 
 					return;
@@ -126,7 +126,7 @@ namespace Singularity.Code.Utilities
 				else
 				{
 					// this quad is small enough for this object
-					Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 					this.Leafs.Add(obj);
 				}
 			}
@@ -142,7 +142,7 @@ namespace Singularity.Code.Utilities
 		{
 			if (!ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
 			{
-				Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+				//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 				this.Leafs.Add(obj);
 				return;
 			}

@@ -29,6 +29,21 @@ namespace Singularity.Code
 
 		public String DebugName { get; private set; } // Used for debugging.
 
+		public Matrix GetScaleMatrix
+		{
+			get { return Matrix.CreateScale(this.Scale); }
+		}
+
+		public Matrix GetRotationMatrix
+		{
+			get
+			{
+				return Matrix.CreateRotationX(this.Rotation.X)
+				       * Matrix.CreateRotationY(this.Rotation.Y)
+				       * Matrix.CreateRotationZ(this.Rotation.Z);
+			}
+		}
+
 		public float ModelRadius { get; private set; }
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
@@ -551,8 +566,8 @@ namespace Singularity.Code
 
 					effect.World = transformMatrices[mesh.ParentBone.Index]
 					               * Matrix.CreateScale(this.GetHierarchyScale())
-					               * Matrix.CreateTranslation(position)
-					               * totalRotation;
+					               * totalRotation
+								   * Matrix.CreateTranslation(position);
 
 					effect.View = scene.GetViewMatrix();
 					effect.Projection = scene.GetProjectionMatrix();

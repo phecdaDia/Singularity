@@ -18,7 +18,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			var rd2 = radiusDist * radiusDist;
 			var dist2 = dist.LengthSquared();
 
-			if (dist2 >= rd2 - 0.001f)
+			if (dist2 >= rd2 - 0.0001f)
 			{
 				// no collision
 				position = new Vector3();

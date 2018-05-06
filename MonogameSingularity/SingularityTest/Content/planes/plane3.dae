@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.79.0 commit date:2018-03-22, commit time:14:10, hash:f4dc9f9d68b</authoring_tool>
     </contributor>
-    <created>2018-05-06T23:22:07</created>
-    <modified>2018-05-06T23:22:07</modified>
+    <created>2018-05-06T20:38:34</created>
+    <modified>2018-05-06T20:38:34</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -102,27 +102,27 @@
     </light>
   </library_lights>
   <library_images>
-    <image id="slope3" name="slope3">
-      <init_from>slope3.png</init_from>
+    <image id="plane3" name="plane3">
+      <init_from>plane3.png</init_from>
     </image>
   </library_images>
   <library_effects>
-    <effect id="slope3-effect">
+    <effect id="plane3-effect">
       <profile_COMMON>
-        <newparam sid="slope3-surface">
+        <newparam sid="plane3-surface">
           <surface type="2D">
-            <init_from>slope3</init_from>
+            <init_from>plane3</init_from>
           </surface>
         </newparam>
-        <newparam sid="slope3-sampler">
+        <newparam sid="plane3-sampler">
           <sampler2D>
-            <source>slope3-surface</source>
+            <source>plane3-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
           <phong>
             <diffuse>
-              <texture texture="slope3-sampler" texcoord="slope3"/>
+              <texture texture="plane3-sampler" texcoord="plane3"/>
             </diffuse>
             <specular>
               <color sid="specular">0 0 0 1</color>
@@ -133,50 +133,50 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="slope3-material" name="slope3">
-      <instance_effect url="#slope3-effect"/>
+    <material id="plane3-material" name="plane3">
+      <instance_effect url="#plane3-effect"/>
     </material>
   </library_materials>
   <library_geometries>
-    <geometry id="Cube_001-mesh" name="Cube.001">
+    <geometry id="Plane-mesh" name="Plane">
       <mesh>
-        <source id="Cube_001-mesh-positions">
-          <float_array id="Cube_001-mesh-positions-array" count="18">-1 -1 -1 -1 1 -1 1 -1 -1 1 -1 1 1 1 -1 1 1 1</float_array>
+        <source id="Plane-mesh-positions">
+          <float_array id="Plane-mesh-positions-array" count="12">-32 -32 0 32 -32 0 -32 32 0 32 32 0</float_array>
           <technique_common>
-            <accessor source="#Cube_001-mesh-positions-array" count="6" stride="3">
+            <accessor source="#Plane-mesh-positions-array" count="4" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Cube_001-mesh-normals">
-          <float_array id="Cube_001-mesh-normals-array" count="15">-0.7071068 0 0.7071068 0 1 0 1 0 0 0 0 -1 0 -1 0</float_array>
+        <source id="Plane-mesh-normals">
+          <float_array id="Plane-mesh-normals-array" count="3">0 0 1</float_array>
           <technique_common>
-            <accessor source="#Cube_001-mesh-normals-array" count="5" stride="3">
+            <accessor source="#Plane-mesh-normals-array" count="1" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Cube_001-mesh-map-0">
-          <float_array id="Cube_001-mesh-map-0-array" count="48">0.369398 0.5857864 0 0 0.369398 0 0.7387961 0.4142137 0.7387961 0.8284273 0.369398 0.4142138 0.3693982 0.4142137 0.7387961 0 0.7387962 0.4142136 0 1 0.3693979 0.5857865 0.369398 1 1 0.5857865 0.7387962 0.2928932 1 0 0.369398 0.5857864 0 0.5857865 0 0 0.3693982 0.4142137 0.369398 0 0.7387961 0 0 1 0 0.5857865 0.3693979 0.5857865</float_array>
+        <source id="Plane-mesh-map-0">
+          <float_array id="Plane-mesh-map-0-array" count="12">0 1.49012e-7 1 0.9999999 1.49012e-7 1 0 1.49012e-7 0.9999999 0 1 0.9999999</float_array>
           <technique_common>
-            <accessor source="#Cube_001-mesh-map-0-array" count="24" stride="2">
+            <accessor source="#Plane-mesh-map-0-array" count="6" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="Cube_001-mesh-vertices">
-          <input semantic="POSITION" source="#Cube_001-mesh-positions"/>
+        <vertices id="Plane-mesh-vertices">
+          <input semantic="POSITION" source="#Plane-mesh-positions"/>
         </vertices>
-        <triangles material="slope3-material" count="8">
-          <input semantic="VERTEX" source="#Cube_001-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#Cube_001-mesh-normals" offset="1"/>
-          <input semantic="TEXCOORD" source="#Cube_001-mesh-map-0" offset="2" set="0"/>
-          <p>3 0 0 1 0 1 0 0 2 4 1 3 1 1 4 5 1 5 5 2 6 2 2 7 4 2 8 4 3 9 0 3 10 1 3 11 0 4 12 2 4 13 3 4 14 3 0 15 5 0 16 1 0 17 5 2 18 3 2 19 2 2 20 4 3 21 2 3 22 0 3 23</p>
+        <triangles material="plane3-material" count="2">
+          <input semantic="VERTEX" source="#Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Plane-mesh-map-0" offset="2" set="0"/>
+          <p>1 0 0 2 0 1 0 0 2 1 0 3 3 0 4 2 0 5</p>
         </triangles>
       </mesh>
     </geometry>
@@ -192,12 +192,12 @@
         <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
         <instance_light url="#Lamp-light"/>
       </node>
-      <node id="Cube" name="Cube" type="NODE">
-        <matrix sid="transform">0.5 0 0 -0.3333334 0 0.5 0 0 0 0 0.5 0.3333334 0 0 0 1</matrix>
-        <instance_geometry url="#Cube_001-mesh" name="Cube">
+      <node id="Plane" name="Plane" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <instance_geometry url="#Plane-mesh" name="Plane">
           <bind_material>
             <technique_common>
-              <instance_material symbol="slope3-material" target="#slope3-material">
+              <instance_material symbol="plane3-material" target="#plane3-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
