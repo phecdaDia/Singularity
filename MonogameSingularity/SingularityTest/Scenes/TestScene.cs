@@ -8,10 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code;
 using Singularity.Code.GameObjects;
+using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
-	public class TestScene : GameScene
+    public class TestScene : GameScene
 	{
 		public TestScene(SingularityGame game) : base(game, "test")
 		{
@@ -31,6 +32,13 @@ namespace SingularityTest.Scenes
 
 				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnObject(new CollidableModelObject("unit-cube-small")
 					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
+
+                if(KeyboardManager.IsKeyPressed(Keys.Y))
+                    Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
+                if(KeyboardManager.IsKeyPressed(Keys.X))
+                    Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
+                if(KeyboardManager.IsKeyPressed(Keys.C))
+                    Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 			}));
 
 
