@@ -76,5 +76,20 @@ namespace Singularity.Code
 
 		#endregion
 
+		#region IsKeyUp
+
+        /// <summary>
+		/// Returns true, if the <seealso cref="Keys"/> have not been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+	    public static bool IsKeyUp(Keys key)
+	    {
+	        return !CurrentPressedKeys.Contains(key);
+	    }
+	    public static bool IsKeyUp(this KeyboardState _, Keys key) => IsKeyUp(key);
+
+	    #endregion
+
 	}
 }
