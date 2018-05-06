@@ -57,7 +57,8 @@ namespace Singularity.Code
 	    protected override void Initialize()
 	    {
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
-	        this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+            _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 			base.Initialize();
 	    }
 
@@ -87,11 +88,10 @@ namespace Singularity.Code
 			{
 				var data = func.Invoke(gameTime, RenderTarget);
 
-				_tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
 				GraphicsDevice.SetRenderTarget(_tempRenderTarget);
 				GraphicsDevice.Clear(Color.CornflowerBlue);
 
-				SpriteBatch.Begin();
+				SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone);
 				SpriteBatch.Draw(texture: RenderTarget, 
 					destinationRectangle: new Rectangle(), 
 					sourceRectangle: new Rectangle(), 
@@ -102,8 +102,9 @@ namespace Singularity.Code
 					layerDepth: 0);
 				SpriteBatch.End();
 
-				RenderTarget.Dispose();
+			    var tempRenderSwitchHelper = RenderTarget;
 				RenderTarget = _tempRenderTarget;
+			    _tempRenderTarget = tempRenderSwitchHelper;
 			}
 
 			_lastFrame = RenderTarget;
