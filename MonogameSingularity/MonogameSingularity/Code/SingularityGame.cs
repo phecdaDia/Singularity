@@ -5,6 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Code
 {
+	using System.Collections.Generic;
+
+	using Utilities;
+
 	public class SingularityGame : Game
 	{
 		public static readonly String SINGULARITY_VERSION = "v0.06";
@@ -17,6 +21,8 @@ namespace Singularity.Code
 		protected SpriteBatch SpriteBatch;
 
 	    protected RenderTarget2D RenderTarget;
+		private RenderTarget2D tempRenderTarget;
+		public List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
 		public SingularityGame()
 		{
@@ -42,6 +48,7 @@ namespace Singularity.Code
 	    protected override void Initialize()
 	    {
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+			tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
 	        this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 			base.Initialize();
 	    }
@@ -50,20 +57,40 @@ namespace Singularity.Code
 		{
             //Draw everything to RenderTarget instead of the Screen
             GraphicsDevice.SetRenderTarget(RenderTarget);
-
 			GraphicsDevice.Clear(Color.CornflowerBlue);
+
 			ResetGraphic();
 			BeginRender3D();
 
 			// Add Drawing stuff here!
 			SceneManager.Draw(this.SpriteBatch);
-			
-            //Draw RenderTarget to Screen to add effects later
+
+			//Apply each function for 2D Screenwide effects
+			foreach (var func in ScreenEffectList)
+			{
+				var data = func.Invoke(gameTime, RenderTarget);
+				GraphicsDevice.SetRenderTarget(tempRenderTarget);
+				GraphicsDevice.Clear(Color.CornflowerBlue);
+
+				SpriteBatch.Begin();
+				SpriteBatch.Draw(texture: RenderTarget, 
+					destinationRectangle: new Rectangle(), 
+					sourceRectangle: new Rectangle(), 
+					color: data.Color, 
+					rotation: data.Rotation, 
+					origin:data.Origin, 
+					effects: data.Effect, 
+					layerDepth: 0);
+				SpriteBatch.End();
+
+				RenderTarget = tempRenderTarget;
+			}
+
+            //Draw RenderTarget to Screen
             GraphicsDevice.SetRenderTarget(null);
+			GraphicsDevice.Clear(Color.CornflowerBlue);
 
             SpriteBatch.Begin();
-
-			//TODO: Add Class/Method/Posibility to easily change how this is drawn
 
 		    SpriteBatch.Draw(texture: RenderTarget,
 		                     destinationRectangle: new Rectangle(new Point(0, 0),
