@@ -29,10 +29,6 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			var sv1 = Vector3.Transform(collidableB.SpanVector1, tm2);
 			var sv2 = Vector3.Transform(collidableB.SpanVector2, tm2);
 
-			//Console.WriteLine($"DEFAULT: {collidableB.SpanVector1} x {collidableB.SpanVector2} => {collidableB.Normal}");
-			Console.WriteLine($"POSITIO: {collidableA.Position}");
-			Console.WriteLine($"TRANSFO: {sv1} x {sv2} => {normal}");
-
 			Matrix L = Matrix.Invert(new Matrix(
 				sv1.X, sv2.X, normal.X, 0,
 				sv1.Y, sv2.Y, normal.Y, 0,
@@ -51,17 +47,13 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			);
 			
 			Vector4 x = Vector4.Transform(b, L);
-
-			//Console.WriteLine(x);
+			
 			scale1 = x.X;
 			scale2 = x.Y;
 			float t = x.Z;
-			Console.WriteLine($"Parameters: {x}");
 
 			position = origin + scale1 * sv1 + scale2 * sv2;
 			normal = (t < 0 ? -1 : 1) * normal;
-			
-			//Console.WriteLine($"{position} = {origin} + {scale1} * {sv1} + {scale2} * {sv2}");
 
 			return Math.Abs(t) < collidableA.Radius * collidableA.Parent.Scale.X - 0.001f;
 
