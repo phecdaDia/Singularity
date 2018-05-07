@@ -563,15 +563,12 @@ namespace Singularity.Code
 					// calculating the full rotation of our object.
 					//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
 
-					var position = this.GetHierarchyPosition();
-					position.Y = -position.Y;
-
 					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
 
 					effect.World = transformMatrices[mesh.ParentBone.Index]
 					               * Matrix.CreateScale(this.GetHierarchyScale())
 					               * totalRotation
-								   * Matrix.CreateTranslation(position);
+								   * Matrix.CreateTranslation(this.GetHierarchyPosition());
 
 					effect.View = scene.GetViewMatrix();
 					effect.Projection = scene.GetProjectionMatrix();

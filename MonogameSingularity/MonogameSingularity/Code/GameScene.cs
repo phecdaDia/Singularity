@@ -232,7 +232,7 @@ namespace Singularity.Code
 
 			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
 
-			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
+			Console.WriteLine($"VM: {viewPosition} {viewTarget}");
 
 			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
 
