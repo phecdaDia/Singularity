@@ -50,7 +50,40 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			var sv1 = Vector3.Transform(collidableB.SpanVector1, tm2);
 			var sv2 = Vector3.Transform(collidableB.SpanVector2, tm2);
 
-			// TODO calculate parameters
+			Matrix L = Matrix.Invert(new Matrix(
+				1    , 0    , 0, 0,
+				sv1.Y, 1    , 0, 0,
+				sv1.Z, sv2.Z, 1, 0,
+				0    , 0    , 0, 1
+			));
+
+			Matrix R = new Matrix(
+				sv1.X,	sv2.X,	normal.X, 0,
+				0	 ,	sv2.Y,	normal.Y, 0,
+				0	 ,	0	 ,	normal.Z, 0,
+				0, 0, 0, 1
+			);
+
+			Console.WriteLine($"{R}");
+			R = Matrix.Invert(R);
+
+			var point = collidableA.Position;
+			var origin = collidableB.Position + collidableB.Origin;
+
+			Vector3 b = new Vector3(
+				point.X - origin.X,
+				point.Y - origin.Y,
+				point.Z - origin.Z
+			);
+
+			Console.WriteLine($"{b} * {L}");
+
+			b = Vector3.Transform(b, L);
+			Console.WriteLine($"{b} * {R}");
+
+			b = Vector3.Transform(b, R);
+
+			Console.WriteLine($"{b}");
 
 			return true;
 
