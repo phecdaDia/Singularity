@@ -23,11 +23,5 @@ namespace Singularity.Code.Collisions
 			
 			Normal.Normalize();
 		}
-		public PlaneCollision(GameObject parent, Vector3 origin, Vector3 spanVector1, Vector3 spanVector2, Vector3 normal) : this(parent, origin, spanVector1, spanVector2)
-		{
-			Normal = normal;
-
-			Normal.Normalize();
-		}
 	}
 }
