@@ -30,7 +30,8 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			var sv2 = Vector3.Transform(collidableB.SpanVector2, tm2);
 
 			//Console.WriteLine($"DEFAULT: {collidableB.SpanVector1} x {collidableB.SpanVector2} => {collidableB.Normal}");
-			//Console.WriteLine($"TRANSFO: {sv1} x {sv2} => {normal}");
+			Console.WriteLine($"POSITIO: {collidableA.Position}");
+			Console.WriteLine($"TRANSFO: {sv1} x {sv2} => {normal}");
 
 			Matrix L = Matrix.Invert(new Matrix(
 				sv1.X, sv2.X, normal.X, 0,
@@ -52,17 +53,17 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			Vector4 x = Vector4.Transform(b, L);
 
 			//Console.WriteLine(x);
-			scale1 = x.Z;
-			scale2 = x.X;
-			float t = x.Y;
-
+			scale1 = x.X;
+			scale2 = x.Y;
+			float t = x.Z;
+			Console.WriteLine($"Parameters: {x}");
 
 			position = origin + scale1 * sv1 + scale2 * sv2;
 			normal = (t < 0 ? -1 : 1) * normal;
 			
 			//Console.WriteLine($"{position} = {origin} + {scale1} * {sv1} + {scale2} * {sv2}");
 
-			return Math.Abs(t) < collidableA.Radius * collidableA.Parent.Scale.X;
+			return Math.Abs(t) < collidableA.Radius * collidableA.Parent.Scale.X - 0.001f;
 
 		}
 
@@ -74,6 +75,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 
 		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
 		{
+			//Console.WriteLine($"HANDLER: {position} + {normal} * Radius");
 			return position + normal * ((SphereCollision) collider.Collision).Radius;
 		}
 	}

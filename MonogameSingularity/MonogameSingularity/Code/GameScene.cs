@@ -181,22 +181,23 @@ namespace Singularity.Code
 
 			List<GameObject> colliders = new List<GameObject>();
 
-			//int collisionFixes = 0;
+			int collisionFixes = 0;
 
 			Boolean DidCollide = false;
 
 			do
 			{
 				DidCollide = false;
-				//if (++collisionFixes >= 2)
-				//{
-				//	// couldn't escape collision after n tries. Escaping to a safe position
-				//	gameObject.SetPosition(safePosition);
-				//	return;
+				if (++collisionFixes >= 10)
+				{
+					Console.WriteLine($"Could not fix collision!");
+					// couldn't escape collision after n tries. Escaping to a safe position
+					gameObject.SetPosition(safePosition);
+					return;
 
-				//}
+				}
 				// get list of collidables.
-				
+
 				colliders = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
 				foreach (var go in colliders)
