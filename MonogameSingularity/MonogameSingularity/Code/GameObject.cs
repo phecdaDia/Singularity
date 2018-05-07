@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
+using Singularity.Code.GameObjects.Interfaces;
 
 namespace Singularity.Code
 {
@@ -511,6 +512,9 @@ namespace Singularity.Code
 				// we have to talk to the scene about the movement. 
 				scene.MoveOctree(this, position);
 			} 
+
+			// if we are allowed to move the camera, do it
+			if (this is ICameraController controller) controller.SetCamera(scene);
 
 
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);

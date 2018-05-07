@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Singularity.Code.GameObjects
+namespace Singularity.Code.GameObjects.Interfaces
 {
-	public interface ICollidable
+	interface ICollider
 	{}
 }

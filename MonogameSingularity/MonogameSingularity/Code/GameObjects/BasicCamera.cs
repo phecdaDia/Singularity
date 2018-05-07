@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Code.Collisions;
+using Singularity.Code.GameObjects.Interfaces;
 
 namespace Singularity.Code.GameObjects
 {
-	public class BasicCamera : GameObject, ICollider
+	public class BasicCamera : GameObject, ICollider, ICameraController
 	{
 		private double horizontalRotation;	// rotation around the z axis
 		private double verticalRotation;	// rotation up and down
@@ -104,6 +105,13 @@ namespace Singularity.Code.GameObjects
 			scene.SetCamera(this.Position, target);
 
 			//Console.WriteLine($"{this.Position.X} - {this.Position.Y} - {this.Position.Z}");
+		}
+
+		public void SetCamera(GameScene scene)
+		{
+			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
+
+			scene.SetCamera(this.Position, target);
 		}
 	}
 }

@@ -53,8 +53,9 @@
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
-    <Compile Include="Code\GameObjects\ICollidable.cs" />
-    <Compile Include="Code\GameObjects\ICollider.cs" />
+    <Compile Include="Code\GameObjects\Interfaces\ICameraController.cs" />
+    <Compile Include="Code\GameObjects\Interfaces\ICollidable.cs" />
+    <Compile Include="Code\GameObjects\Interfaces\ICollider.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameObjects\SpriteObject.cs" />
     <Compile Include="Code\GameScene.cs" />

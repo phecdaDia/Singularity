@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
+using Singularity.Code.GameObjects.Interfaces;
 using Singularity.Code.Utilities;
 
 namespace Singularity.Code

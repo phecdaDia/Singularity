@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Singularity.Code;
 using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
+using Singularity.Code.GameObjects.Interfaces;
 
 namespace SingularityTest.GameObjects
 {
