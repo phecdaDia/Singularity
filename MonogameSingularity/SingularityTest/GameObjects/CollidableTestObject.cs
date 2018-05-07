@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Singularity.Code;
-using Singularity.Code.Collisions;
-using Singularity.Code.GameObjects;
-using Singularity.Code.GameObjects.Interfaces;
-using Singularity.Code.Utilities;
+using Singularity.Collisions;
+using Singularity.GameObjects;
+using Singularity.GameObjects.Interfaces;
+using Singularity.Utilities;
 
 namespace SingularityTest.GameObjects
 {

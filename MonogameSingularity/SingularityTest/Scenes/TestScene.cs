@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Singularity.Code;
-using Singularity.Code.Collisions;
-using Singularity.Code.GameObjects;
+using Singularity;
+using Singularity.GameObjects;
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
 

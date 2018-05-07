@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Collisions;
-using Singularity.Code.GameObjects;
-using Singularity.Code.GameObjects.Interfaces;
-using Singularity.Code.Utilities;
+using Singularity.Collisions;
+using Singularity.GameObjects.Interfaces;
+using Singularity.Utilities;
 
-namespace Singularity.Code
+namespace Singularity
 {
 	public abstract class GameScene
 	{

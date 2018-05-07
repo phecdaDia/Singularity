@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Singularity.Code;
+using Singularity;
 using SingularityTest.Scenes;
 
 namespace SingularityTest

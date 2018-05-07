@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Singularity.Code.Collisions;
-using Singularity.Code.GameObjects.Interfaces;
+using Singularity.Collisions;
+using Singularity.GameObjects.Interfaces;
 
-namespace Singularity.Code.GameObjects
+namespace Singularity.GameObjects
 {
 	public class BasicCamera : GameObject, ICollider, ICameraController
 	{

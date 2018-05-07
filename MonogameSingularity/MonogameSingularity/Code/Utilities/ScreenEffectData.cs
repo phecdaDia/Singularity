@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity.Code.Utilities
+namespace Singularity.Utilities
 {
 	public struct ScreenEffectData
 	{

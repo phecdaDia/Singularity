@@ -1,14 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using Singularity.Utilities;
 
-using Singularity.Code.Utilities;
-
-namespace Singularity.Code
+namespace Singularity
 {
 
 	public class SingularityGame : Game

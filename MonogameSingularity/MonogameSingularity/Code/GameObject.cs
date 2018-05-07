@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Collisions;
-using Singularity.Code.GameObjects;
-using Singularity.Code.GameObjects.Interfaces;
+using Singularity.Collisions;
+using Singularity.GameObjects.Interfaces;
 
-namespace Singularity.Code
+namespace Singularity
 {
 	/// <summary>
 	/// A GameObject can be any object in a GameScene.

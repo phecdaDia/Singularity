@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Singularity.Utilities;
 
 namespace SingularityTest.ScreenEffect
 {
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
-    using Singularity.Code.Utilities;
-	public class ColorScreenEffect : ScreenEffect
+
+	public class ColorScreenEffect : Singularity.Utilities.ScreenEffect
 	{
 	    private readonly float _duration;
 	    private readonly Color _color;

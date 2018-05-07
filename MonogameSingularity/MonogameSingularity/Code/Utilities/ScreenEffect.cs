@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity.Code.Utilities
+namespace Singularity.Utilities
 {
     /// <summary>
 	/// Template for ScreenEffect (if you want to do it as a class)
