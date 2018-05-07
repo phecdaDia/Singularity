@@ -190,7 +190,7 @@ namespace Singularity.Code
 				DidCollide = false;
 				if (++collisionFixes >= 10)
 				{
-					Console.WriteLine($"Could not fix collision!");
+					//Console.WriteLine($"Could not fix collision!");
 					// couldn't escape collision after n tries. Escaping to a safe position
 					gameObject.SetPosition(safePosition);
 					return;
@@ -232,7 +232,7 @@ namespace Singularity.Code
 
 			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
 
-			Console.WriteLine($"VM: {viewPosition} {viewTarget}");
+			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
 
 			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
 

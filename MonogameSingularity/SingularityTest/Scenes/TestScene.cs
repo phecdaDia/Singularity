@@ -48,13 +48,13 @@ namespace SingularityTest.Scenes
 			//AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));
 			//AddObject(new CollidableModelObject("sphere").SetPosition(10, 1, 0).SetScale(2));
 
-			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, 0.85f, -4));
-			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, 0.85f, -2));
-			AddObject(new ModelObject("slopes/slope3").SetPosition(0, 0.85f, 0));
-			AddObject(new ModelObject("slopes/slope4").SetPosition(0, 0.35f, 2));
-			AddObject(new ModelObject("slopes/slope5").SetPosition(0, -0.65f, 4));
+			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
+			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
+			AddObject(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
+			AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
+			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 			
-			AddObject(new ModelObject("cubes/cube5").SetPosition(0, 9, 0).AddScript((scene, go, time) =>
+			AddObject(new ModelObject("cubes/cube5").SetPosition(0, -9, 0).AddScript((scene, go, time) =>
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.K)) go.AddPosition(0, 0.05f, 0);
 				if (KeyboardManager.IsKeyPressed(Keys.L)) go.AddPosition(0, -0.05f, 0);

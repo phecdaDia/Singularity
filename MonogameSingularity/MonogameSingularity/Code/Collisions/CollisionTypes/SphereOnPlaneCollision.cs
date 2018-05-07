@@ -36,7 +36,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 				0, 0, 0, 1
 			);
 
-			Console.WriteLine($"Matrix: {L}");
+			//Console.WriteLine($"Matrix: {L}");
 
 			var point = collidableA.Position;
 			var origin = collidableB.Position + Vector3.Transform(collidableB.Origin, tm2);
@@ -48,7 +48,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 				1
 			);
 
-			Console.WriteLine($"B: {b}");
+			//Console.WriteLine($"B: {b}");
 
 			Vector4 x = Vector4.Transform(b, L);
 
