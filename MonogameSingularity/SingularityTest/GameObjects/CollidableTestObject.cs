@@ -8,10 +8,11 @@ using Singularity.Code;
 using Singularity.Code.Collisions;
 using Singularity.Code.GameObjects;
 using Singularity.Code.GameObjects.Interfaces;
+using Singularity.Code.Utilities;
 
 namespace SingularityTest.GameObjects
 {
-	public class CollidableTestObject : EmptyGameObject, ICollidable
+	public class CollidableTestObject : EmptyGameObject, ICollidable, IGlobal
 	{
 		public CollidableTestObject()
 		{

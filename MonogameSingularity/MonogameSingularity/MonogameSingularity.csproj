@@ -63,6 +63,7 @@
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
+    <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />

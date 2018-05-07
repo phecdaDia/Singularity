@@ -140,7 +140,7 @@ namespace Singularity.Code.Utilities
 		/// <param name="maxScale"></param>
 		public void AddObject(T obj, Vector3 position, float maxScale)
 		{
-			if (!ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
+			if (obj is IGlobal || !ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
 			{
 				//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
 				this.Leafs.Add(obj);
