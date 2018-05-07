@@ -22,70 +22,47 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			normal = Vector3.Transform(collidableB.Normal, tm2);
 			normal.Normalize();
 
-			var p2 = collidableB.Parent.Position + Vector3.Transform(collidableB.Origin, tm2);
-
-			var t = -normal.X * (collidableA.Position.X - p2.X)
-			        - normal.Y * (collidableA.Position.Y - p2.Y)
-			        - normal.Z * (collidableA.Position.Z - p2.Z);
-
-			t = t / (normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
-
-			position = collidableA.Position + t * normal;
-
-			if ((t * normal).LengthSquared() > collidableA.Radius * collidableA.Radius - 0.001f)
-			{
-				// no collision
-
-				scale1 = 0.0f;
-				scale2 = 0.0f;
-
-				return false;
-			}
-
-			// calculate scale1 and 2
-
 			scale2 = 0.0f;
 			scale1 = 0.0f;
+
 
 			var sv1 = Vector3.Transform(collidableB.SpanVector1, tm2);
 			var sv2 = Vector3.Transform(collidableB.SpanVector2, tm2);
 
+			//Console.WriteLine($"DEFAULT: {collidableB.SpanVector1} x {collidableB.SpanVector2} => {collidableB.Normal}");
+			//Console.WriteLine($"TRANSFO: {sv1} x {sv2} => {normal}");
+
 			Matrix L = Matrix.Invert(new Matrix(
-				1    , 0    , 0, 0,
-				sv1.Y, 1    , 0, 0,
-				sv1.Z, sv2.Z, 1, 0,
-				0    , 0    , 0, 1
+				sv1.X, sv2.X, normal.X, 0,
+				sv1.Y, sv2.Y, normal.Y, 0,
+				sv1.Z, sv2.Z, normal.Z, 0,
+				0, 0, 0, 1
 			));
 
-			Matrix R = new Matrix(
-				sv1.X,	sv2.X,	normal.X, 0,
-				0	 ,	sv2.Y,	normal.Y, 0,
-				0	 ,	0	 ,	normal.Z, 0,
-				0, 0, 0, 1
-			);
-
-			Console.WriteLine($"{R}");
-			R = Matrix.Invert(R);
-
 			var point = collidableA.Position;
-			var origin = collidableB.Position + collidableB.Origin;
+			var origin = collidableB.Position + Vector3.Transform(collidableB.Origin, tm2);
 
-			Vector3 b = new Vector3(
+			Vector4 b = new Vector4(
 				point.X - origin.X,
 				point.Y - origin.Y,
-				point.Z - origin.Z
+				point.Z - origin.Z,
+				1
 			);
+			
+			Vector4 x = Vector4.Transform(b, L);
 
-			Console.WriteLine($"{b} * {L}");
+			//Console.WriteLine(x);
+			scale1 = x.Z;
+			scale2 = x.X;
+			float t = x.Y;
 
-			b = Vector3.Transform(b, L);
-			Console.WriteLine($"{b} * {R}");
 
-			b = Vector3.Transform(b, R);
+			position = origin + scale1 * sv1 + scale2 * sv2;
+			normal = (t < 0 ? -1 : 1) * normal;
+			
+			//Console.WriteLine($"{position} = {origin} + {scale1} * {sv1} + {scale2} * {sv2}");
 
-			Console.WriteLine($"{b}");
-
-			return true;
+			return Math.Abs(t) < collidableA.Radius * collidableA.Parent.Scale.X;
 
 		}
 

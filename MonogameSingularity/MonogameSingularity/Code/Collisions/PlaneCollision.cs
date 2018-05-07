@@ -20,10 +20,14 @@ namespace Singularity.Code.Collisions
 			SpanVector1 = spanVector1;
 			SpanVector2 = spanVector2;
 			Normal = Vector3.Cross(spanVector1, spanVector2);
+			
+			Normal.Normalize();
 		}
 		public PlaneCollision(GameObject parent, Vector3 origin, Vector3 spanVector1, Vector3 spanVector2, Vector3 normal) : this(parent, origin, spanVector1, spanVector2)
 		{
 			Normal = normal;
+
+			Normal.Normalize();
 		}
 	}
 }
