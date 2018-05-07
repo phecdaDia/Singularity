@@ -30,7 +30,7 @@ namespace Singularity.Code
 		public List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
         private List<Func<GameTime, Texture2D, ScreenEffectData>> _removalList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
-		public SingularityGame()
+		public SingularityGame() : base()
 		{
 			this.SceneManager = new SceneManager();
 			this.ModelManager = new ModelManager(Content);
@@ -45,7 +45,7 @@ namespace Singularity.Code
 			Content.RootDirectory = "Content";
 		}
 
-	    public SingularityGame(int width, int height) : base()
+	    public SingularityGame(int width, int height) : this()
 	    {
 	        GraphicsDeviceManager.PreferredBackBufferHeight = height;
 	        GraphicsDeviceManager.PreferredBackBufferWidth = width;
