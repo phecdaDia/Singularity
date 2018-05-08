@@ -11,11 +11,8 @@ namespace Singularity.Collisions.CollisionTypes
 
 			if (SphereOnPlaneCollision.GetCollision(collidableA, collidableB, out position, out normal, out scale1, out scale2))
 			{
-				//Console.WriteLine($"COLL {scale1}, {scale2}");
 				return collidableB.Restriction(scale1, scale2);
 			}
-
-			//Console.WriteLine($"NCOL {scale1}, {scale2}");
 
 			return false;
 

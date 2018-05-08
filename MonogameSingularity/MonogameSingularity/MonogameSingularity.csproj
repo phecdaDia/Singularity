@@ -43,10 +43,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Code\Collisions\BoundEdgeCollision.cs" />
     <Compile Include="Code\Collisions\BoundPlaneCollision.cs" />
     <Compile Include="Code\Collisions\Collision.cs" />
     <Compile Include="Code\Collisions\CollisionManager.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnBoundPlaneCollision.cs" />
+    <Compile Include="Code\Collisions\CollisionTypes\SphereOnBoundEdgeCollision.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnEdgeCollision.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnPlaneCollision.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnSphereCollision.cs" />
