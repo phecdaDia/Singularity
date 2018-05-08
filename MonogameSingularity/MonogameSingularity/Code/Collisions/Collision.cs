@@ -17,7 +17,7 @@ namespace Singularity.Collisions
 			this.Parent = parent;
 		}
 
-		public Boolean DoesCollide(Collision collidable, out Vector3 position, out Vector3 normal)
+		public virtual Boolean DoesCollide(Collision collidable, out Vector3 position, out Vector3 normal)
 		{
 			return CollisionManager.DoesCollide(this, collidable, out position, out normal);
 		}

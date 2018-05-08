@@ -28,9 +28,9 @@ namespace Singularity.Collisions.CollisionTypes
 			return GetCollision(collidableA, collidableB, out position, out normal, out var f1, out var f2);
 		}
 
-		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(SphereCollision collider, BoundPlaneCollision collidable, Vector3 position, Vector3 normal)
 		{
-			return position + normal * ((SphereCollision)collider.Collision).Radius;
+			return position + normal * collider.Radius;
 		}
 	}
 }

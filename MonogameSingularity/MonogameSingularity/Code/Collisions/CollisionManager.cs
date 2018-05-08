@@ -6,7 +6,10 @@ namespace Singularity.Collisions
 {
 	public static class CollisionManager
 	{
-		public static Boolean DoesCollide<T, U>(T collidableA, U collidableB, out Vector3 position, out Vector3 normal)
+		public static Boolean DoesCollide<T, U>(T collidableA, U collidableB, out Vector3 position, out Vector3 normal,
+			Action<Collision, Collision, Vector3, Vector3> callback = null)
+			where T : Collision
+			where U : Collision
 		{
 			// default values for no collision
 			position = new Vector3();
@@ -24,30 +27,79 @@ namespace Singularity.Collisions
 			var planeCollision = typeof(PlaneCollision);
 			var boundPlaneCollision = typeof(BoundPlaneCollision);
 
+			var multiCollision = typeof(MultiCollision);
+
 			if (typeA == sphereCollision && typeB == sphereCollision)
-				return SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision, out position, out normal);
+			{
+				if (!SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision,
+					out position, out normal)) return false;
+
+				callback?.Invoke(collidableA, collidableB, position, normal);
+				return true;
+			}
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			else if (typeA == sphereCollision && typeB == planeCollision)
-				return SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision, out position, out normal);
+			{
+				if (!SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision,
+					out position, out normal)) return false;
+
+				callback?.Invoke(collidableA, collidableB, position, normal);
+				return true;
+			}
 			else if (typeA == planeCollision && typeB == sphereCollision)
-				return SphereOnPlaneCollision.GetCollision(collidableB as SphereCollision, collidableA as PlaneCollision, out position, out normal);
+				return DoesCollide(collidableB, collidableA, out position, out normal);
+			
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			else if (typeA == sphereCollision && typeB == boundPlaneCollision)
-				return SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision, out position, out normal);
+			{
+				if (!SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision,
+					out position, out normal)) return false;
+				
+				callback?.Invoke(collidableA, collidableB, position, normal);
+				return true;
+			}
 			else if (typeA == boundPlaneCollision && typeB == sphereCollision)
-				return SphereOnBoundPlaneCollision.GetCollision(collidableB as SphereCollision, collidableA as BoundPlaneCollision, out position, out normal);
+				return DoesCollide(collidableB, collidableA, out position, out normal);
+			
 
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			else if (typeB == multiCollision || typeB.IsSubclassOf(multiCollision))
+			{
+				var didCollide = false;
+				foreach (var coll in (collidableB as MultiCollision).GetCollidables())
+				{
+					if (!DoesCollide(collidableA, coll, out position, out normal)) continue;
+					
+					if (callback == null) return true;
+
+					callback(collidableA, coll, position, normal);
+					didCollide = true;
+				}
+
+				return didCollide;
+			}
+				
+			else if (typeA == multiCollision || typeA.IsSubclassOf(multiCollision))
+				return DoesCollide(collidableB, collidableA, out position, out normal, callback);
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			return false;
 		}
 
-		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision<T, U>(T collider, U collidable, Vector3 position, Vector3 normal)
+			where T : Collision
+			where U : Collision
 		{
 			// check for the different types.
 			// the normal vector should ALWAYS be from collidableA to collidableB
 
-			var typeA = collider.Collision.GetType();
-			var typeB = collidable.Collision.GetType();
+			var typeA = collider.GetType();
+			var typeB = collidable.GetType();
 
 			// get the different collision types.
 			var sphereCollision = typeof(SphereCollision);
@@ -55,13 +107,13 @@ namespace Singularity.Collisions
 			var boundPlaneCollision = typeof(BoundPlaneCollision);
 
 			if (typeA == sphereCollision && typeB == sphereCollision)
-				return SphereOnSphereCollision.HandleCollision(collider, collidable, position, normal);
+				return SphereOnSphereCollision.HandleCollision(collider as SphereCollision, collidable as SphereCollision, position, normal);
 
 			else if (typeA == sphereCollision && typeB == planeCollision)
-				return SphereOnPlaneCollision.HandleCollision(collider, collidable, position, normal);
+				return SphereOnPlaneCollision.HandleCollision(collider as SphereCollision, collidable as PlaneCollision, position, normal);
 
 			else if (typeA == sphereCollision && typeB == boundPlaneCollision)
-				return SphereOnBoundPlaneCollision.HandleCollision(collider, collidable, position, normal);
+				return SphereOnBoundPlaneCollision.HandleCollision(collider as SphereCollision, collidable as BoundPlaneCollision, position, normal);
 
 
 

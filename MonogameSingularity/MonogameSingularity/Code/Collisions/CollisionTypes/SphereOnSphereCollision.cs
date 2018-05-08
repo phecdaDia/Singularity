@@ -32,9 +32,9 @@ namespace Singularity.Collisions.CollisionTypes
 			return true;
 		}
 
-		public static Vector3 HandleCollision(GameObject collider, GameObject collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(SphereCollision collider, SphereCollision collidable, Vector3 position, Vector3 normal)
 		{
-			return position + normal * ((SphereCollision) collider.Collision).Radius;
+			return position + normal * collider.Radius;
 		}
 	}
 }

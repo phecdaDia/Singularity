@@ -198,15 +198,15 @@ namespace Singularity
 				foreach (var go in colliders)
 				{
 
-					if (CollisionManager.DoesCollide(gameObject.Collision, go.Collision, out var position, out var normal))
+					CollisionManager.DoesCollide(gameObject.Collision, go.Collision, out var position, out var normal,
+					(collider, collidable, pos, nor) =>
 					{
-						gameObject.SetPosition(CollisionManager.HandleCollision(gameObject, go, position, normal));
+						Console.WriteLine("Collision");
+						gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 						DidCollide = true;
-					}
+					});
 
 				}
-
-
 
 			} while (DidCollide);
 
