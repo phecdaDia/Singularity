@@ -14,10 +14,14 @@ namespace Singularity.Code.Collisions
 
 		public Vector3 SpanVector { get; private set; }
 
-		public EdgeCollision(GameObject parent, Vector3 origin, Vector3 spanVector) : base(parent)
+		public float Distance { get; private set; }
+
+		public EdgeCollision(GameObject parent, Vector3 origin, Vector3 spanVector, float distance = 0.0f) : base(parent)
 		{
 			this.Origin = origin;
 			this.SpanVector = spanVector;
+			this.Distance = distance;
+
 		}
 	}
 }

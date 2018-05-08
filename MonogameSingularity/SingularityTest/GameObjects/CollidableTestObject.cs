@@ -18,9 +18,17 @@ namespace SingularityTest.GameObjects
 		public CollidableTestObject()
 		{
 
-			this.SetModel("cubes/cube1");
-			this.SetCollision(new BoxCollision(this, new Vector3(-0.5f, -0.5f, -0.5f), new Vector3(0.5f, 0.5f, 0.5f)));
-			this.AddScript((scene, go, time) => AddRotation(new Vector3(0.4f, 0.6f, 1f) * (float) time.ElapsedGameTime.TotalSeconds));
+			this.SetModel("cylinders/cylinder3");
+			this.SetScale(1f, 1, 1f);
+			this.SetCollision(
+				new MultiCollision(this,
+					new BoundEdgeCollision(this, new Vector3(0, -0.5f, 0), new Vector3(0, 1, 0), 1.0f, (scale, distance) => 0 <= scale && scale <= 1),
+					new BoundPlaneCollision(this, new Vector3(0, 0.5f, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), (f1, f2) => Math.Abs(f1) + Math.Abs(f2) <= 1),
+					new BoundPlaneCollision(this, new Vector3(0, -0.5f, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), (f1, f2) => Math.Abs(f1) + Math.Abs(f2) <= 1)
+
+				)
+			);
+			//this.AddScript((scene, go, time) => AddRotation(new Vector3(0.4f, 0.6f, 1f) * (float) time.ElapsedGameTime.TotalSeconds));
 		}
 	}
 }

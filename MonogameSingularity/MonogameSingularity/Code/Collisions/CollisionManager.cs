@@ -8,14 +8,25 @@ namespace Singularity.Collisions
 {
 	public static class CollisionManager
 	{
-		public static Boolean DoesCollide<T, U>(T collidableA, U collidableB, out Vector3 position, out Vector3 normal,
-			Action<Collision, Collision, Vector3, Vector3> callback = null)
+		#region Collision Types
+		private static readonly Type SphereCollision = typeof(SphereCollision);
+		private static readonly Type PlaneCollision = typeof(PlaneCollision);
+		private static readonly Type BoundPlaneCollision = typeof(BoundPlaneCollision);
+		private static readonly Type EdgeCollision = typeof(EdgeCollision);
+		private static readonly Type BoundEdgeCollision = typeof(BoundEdgeCollision);
+
+		private static readonly Type MultiCollision = typeof(MultiCollision);
+		#endregion
+
+
+		public static Boolean DoesCollide<T, U>(T collidableA, U collidableB, 
+			Action<Collision, Collision, Vector3, Vector3> callback = null, Boolean invertNormal = false)
 			where T : Collision
 			where U : Collision
 		{
 			// default values for no collision
-			position = new Vector3();
-			normal = new Vector3(); // normal Vector of (0,0,0) should not be possible
+			var position = new Vector3();
+			var normal = new Vector3(); // normal Vector of (0,0,0) should not be possible
 
 
 			// check for the different types.
@@ -24,100 +35,110 @@ namespace Singularity.Collisions
 			var typeA = collidableA.GetType();
 			var typeB = collidableB.GetType();
 
-			// get the different collision types.
-			var sphereCollision = typeof(SphereCollision);
-			var planeCollision = typeof(PlaneCollision);
-			var boundPlaneCollision = typeof(BoundPlaneCollision);
-			var edgeCollision = typeof(EdgeCollision);
-			var boundEdgeCollision = typeof(BoundEdgeCollision);
 
-			var multiCollision = typeof(MultiCollision);
+			#region Sphere On Collision
 
-			if (typeA == sphereCollision && typeB == sphereCollision)
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Sphere Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			if (typeA == SphereCollision && typeB == SphereCollision)
 			{
 				if (!SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision,
 					out position, out normal)) return false;
 
+				if (invertNormal) normal = -normal;
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Plane Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeA == sphereCollision && typeB == planeCollision)
+			else if (typeA == SphereCollision && typeB == PlaneCollision)
 			{
 				if (!SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision,
 					out position, out normal)) return false;
 
+				if (invertNormal) normal = -normal;
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeA == planeCollision && typeB == sphereCollision)
-				return DoesCollide(collidableB, collidableA, out position, out normal);
+			else if (typeA == PlaneCollision && typeB == SphereCollision)
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Bound Plane Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeA == sphereCollision && typeB == boundPlaneCollision)
+			else if (typeA == SphereCollision && typeB == BoundPlaneCollision)
 			{
 				if (!SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision,
 					out position, out normal)) return false;
 
+				if (invertNormal) normal = -normal;
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeA == boundPlaneCollision && typeB == sphereCollision)
-				return DoesCollide(collidableB, collidableA, out position, out normal);
+			else if (typeA == BoundPlaneCollision && typeB == SphereCollision)
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Edge Collision
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-			else if (typeA == sphereCollision && typeB == edgeCollision)
+			else if (typeA == SphereCollision && typeB == EdgeCollision)
 			{
 				if (!SphereOnEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as EdgeCollision,
 					out position, out normal)) return false;
 
+				if (invertNormal) normal = -normal;
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeA == edgeCollision && typeB == sphereCollision)
-				return DoesCollide(collidableB, collidableA, out position, out normal);
+			else if (typeA == EdgeCollision && typeB == SphereCollision)
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Bound Edge Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-			else if (typeA == sphereCollision && typeB == boundEdgeCollision)
+			else if (typeA == SphereCollision && typeB == BoundEdgeCollision)
 			{
 				if (!SphereOnBoundEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundEdgeCollision,
 					out position, out normal)) return false;
 
+				if (invertNormal) normal = -normal;
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeA == boundEdgeCollision && typeB == sphereCollision)
-				return DoesCollide(collidableB, collidableA, out position, out normal);
+			else if (typeA == BoundEdgeCollision && typeB == SphereCollision)
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+
+			#endregion
 
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Multiple collision handlers Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeB == multiCollision || typeB.IsSubclassOf(multiCollision))
+			else if (typeB == MultiCollision || typeB.IsSubclassOf(MultiCollision))
 			{
 				var didCollide = false;
 				foreach (var coll in (collidableB as MultiCollision).GetCollidables())
 				{
-					if (!DoesCollide(collidableA, coll, out position, out normal)) continue;
-					
-					if (callback == null) return true;
-
-					callback(collidableA, coll, position, normal);
-					didCollide = true;
+					if (DoesCollide(collidableA, coll, callback, invertNormal)) didCollide = true;
 				}
 
 				return didCollide;
 			}
 				
-			else if (typeA == multiCollision || typeA.IsSubclassOf(multiCollision))
-				return DoesCollide(collidableB, collidableA, out position, out normal, callback);
+			else if (typeA == MultiCollision || typeA.IsSubclassOf(MultiCollision))
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,26 +155,19 @@ namespace Singularity.Collisions
 			var typeA = collider.GetType();
 			var typeB = collidable.GetType();
 
-			// get the different collision types.
-			var sphereCollision = typeof(SphereCollision);
-			var planeCollision = typeof(PlaneCollision);
-			var boundPlaneCollision = typeof(BoundPlaneCollision);
-			var edgeCollision = typeof(EdgeCollision);
-			var boundEdgeCollision = typeof(BoundEdgeCollision);
-
-			if (typeA == sphereCollision && typeB == sphereCollision)
+			if (typeA == SphereCollision && typeB == SphereCollision)
 				return SphereOnSphereCollision.HandleCollision(collider as SphereCollision, collidable as SphereCollision, position, normal);
 
-			else if (typeA == sphereCollision && typeB == planeCollision)
+			else if (typeA == SphereCollision && typeB == PlaneCollision)
 				return SphereOnPlaneCollision.HandleCollision(collider as SphereCollision, collidable as PlaneCollision, position, normal);
 
-			else if (typeA == sphereCollision && typeB == boundPlaneCollision)
+			else if (typeA == SphereCollision && typeB == BoundPlaneCollision)
 				return SphereOnBoundPlaneCollision.HandleCollision(collider as SphereCollision, collidable as BoundPlaneCollision, position, normal);
 
-			else if (typeA == sphereCollision && typeB == edgeCollision)
+			else if (typeA == SphereCollision && typeB == EdgeCollision)
 				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
 
-			else if (typeA == sphereCollision && typeB == boundEdgeCollision)
+			else if (typeA == SphereCollision && typeB == BoundEdgeCollision)
 				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
 
 

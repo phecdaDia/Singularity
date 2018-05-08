@@ -9,15 +9,15 @@ using Singularity.Collisions.CollisionTypes;
 
 namespace Singularity.Code.Collisions.CollisionTypes
 {
-	public class SphereOnBoundEdgeCollision
+	public static class SphereOnBoundEdgeCollision
 	{
 		public static Boolean GetCollision(SphereCollision collidableA, BoundEdgeCollision collidableB, out Vector3 position,
-			out Vector3 normal, out float scale)
+			out Vector3 normal, out float scale, out float distance)
 		{
 
-			if (SphereOnEdgeCollision.GetCollision(collidableA, collidableB, out position, out normal, out scale))
+			if (SphereOnEdgeCollision.GetCollision(collidableA, collidableB, out position, out normal, out scale, out distance))
 			{
-				return collidableB.Restriction(scale);
+				return collidableB.Restriction(scale, distance);
 			}
 
 			return false;
@@ -28,7 +28,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 		public static Boolean GetCollision(SphereCollision collidableA, BoundEdgeCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
-			return GetCollision(collidableA, collidableB, out position, out normal, out var f1);
+			return GetCollision(collidableA, collidableB, out position, out normal, out var f1, out var f2);
 		}
 
 		public static Vector3 HandleCollision(SphereCollision collider, EdgeCollision collidable, Vector3 position, Vector3 normal)

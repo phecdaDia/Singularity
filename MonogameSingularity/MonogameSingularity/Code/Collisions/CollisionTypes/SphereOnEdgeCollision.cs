@@ -8,10 +8,10 @@ using Singularity.Collisions;
 
 namespace Singularity.Code.Collisions.CollisionTypes
 {
-	public class SphereOnEdgeCollision
+	public static class SphereOnEdgeCollision
 	{
 		public static Boolean GetCollision(SphereCollision collidableA, EdgeCollision collidableB, out Vector3 position,
-			out Vector3 normal, out float scale)
+			out Vector3 normal, out float scale, out float distance)
 		{
 
 			// transformation matrix 1
@@ -29,18 +29,20 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			normal = pos - position;
 			normal.Normalize();
 
-			return (pos - position).Length() < collidableA.Radius;
+			distance = (pos - position).Length();
+
+			return distance < collidableB.Distance + collidableA.Radius;
 		}
 
 		public static Boolean GetCollision(SphereCollision collidableA, EdgeCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
-			return GetCollision(collidableA, collidableB, out position, out normal, out var f1);
+			return GetCollision(collidableA, collidableB, out position, out normal, out var f1, out var f2);
 		}
 
 		public static Vector3 HandleCollision(SphereCollision collider, EdgeCollision collidable, Vector3 position, Vector3 normal)
 		{
-			return position + normal * collider.Radius;
+			return position + normal * (collidable.Distance + collider.Radius);
 		}
 	}
 }
