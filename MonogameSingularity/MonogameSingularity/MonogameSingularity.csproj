@@ -47,8 +47,10 @@
     <Compile Include="Code\Collisions\Collision.cs" />
     <Compile Include="Code\Collisions\CollisionManager.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnBoundPlaneCollision.cs" />
+    <Compile Include="Code\Collisions\CollisionTypes\SphereOnEdgeCollision.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnPlaneCollision.cs" />
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnSphereCollision.cs" />
+    <Compile Include="Code\Collisions\EdgeCollision.cs" />
     <Compile Include="Code\Collisions\MultiCollision.cs" />
     <Compile Include="Code\Collisions\PlaneCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
