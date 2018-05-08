@@ -23,7 +23,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 			scale = (sv.X * (pos.X - origin.X) + sv.Y * (pos.Y - origin.Y) + sv.Z * (pos.Z - origin.Z)) /
 			        (sv.X * sv.X + sv.Y * sv.Y + sv.Z * sv.Z);
 
-			Console.WriteLine($"{scale}");
+			//Console.WriteLine($"{scale}");
 
 			position = origin + scale * sv;
 			normal = pos - position;

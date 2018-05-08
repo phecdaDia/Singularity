@@ -54,6 +54,7 @@
     <Compile Include="Code\Collisions\CollisionTypes\SphereOnSphereCollision.cs" />
     <Compile Include="Code\Collisions\EdgeCollision.cs" />
     <Compile Include="Code\Collisions\MultiCollision.cs" />
+    <Compile Include="Code\Collisions\Multi\BoxCollision.cs" />
     <Compile Include="Code\Collisions\PlaneCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\GameObject.cs" />

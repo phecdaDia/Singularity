@@ -40,8 +40,14 @@ namespace SingularityTest.Scenes
                     Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
                 if(KeyboardManager.IsKeyPressed(Keys.C))
                     Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-			}).AddChild(new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
-				.AddChild(new ModelObject("cubes/cube1").SetPosition(5, 0, 0))));
+			})
+				//.AddChild(
+				//	new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
+				//	.AddChild(
+				//		new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
+				//	)
+				//)
+			);
 
 
 			//AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));

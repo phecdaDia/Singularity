@@ -187,7 +187,7 @@ namespace Singularity
 				{
 					//Console.WriteLine($"Could not fix collision!");
 					// couldn't escape collision after n tries. Escaping to a safe position
-					gameObject.SetPosition(safePosition);
+					//gameObject.SetPosition(safePosition);
 					return;
 
 				}
@@ -201,7 +201,7 @@ namespace Singularity
 					CollisionManager.DoesCollide(gameObject.Collision, go.Collision, out var position, out var normal,
 					(collider, collidable, pos, nor) =>
 					{
-						Console.WriteLine("Collision");
+						//Console.WriteLine("Collision");
 						gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 						DidCollide = true;
 					});
