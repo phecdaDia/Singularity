@@ -24,8 +24,8 @@ namespace Singularity
 	    protected RenderTarget2D RenderTarget;
 		private RenderTarget2D _tempRenderTarget;
 		private Texture2D _lastFrame;
-		public List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
-        private List<Func<GameTime, Texture2D, ScreenEffectData>> _removalList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
+		public readonly List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
+        private readonly List<Func<GameTime, Texture2D, ScreenEffectData>> _removalList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
 		public SingularityGame() : base()
 		{
@@ -54,8 +54,8 @@ namespace Singularity
 		/// </summary>
 	    protected override void Initialize()
 	    {
-            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
-            _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.DiscardContents);
+            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
+            _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
 			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 			base.Initialize();
 	    }
