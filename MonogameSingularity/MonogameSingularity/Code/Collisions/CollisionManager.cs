@@ -14,6 +14,7 @@ namespace Singularity.Collisions
 		private static readonly Type BoundPlaneCollision = typeof(BoundPlaneCollision);
 		private static readonly Type EdgeCollision = typeof(EdgeCollision);
 		private static readonly Type BoundEdgeCollision = typeof(BoundEdgeCollision);
+		private static readonly Type RingCollision = typeof(RingCollision);
 
 		private static readonly Type MultiCollision = typeof(MultiCollision);
 		#endregion
@@ -119,6 +120,24 @@ namespace Singularity.Collisions
 			else if (typeA == BoundEdgeCollision && typeB == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Sphere on Ring Collision
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+			else if (typeA == SphereCollision && typeB == RingCollision)
+			{
+				if (!SphereOnRingCollision.GetCollision(collidableA as SphereCollision, collidableB as RingCollision,
+					out position, out normal)) return false;
+
+				if (invertNormal) normal = -normal;
+				callback?.Invoke(collidableA, collidableB, position, normal);
+				return true;
+			}
+			else if (typeA == RingCollision && typeB == SphereCollision)
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+
 			#endregion
 
 
@@ -169,6 +188,9 @@ namespace Singularity.Collisions
 
 			else if (typeA == SphereCollision && typeB == BoundEdgeCollision)
 				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
+
+			else if (typeA == SphereCollision && typeB == RingCollision)
+				return SphereOnRingCollision.HandleCollision(collider as SphereCollision, collidable as RingCollision, position, normal);
 
 
 
