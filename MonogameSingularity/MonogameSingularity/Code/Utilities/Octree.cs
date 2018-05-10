@@ -166,7 +166,7 @@ namespace Singularity.Utilities
 			{
 				// removed object, we can return.
 				return true;
-			} 
+			}
 
 			// it's not in this part, get the children.
 
@@ -174,6 +174,8 @@ namespace Singularity.Utilities
 			if (this.Children == null) return false;
 
 			var id = this.GetQuadrantNumber(position);
+
+			if (this.Children[id] == null) return false;
 			return this.Children[id].RemoveObject(obj, position);
 		}
 
