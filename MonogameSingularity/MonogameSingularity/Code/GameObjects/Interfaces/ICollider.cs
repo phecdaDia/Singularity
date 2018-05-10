@@ -1,5 +1,5 @@
 ﻿namespace Singularity.GameObjects.Interfaces
 {
-	interface ICollider
+	public interface ICollider
 	{}
 }
