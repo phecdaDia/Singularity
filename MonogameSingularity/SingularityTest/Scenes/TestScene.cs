@@ -68,6 +68,11 @@ namespace SingularityTest.Scenes
 				((scene, o, arg3) => o.AddRotation(0, (float) arg3.ElapsedGameTime.TotalSeconds, 0))
 			).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
+			// inertia test
+			AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
+
+
+
 			AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
 
 		}
