@@ -19,7 +19,7 @@ namespace Singularity.GameObjects
 
 			Mouse.SetPosition(200, 200); // capture the mouse
 
-			this.SetCollision(new SphereCollision(this, 0.25f));
+			this.SetCollision(new SphereCollision(0.25f));
 		}
 
 

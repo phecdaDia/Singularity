@@ -90,7 +90,7 @@ namespace Singularity
 			this.ModelRadius = rm;
 
 			if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
-				this.Collision = new SphereCollision(this);
+				this.Collision = new SphereCollision(this.ModelRadius);
 			return this;
 		}
 
@@ -383,6 +383,7 @@ namespace Singularity
 		public GameObject SetCollision(Collision collision)
 		{
 			this.Collision = collision;
+			this.Collision.SetParent(this);
 			return this;
 		}
 

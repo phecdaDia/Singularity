@@ -16,7 +16,7 @@ namespace Singularity.Code.Collisions
 
 		public float Distance { get; private set; }
 
-		public EdgeCollision(GameObject parent, Vector3 origin, Vector3 spanVector, float distance = 0.0f) : base(parent)
+		public EdgeCollision(Vector3 origin, Vector3 spanVector, float distance = 0.0f) : base()
 		{
 			this.Origin = origin;
 			this.SpanVector = spanVector;
