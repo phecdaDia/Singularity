@@ -63,8 +63,10 @@ namespace SingularityTest.Scenes
 		    }));
 
 
-			//AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
-			//AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
+			// orbiting object.
+			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+				((scene, o, arg3) => o.AddRotation(0, (float) arg3.ElapsedGameTime.TotalSeconds, 0))
+			).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
 			AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
 

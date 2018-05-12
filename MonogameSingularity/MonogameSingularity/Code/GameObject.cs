@@ -408,7 +408,7 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return this.Position + this.ParentObject.GetHierarchyPosition();
+			return Vector3.Transform(this.Position, this.ParentObject.GetRotationMatrix) + this.ParentObject.GetHierarchyPosition();
 		}
 
 		
