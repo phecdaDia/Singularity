@@ -8,14 +8,14 @@ namespace Singularity.GameObjects
 {
 	public class BasicCamera : GameObject, ICollider, ICameraController
 	{
-		private double horizontalRotation;	// rotation around the z axis
-		private double verticalRotation;	// rotation up and down
+		private double HorizontalRotation;	// rotation around the z axis
+		private double VerticalRotation;	// rotation up and down
 		public Boolean Is3DEnabled { get; private set; }
 
 		public BasicCamera() : base()
 		{
-			this.horizontalRotation = 0.0d;
-			this.verticalRotation = 0.0d;
+			this.HorizontalRotation = 0.0d;
+			this.VerticalRotation = 0.0d;
 
 			Mouse.SetPosition(200, 200); // capture the mouse
 
@@ -24,7 +24,7 @@ namespace Singularity.GameObjects
 
 
 		/// <summary>
-		/// Enables <see cref="verticalRotation"/>
+		/// Enables <see cref="VerticalRotation"/>
 		/// </summary>
 		/// <param name="enable"></param>
 		public void Set3DEnabled(Boolean enable)
@@ -42,26 +42,26 @@ namespace Singularity.GameObjects
 			var dx = mouseState.X - 200;
 			var dy = 200 - mouseState.Y;
 
-			this.horizontalRotation += dx / 100f;
+			this.HorizontalRotation += dx / 100f;
 
 			if (this.Is3DEnabled)
-				this.verticalRotation += dy / 100f;
+				this.VerticalRotation += dy / 100f;
 
 
 			Mouse.SetPosition(200, 200);
 
 			// Constraint rotation
 
-			if (horizontalRotation >= MathHelper.TwoPi) horizontalRotation -= MathHelper.TwoPi;
-			else if (horizontalRotation < 0f) horizontalRotation += MathHelper.TwoPi;
+			if (HorizontalRotation >= MathHelper.TwoPi) HorizontalRotation -= MathHelper.TwoPi;
+			else if (HorizontalRotation < 0f) HorizontalRotation += MathHelper.TwoPi;
 
-			if (verticalRotation > MathHelper.PiOver2)
-				verticalRotation = MathHelper.PiOver2;
-			else if (verticalRotation < -MathHelper.PiOver2)
-				verticalRotation = -MathHelper.PiOver2;
+			if (VerticalRotation > MathHelper.PiOver2)
+				VerticalRotation = MathHelper.PiOver2;
+			else if (VerticalRotation < -MathHelper.PiOver2)
+				VerticalRotation = -MathHelper.PiOver2;
 
 			// calculate forward vector
-			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Cos(HorizontalRotation), Is3DEnabled ? (float)Math.Sin(VerticalRotation) : 0f, (float)Math.Sin(HorizontalRotation));
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
@@ -105,7 +105,7 @@ namespace Singularity.GameObjects
 
 		public void SetCamera(GameScene scene)
 		{
-			Vector3 target = new Vector3((float)Math.Cos(horizontalRotation), Is3DEnabled ? (float)Math.Sin(verticalRotation) : 0f, (float)Math.Sin(horizontalRotation));
+			Vector3 target = new Vector3((float)Math.Cos(HorizontalRotation), Is3DEnabled ? (float)Math.Sin(VerticalRotation) : 0f, (float)Math.Sin(HorizontalRotation));
 
 			scene.SetCamera(this.Position, target);
 		}
