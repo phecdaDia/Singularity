@@ -12,7 +12,14 @@ namespace Singularity.Collisions
 
 		public GameObject Parent { get; private set; }
 
-		public Collision(GameObject parent)
+		public Collision(GameObject parent) : this()
+		{
+			this.Parent = parent;
+		}
+		public Collision()
+		{}
+
+		public virtual void SetParent(GameObject parent)
 		{
 			this.Parent = parent;
 		}

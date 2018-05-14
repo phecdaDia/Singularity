@@ -17,6 +17,7 @@ namespace Singularity
 		public Vector3 Position { get; private set; } // Current position of the model
 		public Vector3 Rotation { get; private set; } // Current rotation of the model
 		public Vector3 Scale { get; private set; } // Scale of the model
+		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
 
 		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
@@ -53,6 +54,7 @@ namespace Singularity
 			this.Position = new Vector3();
 			this.Rotation = new Vector3();
 			this.Scale = Vector3.One;
+			this.Inertia = new Vector3();
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
@@ -90,7 +92,7 @@ namespace Singularity
 			this.ModelRadius = rm;
 
 			if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
-				this.Collision = new SphereCollision(this);
+				this.Collision = new SphereCollision(this.ModelRadius);
 			return this;
 		}
 
@@ -383,10 +385,44 @@ namespace Singularity
 		public GameObject SetCollision(Collision collision)
 		{
 			this.Collision = collision;
+			this.Collision.SetParent(this);
 			return this;
 		}
 
 		#endregion
+
+		public GameObject SetInertia(float x, float y) => SetInertia(x, y, 0);
+
+		public GameObject SetInertia(float x, float y, float z) => SetInertia(new Vector3(x, y, z));
+
+		public GameObject SetInertia(Vector3 inertia)
+		{
+			if (!(this is IInertia))
+			{
+				// give out a warning, that inertia should not be used
+				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
+			}
+
+
+			this.Inertia = inertia;
+			return this;
+		}
+
+		public GameObject AddInertia(float x, float y) => AddInertia(x, y, 0);
+
+		public GameObject AddInertia(float x, float y, float z) => AddInertia(new Vector3(x, y, z));
+
+		public GameObject AddInertia(Vector3 inertia)
+		{
+			if (!(this is IInertia))
+			{
+				// give out a warning, that inertia should not be used
+				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
+			}
+
+			this.Inertia += inertia;
+			return this;
+		}
 
 		#endregion
 
@@ -407,7 +443,7 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return this.Position + this.ParentObject.GetHierarchyPosition();
+			return Vector3.Transform(this.Position, this.ParentObject.GetRotationMatrix) + this.ParentObject.GetHierarchyPosition();
 		}
 
 		
@@ -492,6 +528,10 @@ namespace Singularity
 			var position = this.GetHierarchyPosition();
 
 			Update(scene, gameTime);
+
+			// add inertia.
+			if (this is IInertia)
+				this.Position += this.Inertia * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
 			// execute scripts
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
@@ -594,7 +634,7 @@ namespace Singularity
 		//public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
 		//	OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
 
-		//public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) => 
+		//public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) =>
 		//	OnCollision?.Invoke(this, e);
 
 		#endregion

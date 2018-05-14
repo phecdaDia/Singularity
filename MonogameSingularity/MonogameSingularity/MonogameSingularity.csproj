@@ -68,6 +68,7 @@
     <Compile Include="Code\GameObjects\Interfaces\ICameraController.cs" />
     <Compile Include="Code\GameObjects\Interfaces\ICollidable.cs" />
     <Compile Include="Code\GameObjects\Interfaces\ICollider.cs" />
+    <Compile Include="Code\GameObjects\Interfaces\IInertia.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameObjects\SpriteObject.cs" />
     <Compile Include="Code\GameScene.cs" />

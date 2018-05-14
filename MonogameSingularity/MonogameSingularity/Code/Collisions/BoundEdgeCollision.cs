@@ -11,10 +11,10 @@ namespace Singularity.Code.Collisions
 	{
 		public Func<float, float, Boolean> Restriction { get; private set; }
 
-		public BoundEdgeCollision(GameObject parent, Vector3 origin, Vector3 spanVector, Func<float, float, Boolean> restriction) : this(parent, origin, spanVector, 0.0f, restriction)
+		public BoundEdgeCollision(Vector3 origin, Vector3 spanVector, Func<float, float, Boolean> restriction) : this(origin, spanVector, 0.0f, restriction)
 		{}
 
-		public BoundEdgeCollision(GameObject parent, Vector3 origin, Vector3 spanVector, float distance, Func<float, float, Boolean> restriction) : base(parent, origin, spanVector, distance)
+		public BoundEdgeCollision(Vector3 origin, Vector3 spanVector, float distance, Func<float, float, Boolean> restriction) : base(origin, spanVector, distance)
 		{
 			this.Restriction = restriction;
 		}

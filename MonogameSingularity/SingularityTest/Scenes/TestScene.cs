@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using Singularity.Code.Collisions.Multi;
 using Singularity.GameObjects;
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
@@ -40,18 +41,7 @@ namespace SingularityTest.Scenes
                     Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
                 if(KeyboardManager.IsKeyPressed(Keys.C))
                     Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-			})
-				//.AddChild(
-				//	new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
-				//	.AddChild(
-				//		new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
-				//	)
-				//)
-			);
-
-
-			//AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));
-			//AddObject(new CollidableModelObject("sphere").SetPosition(10, 1, 0).SetScale(2));
+			}));
 
 			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
 			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
@@ -73,10 +63,17 @@ namespace SingularityTest.Scenes
 		    }));
 
 
-			//AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
-			//AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
+			// orbiting object.
+			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+				((scene, o, arg3) => o.AddRotation(0, (float) arg3.ElapsedGameTime.TotalSeconds, 0))
+			).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
-			AddObject(new CollidableTestObject().SetPosition(10, 0, 0));
+			// inertia test
+			AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
+
+
+
+			AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
 
 		}
 
