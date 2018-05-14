@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Collisions;
@@ -32,23 +33,28 @@ namespace Singularity.GameObjects
 			this.Is3DEnabled = enable;
 		}
 
+		private int lx, ly = 200;
+
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
 			if (!scene.Game.IsActive) return;
 
-
-			// Capture Mouse
 			MouseState mouseState = Mouse.GetState();
-			var dx = mouseState.X - 200;
-			var dy = 200 - mouseState.Y;
+			// Capture Mouse
+			var dx = mouseState.X - lx;
+			var dy = ly - mouseState.Y;
 
 			this.HorizontalRotation += dx / 100f;
 
 			if (this.Is3DEnabled)
 				this.VerticalRotation += dy / 100f;
-
+			
 
 			Mouse.SetPosition(200, 200);
+
+			MouseState ms = Mouse.GetState();
+			lx = ms.X;
+			ly = ms.Y;
 
 			// Constraint rotation
 

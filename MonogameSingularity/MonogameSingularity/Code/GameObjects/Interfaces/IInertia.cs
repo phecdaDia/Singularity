@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Code.GameObjects.Interfaces
+namespace Singularity.GameObjects.Interfaces
 {
 	public interface IInertia
 	{
-		void SetInertia(Vector3 inertia);
-		Vector3 GetInertia();
 	}
 }

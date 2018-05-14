@@ -5,15 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Singularity;
-using Singularity.Code.GameObjects.Interfaces;
+using Singularity.GameObjects.Interfaces;
 
 namespace SingularityTest.GameObjects
 {
 	class InertiaTestObject : GameObject, IInertia
 	{
-		private Vector3 Inertia = new Vector3();
 
-		private Vector3 Gravity = new Vector3(0, -1, 0);
+		private readonly Vector3 Gravity = new Vector3(0, -1, 0);
 
 		public InertiaTestObject()
 		{
@@ -24,25 +23,15 @@ namespace SingularityTest.GameObjects
 		{
 			if (this.GetHierarchyPosition().Y <= 0)
 			{
-				this.Inertia.Y = -this.Inertia.Y * 0.99f;
+				this.SetInertia(this.Inertia.X, -this.Inertia.Y, this.Inertia.Z);
 
-				if (this.Inertia.Y <= 0.01f) this.Inertia.Y = 1.0f;
+				if (this.Inertia.Y <= 0.01f) this.SetInertia(this.Inertia.X, 0.5f, this.Inertia.Z);
 			}
 
 			// add gravity
-			this.Inertia += this.Gravity * (float) gameTime.ElapsedGameTime.TotalSeconds;
+			this.AddInertia(this.Gravity * (float) gameTime.ElapsedGameTime.TotalSeconds);
 
 			this.AddPosition(this.Inertia);
-		}
-
-		public void SetInertia(Vector3 inertia)
-		{
-			this.Inertia = inertia;
-		}
-
-		public Vector3 GetInertia()
-		{
-			return this.Inertia;
 		}
 	}
 }
