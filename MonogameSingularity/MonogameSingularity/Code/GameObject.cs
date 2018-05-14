@@ -391,6 +391,7 @@ namespace Singularity
 
 		#endregion
 
+		#region SetInertia
 		public GameObject SetInertia(float x, float y) => SetInertia(x, y, 0);
 
 		public GameObject SetInertia(float x, float y, float z) => SetInertia(new Vector3(x, y, z));
@@ -407,7 +408,9 @@ namespace Singularity
 			this.Inertia = inertia;
 			return this;
 		}
+		#endregion
 
+		#region AddInertia
 		public GameObject AddInertia(float x, float y) => AddInertia(x, y, 0);
 
 		public GameObject AddInertia(float x, float y, float z) => AddInertia(new Vector3(x, y, z));
@@ -423,6 +426,7 @@ namespace Singularity
 			this.Inertia += inertia;
 			return this;
 		}
+	#endregion
 
 		#endregion
 
