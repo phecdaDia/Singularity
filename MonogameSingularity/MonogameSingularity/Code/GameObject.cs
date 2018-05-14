@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Collisions;
 using Singularity.GameObjects.Interfaces;
@@ -426,7 +427,7 @@ namespace Singularity
 			this.Inertia += inertia;
 			return this;
 		}
-	#endregion
+		#endregion
 
 		#endregion
 
@@ -627,6 +628,9 @@ namespace Singularity
 			}
 
 		}
+
+		public virtual void LoadContent(ContentManager contentManager) { }
+		public virtual void UnloadContent() { }
 
 		#endregion
 

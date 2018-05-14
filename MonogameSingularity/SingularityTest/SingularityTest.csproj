@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="GameObjects\CollidableTestObject.cs" />
     <Compile Include="GameObjects\InertiaTestObject.cs" />
+    <Compile Include="GameObjects\TestSpriteObject.cs" />
     <Compile Include="Scenes\CollisionTestScene.cs" />
     <Compile Include="ScreenEffect\ColorScreenEffect.cs" />
     <Compile Include="ScreenEffect\ShakeScreenEffect.cs" />

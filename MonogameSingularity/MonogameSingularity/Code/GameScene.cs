@@ -51,6 +51,7 @@ namespace Singularity
 		/// </summary>
 		public void SetupScene()
 		{
+			UnloadContent();
 			// clear all current objects.
 			this.ColliderObjects.Clear();
 
@@ -77,6 +78,12 @@ namespace Singularity
 		{
 			this.ColliderObjects.RemoveObject(gameObject, previousPosition);
 			this.AddObject(gameObject);
+		}
+
+		public void RemoveObject(GameObject gameObject)
+		{
+			gameObject.UnloadContent();
+			this.ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 		}
 
 		/// <summary>
@@ -248,6 +255,23 @@ namespace Singularity
 		/// <param name="effect"></param>
 		public abstract void AddLightningToEffect(BasicEffect effect);
 
+		public virtual void LoadContent()
+		{
+			// load content
+			foreach (var obj in ColliderObjects.GetAllObjects())
+			{
+				obj.LoadContent(this.Game.Content);
+			}
+		}
+
+		public virtual void UnloadContent()
+		{
+			foreach (var obj in ColliderObjects.GetAllObjects())
+			{
+				obj.UnloadContent();
+			}
+		}
+
 
 		/// <summary>
 		/// Updates all <seealso cref="GameObject"/> and adds <see cref="BufferedObjects"/>
@@ -259,7 +283,11 @@ namespace Singularity
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects().ToArray()) obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
-			foreach (GameObject obj in BufferedObjects) this.AddObject(obj);
+			foreach (GameObject obj in BufferedObjects)
+			{
+				obj.LoadContent(this.Game.Content);
+				this.AddObject(obj);
+			}
 
 			// clear buffers
 			this.BufferedObjects.Clear();

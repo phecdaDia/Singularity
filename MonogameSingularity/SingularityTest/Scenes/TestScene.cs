@@ -71,7 +71,7 @@ namespace SingularityTest.Scenes
 			// inertia test
 			AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
 
-
+			AddObject(new TestSpriteObject().SetPosition(10, 10));
 
 			AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
 

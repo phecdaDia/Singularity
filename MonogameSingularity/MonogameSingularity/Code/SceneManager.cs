@@ -33,6 +33,7 @@ namespace Singularity
 		public void AddSceneToStack(GameScene scene)
 		{
 			scene.SetupScene();
+			scene.LoadContent();
 			this.SceneStack.Push(scene);
 		}
 
@@ -60,6 +61,9 @@ namespace Singularity
 		public void CloseScene()
 		{
 			GameScene scene = this.SceneStack.Pop();
+			scene.UnloadContent();
+
+			// unload content from the scene.
 			
 		}
 
