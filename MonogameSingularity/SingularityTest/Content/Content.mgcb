@@ -393,3 +393,10 @@
 /processorParam:TextureFormat=Compressed
 /build:testfont.spritefont
 
+#begin Shaders/ShadowMapsGenerate.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/processorParam:Defines=
+/build:Shaders/ShadowMapsGenerate.fx
+
