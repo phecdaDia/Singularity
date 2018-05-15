@@ -48,8 +48,8 @@ namespace Singularity.Collisions.CollisionTypes
 
 			Vector4 x = Vector4.Transform(b, L);
 
-			scale1 = x.X;
-			scale2 = x.Y;
+			scale1 = x.X / sv1.LengthSquared();
+			scale2 = x.Y / sv2.LengthSquared();
 			float t = x.Z;
 
 			position = origin + scale1 * sv1 + scale2 * sv2;

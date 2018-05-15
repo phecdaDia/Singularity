@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
 using Singularity.Code.Collisions.Multi;
+using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
@@ -49,7 +50,10 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 			
-			AddObject(new ModelObject("cubes/cube5").SetPosition(0, -9, 0).AddScript((scene, go, time) =>
+			AddObject(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
+				//.SetScale(0.5f, 0.5f, 0.5f)
+				.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8)))
+				.AddScript((scene, go, time) =>
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.K)) go.AddPosition(0, 0.05f, 0);
 				if (KeyboardManager.IsKeyPressed(Keys.L)) go.AddPosition(0, -0.05f, 0);
@@ -73,7 +77,7 @@ namespace SingularityTest.Scenes
 
 			AddObject(new TestSpriteObject().SetPosition(10, 10));
 
-			AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
+			//AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
 
 		}
 
