@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Code.Events;
 using Singularity.Collisions;
 using Singularity.GameObjects.Interfaces;
 
@@ -20,6 +23,8 @@ namespace Singularity
 		public Vector3 Scale { get; private set; } // Scale of the model
 		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
+
+		public Boolean EnablePushCollision { get; set; }
 
 		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
@@ -56,6 +61,7 @@ namespace Singularity
 			this.Rotation = new Vector3();
 			this.Scale = Vector3.One;
 			this.Inertia = new Vector3();
+			this.EnablePushCollision = true;
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
@@ -353,6 +359,18 @@ namespace Singularity
 
 		#endregion
 
+		#region AddCollisionEvent
+
+		public GameObject AddCollisionEvent(Action<GameObject, GameScene, Vector3, Vector3> collEvent)
+		{
+			Debug.Assert(collEvent != null, nameof(collEvent) + " != null");
+
+			this.OnCollisionEvent += (s, e) => collEvent(e.Collidable, e.Scene, e.Position, e.Normal);
+			return this;
+		}
+
+		#endregion
+
 		#region AddChild
 
 		/// <summary>
@@ -636,14 +654,13 @@ namespace Singularity
 
 		#region Events
 
-		// currently unused.
-		//protected event EventHandler<GameObjectCollisionEvent> OnCollision;
+		protected event EventHandler<CollisionEventArgs> OnCollisionEvent;
 
-		//public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
-		//	OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
+		public virtual void OnCollision(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal) =>
+			OnCollision(new CollisionEventArgs(position, normal, collidable, scene));
 
-		//public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) =>
-		//	OnCollision?.Invoke(this, e);
+		public virtual void OnCollision(CollisionEventArgs e) =>
+			OnCollisionEvent?.Invoke(this, e);
 
 		#endregion
 

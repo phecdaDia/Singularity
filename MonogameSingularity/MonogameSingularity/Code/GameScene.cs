@@ -190,7 +190,7 @@ namespace Singularity
 			do
 			{
 				DidCollide = false;
-				if (++collisionFixes >= 10)
+				if (++collisionFixes >= 2)
 				{
 					//Console.WriteLine($"Could not fix collision!");
 					// couldn't escape collision after n tries. Escaping to a safe position
@@ -209,7 +209,12 @@ namespace Singularity
 					(collider, collidable, pos, nor) =>
 					{
 						//Console.WriteLine("Collision");
-						gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+
+						if (gameObject.EnablePushCollision)
+							gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+						
+						gameObject.OnCollision(go, this, pos, nor);
+
 						DidCollide = true;
 					});
 
