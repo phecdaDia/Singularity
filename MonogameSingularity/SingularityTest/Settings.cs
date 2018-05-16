@@ -16,7 +16,7 @@ namespace SingularityTest
 		public static SettingsKey DownKey { get; private set; }
 		public static SettingsKey LeftKey { get; private set; }
 		public static SettingsKey RightKey { get; private set; }
-
+		public static SettingsKey ExitKey { get; private set; }
 
 		public override void SetDefaultSettings()
 		{
@@ -33,6 +33,9 @@ namespace SingularityTest
 			SettingsList.Add(RightKey.Name, RightKey);
 
 			SettingsList.Add("version", new SettingsString("version", "0.1"));
+
+			var ExitKey = new SettingsKey("exitKey", Keys.Escape);
+			SettingsList.Add(ExitKey.Name, ExitKey);
 		}
 
 		public override void ApplyQuickAccess()
@@ -41,6 +44,7 @@ namespace SingularityTest
 			DownKey = SettingsList["downKey"] as SettingsKey;
 			LeftKey = SettingsList["leftKey"] as SettingsKey;
 			RightKey = SettingsList["rightKey"] as SettingsKey;
+			ExitKey = SettingsList["exitKey"] as SettingsKey;
 		}
 
 		public override bool CheckForUserSettings()
