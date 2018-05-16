@@ -60,7 +60,7 @@ namespace SingularityTest.Scenes
 			//AddObject(new SpriteObject());
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 		    {
-                if(KeyboardManager.IsKeyPressed(Keys.Escape))
+                if(KeyboardManager.IsKeyPressed(Settings.ExitKey))
                     Game.Exit();
 		    }));
 
