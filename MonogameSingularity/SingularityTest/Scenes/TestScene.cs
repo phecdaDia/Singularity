@@ -49,18 +49,16 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
 			AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
-			
+
+			//AddObject(new TestBallObject().SetPosition(2, 3, 0));
+
 			AddObject(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
-				//.SetScale(0.5f, 0.5f, 0.5f)
+				//.SetRotation(0, 0, 0.4f)
 				.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8)))
-				.AddScript((scene, go, time) =>
-			{
-				if (KeyboardManager.IsKeyPressed(Keys.K)) go.AddPosition(0, 0.05f, 0);
-				if (KeyboardManager.IsKeyPressed(Keys.L)) go.AddPosition(0, -0.05f, 0);
-			}));
+			);
 
 			//AddObject(new SpriteObject());
-		    AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
+			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 		    {
                 if(KeyboardManager.IsKeyPressed(Keys.Escape))
                     Game.Exit();
@@ -73,7 +71,7 @@ namespace SingularityTest.Scenes
 			).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
 			// inertia test
-			AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
+			//AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
 
 			AddObject(new TestSpriteObject().SetPosition(10, 10));
 

@@ -67,6 +67,7 @@ namespace Singularity
 			this.ChildObjects = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
+			
 
 		}
 
