@@ -15,7 +15,7 @@ namespace Singularity
 		/// </summary>
 		public static readonly String SINGULARITY_VERSION = "v0.07";
 		
-		protected readonly SceneManager SceneManager;
+		protected SceneManager SceneManager { get; private set; }
 		protected readonly ModelManager ModelManager;
 
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
@@ -29,7 +29,6 @@ namespace Singularity
 
 		public SingularityGame() : base()
 		{
-			this.SceneManager = new SceneManager();
 			this.ModelManager = new ModelManager(Content);
 			ImageManager.SetContentManager(Content);
 
@@ -57,6 +56,9 @@ namespace Singularity
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
             _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
 			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+			
+		    this.SceneManager = new SceneManager();
+
 			base.Initialize();
 	    }
 

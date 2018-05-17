@@ -25,24 +25,38 @@ namespace SingularityTest.Scenes
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
-			{
-				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
+			// load the savegame
+			Savegame sg = Savegame.GetSavegame();
 
+			Mouse.SetPosition(200, 200);
 
-				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+			AddObject(new BasicCamera()
+				.SetCameraTarget(sg.IsValidSavegame ? sg.CameraTarget : new Vector3(-1, 0, 0))
+				.SetPosition(sg.IsValidSavegame ? sg.Position : new Vector3(0, 0, 10))
+				.AddScript((scene, obj, time) =>
+				{
+					// enable or disable 3d.
+					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
-				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnObject(new CollidableModelObject("unit-cube-small")
-					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
+					// some more movement options
+					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
 
-                if(KeyboardManager.IsKeyPressed(Keys.Y))
-                    Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.X))
-                    Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.C))
-                    Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-			}));
+					// screen effects
+
+					if(KeyboardManager.IsKeyPressed(Keys.Y))
+						Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
+					if(KeyboardManager.IsKeyPressed(Keys.X))
+						Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
+					if(KeyboardManager.IsKeyPressed(Keys.C))
+						Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+
+					// savegame stuff
+					sg.Position = obj.Position;
+					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
+
+				})
+			);
 
 			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
 			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
