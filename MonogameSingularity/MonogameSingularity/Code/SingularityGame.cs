@@ -15,7 +15,7 @@ namespace Singularity
 		/// </summary>
 		public static readonly String SINGULARITY_VERSION = "v0.07";
 		
-		public readonly SceneManager SceneManager;
+		public SceneManager SceneManager;
 
 		protected readonly ModelManager ModelManager;
 
