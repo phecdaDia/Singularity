@@ -1,47 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Singularity;
-using Singularity.Code.Collisions.Multi;
-using Singularity.Collisions.Multi;
-using Singularity.GameObjects;
+
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
 
+using Singularity;
+using Singularity.Collisions.Multi;
+using Singularity.GameObjects;
+
 namespace SingularityTest.Scenes
 {
-    public class TestScene : GameScene
-	{
-		public TestScene(SingularityGame game) : base(game, "test")
-		{
-			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 
+	public class ExScene : GameScene
+	{
+		public ExScene(SingularityGame game, string sceneKey, int sceneSize = 16, int minPartition = 2, float precision = 0) :
+			base(game, sceneKey, sceneSize, minPartition, precision)
+		{
 		}
 
 		protected override void AddGameObjects()
 		{
 			AddObject(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
+				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
 
-				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.Q))
+					obj.AddPosition(new Vector3(0, 1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
+				if (KeyboardManager.IsKeyDown(Keys.E))
+					obj.AddPosition(new Vector3(0, -1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
 
-				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnObject(new CollidableModelObject("unit-cube-small")
-					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
+				if (KeyboardManager.IsKeyDown(Keys.F2))
+					scene.SpawnObject(new CollidableModelObject("unit-cube-small")
+						.SetPosition(obj.Position + new Vector3(0, 0, -5)));
 
-                if(KeyboardManager.IsKeyPressed(Keys.Y))
-                    Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.X))
-                    Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.C))
-                    Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+				if (KeyboardManager.IsKeyPressed(Keys.Y))
+					Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
+				if (KeyboardManager.IsKeyPressed(Keys.X))
+					Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
+				if (KeyboardManager.IsKeyPressed(Keys.C))
+					Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 			}));
 
 			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
@@ -59,10 +60,10 @@ namespace SingularityTest.Scenes
 
 			//AddObject(new SpriteObject());
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
-		    {
-                if(KeyboardManager.IsKeyPressed(Keys.Escape))
-                    Game.Exit();
-		    }));
+			{
+				if (KeyboardManager.IsKeyPressed(Keys.Escape))
+					Game.Exit();
+			}));
 
 
 			// orbiting object.
@@ -76,15 +77,13 @@ namespace SingularityTest.Scenes
 			AddObject(new TestSpriteObject().SetPosition(10, 10));
 
 			//AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
-
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)
 		{
 			effect.DirectionalLight0.DiffuseColor = new Vector3(0.15f, 0.15f, 0.15f); // some diffuse light
-			effect.DirectionalLight0.Direction = new Vector3(1, -2, 1);  // 
+			effect.DirectionalLight0.Direction = new Vector3(1, -2, 1); // 
 			effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
-			//effect.AmbientLightColor = new Vector3(1f, 1f, 1f); // Add some overall ambient light.
 			effect.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.315f); // Add some overall ambient light.
 		}
 	}

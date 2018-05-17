@@ -6,7 +6,11 @@ using SingularityTest.Scenes;
 
 namespace SingularityTest
 {
-    /// <summary>
+	using System.Reflection;
+
+	using Singularity.Scripting;
+
+	/// <summary>
     /// This is the main type for your game.
     /// </summary>
     public class TestGame : SingularityGame
@@ -14,7 +18,7 @@ namespace SingularityTest
         public TestGame() : base()
         {
 	        this.IsMouseVisible = true;
-		}
+        }
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -37,7 +41,7 @@ namespace SingularityTest
 		{
 			base.LoadContent();
 
-			this.SceneManager.AddSceneToStack(new TestScene(this));
+			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, "testScene", @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly()));
 		}
 
         /// <summary>
