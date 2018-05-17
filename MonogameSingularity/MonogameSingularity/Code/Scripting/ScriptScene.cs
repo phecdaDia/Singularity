@@ -1,28 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using Singularity.GameObjects;
-using Singularity.Utilities;
 
 namespace Singularity.Scripting
 {
+	/// <summary>
+	/// Scene in which Script will be embedded
+	/// </summary>
 	public class ScriptScene : GameScene
 	{
+		private static int _instanceCounter = 0;
+
 		private ScriptingTemplate _script;
 		private string _pathToScript;
 		private Assembly _currentAssembly;
 		private Type _loadingScreen;
 
+		/* Takes Game, the compliled & instanciated script, the path to it, the running Assembly ([Name].exe) and typereference to Loadingscreen
+		 * Uses Settings in script to define the Scene
+		 * everything else is stored & the script initialted
+		 */
 		public ScriptScene(SingularityGame game, ScriptingTemplate script, string pathToScript, Assembly currentAssembly, Type loadingScreen) 
 			: base(game, 
-				sceneKey: string.IsNullOrEmpty(script.GetSettings().SceneKey) ? "ScriptedScene" : script.GetSettings().SceneKey, 
+				sceneKey: string.IsNullOrEmpty(script.GetSettings().SceneKey) ? "ScriptedScene" + (++_instanceCounter) : script.GetSettings().SceneKey, 
 				sceneSize: script.GetSettings().SceneSize?? 16, 
 				minPartition: script.GetSettings().MinPartition ?? 2,
 				precision: script.GetSettings().Precision ?? 0f)
@@ -36,6 +41,7 @@ namespace Singularity.Scripting
 
 		protected override void AddGameObjects()
 		{
+			//Reload script in Debug mode with O
 #if DEBUG
 			AddObject(new EmptyGameObject().AddScript((scene, obj, time) =>
 			{
@@ -46,6 +52,7 @@ namespace Singularity.Scripting
 				}
 			}));
 #endif
+			//Get all objects from script and use them
 			var gameObjects = new List<GameObject>();
 			_script.AddGameObjects(gameObjects);
 

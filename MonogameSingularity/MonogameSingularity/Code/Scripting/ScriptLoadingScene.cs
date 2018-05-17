@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
+
+using Singularity.GameObjects;
+
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.Scripting
 {
-	using System.Diagnostics;
-	using System.IO;
-	using System.Reflection;
-
-	using GameObjects;
-
-	using Microsoft.CodeAnalysis.CSharp.Scripting;
-	using Microsoft.CodeAnalysis.Scripting;
-	using Microsoft.Xna.Framework;
-	using Microsoft.Xna.Framework.Graphics;
-
-	using Utilities;
-
+	/// <summary>
+	/// Scene which loads Script
+	///</summary>
 	public class ScriptLoadingScene : GameScene
 	{
 		enum State
@@ -34,16 +31,27 @@ namespace Singularity.Scripting
 		private Type _loadingScreenType;
 		private LoadingScreenTemplate _loadingScreen;
 
-		public ScriptLoadingScene(SingularityGame game, string pathToLoadingScript, Assembly currentAssembly, Type loadingScreen) : base(game, "ScriptLoading")
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="game">reference to used SingularityGame</param>
+		/// <param name="pathToLoadingScript">Path to script - can be relative or absolut</param>
+		/// <param name="currentAssembly">Assembly from which this is called - Assembly.GetExecutingAssembly()</param>
+		/// <param name="loadingScreen">Type of Loadingscreen to use</param>
+		public ScriptLoadingScene(SingularityGame game, string pathToLoadingScript, Assembly currentAssembly,
+			Type loadingScreen) : base(game, "ScriptLoading")
 		{
-			if(loadingScreen == null || !loadingScreen.IsSubclassOf(typeof(LoadingScreenTemplate)))
+			//CHeck loadingScreen Type
+			if (loadingScreen == null || !loadingScreen.IsSubclassOf(typeof(LoadingScreenTemplate)))
 				throw new Exception("LoadingScreen null or not subclass of LoadingScreenTemplate");
 
+			//Store rest
 			_loadingScreenType = loadingScreen;
 			_state = State.Loading;
 			_scriptPath = pathToLoadingScript;
 			_curAssembly = currentAssembly;
 
+			//Activate Loading screen
 			_loadingScreen = (LoadingScreenTemplate) Activator.CreateInstance(loadingScreen);
 			_loadingScreen.Init(Game);
 
@@ -53,13 +61,22 @@ namespace Singularity.Scripting
 
 		public void RunScript()
 		{
-			if(!File.Exists(_scriptPath))
+			/* Check if script exists.
+			 * Read it
+			 * Load it with Roslyn - injecting mscorlib, Monogame.Framework, Singularity & Current Assembly
+			 * Compile it
+			 * get the type of the ScriptingTemplate in script
+			 * instanciate it
+			 * Tell main thread that finished
+			 */
+			if (!File.Exists(_scriptPath))
 				throw new Exception("Script does not exist");
 			var scriptCode = File.ReadAllText(_scriptPath);
 
 			var script = CSharpScript.Create(scriptCode, ScriptOptions.Default
-				.WithReferences(Assembly.GetCallingAssembly(), Assembly.GetExecutingAssembly(), Assembly.GetAssembly(typeof(Game)), _curAssembly)
-				);
+				.WithReferences(Assembly.GetCallingAssembly(), Assembly.GetExecutingAssembly(), Assembly.GetAssembly(typeof(Game)),
+					_curAssembly)
+			);
 			script.Compile();
 
 			var scriptType = (Type) script.RunAsync().Result.ReturnValue;
@@ -74,6 +91,7 @@ namespace Singularity.Scripting
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 			{
+				//CHeck if loading finished. if done -> close loading and open script-scene
 				if (this._state == State.Done)
 				{
 					Game.SceneManager.CloseScene();
@@ -81,7 +99,7 @@ namespace Singularity.Scripting
 				}
 			}));
 
-
+			//Apply GameObjects from LoadingScreen
 			var gameObjects = new List<GameObject>();
 			_loadingScreen.AddGameObjects(gameObjects);
 			foreach (var gameObject in gameObjects)

@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
 using Singularity;
-using Singularity.GameObjects;
 using Singularity.Scripting;
 
 using SingularityTest.GameObjects;
 
 namespace SingularityTest
 {
+	/// <summary>
+	/// Example Loading Screen -> just adds TestSpriteObject at 200, 200
+	/// </summary>
 	public class LoadingScreen : LoadingScreenTemplate
 	{
 		public override void AddGameObjects(List<GameObject> objectList)
