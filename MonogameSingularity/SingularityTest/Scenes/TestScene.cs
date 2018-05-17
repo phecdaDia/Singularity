@@ -60,8 +60,13 @@ namespace SingularityTest.Scenes
 			//AddObject(new SpriteObject());
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 		    {
+				/* Close Game with Settings.ExitKey
+				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
+				 */
                 if(KeyboardManager.IsKeyPressed(Settings.ExitKey))
                     Game.Exit();
+				if(KeyboardManager.IsKeyPressed(Keys.I))
+					SettingsManager.SetSetting("exitKey", Keys.P);
 		    }));
 
 

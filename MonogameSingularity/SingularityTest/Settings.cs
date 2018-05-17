@@ -14,39 +14,34 @@ namespace SingularityTest
 	public class Settings : SettingsTemplate
 	{
 		//"Quick Access" Properties
-		public static Keys UpKey { get; private set; }
-		public static Keys DownKey { get; private set; }
-		public static Keys LeftKey { get; private set; }
-		public static Keys RightKey { get; private set; }
-		public static Keys ExitKey { get; private set; }
+		public static SettingsObject<Keys> UpKey { get; private set; }
+		public static SettingsObject<Keys> DownKey { get; private set; }
+		public static SettingsObject<Keys> LeftKey { get; private set; }
+		public static SettingsObject<Keys> RightKey { get; private set; }
+		public static SettingsObject<Keys> ExitKey { get; private set; }
 
 		public override void SetDefaultSettings()
 		{
 			//Add all default Settings here
 			//Simple combination from string-identifier & Object to store
-			SettingsList.Add("upKey", Keys.W);
-			SettingsList.Add("downKey", Keys.S);
-			SettingsList.Add("leftKey", Keys.A);
-			SettingsList.Add("rightKey", Keys.D);
-			SettingsList.Add("version", "0.1");
-			SettingsList.Add("exitKey", Keys.Escape);
-
-			//Add the type of objects used above here
-			KnownTypes.Add(typeof(Keys));
-			KnownTypes.Add(typeof(string));
+			AddSetting("upKey", Keys.W);
+			AddSetting("downKey", Keys.S);
+			AddSetting("leftKey", Keys.A);
+			AddSetting("rightKey", Keys.D);
+			AddSetting("version", "0.1");
+			AddSetting("exitKey", Keys.Escape);
 		}
 
 		public override void SetQuickAccessProperties()
 		{
-			//Create QuickAccessProperties
+			//Create QuickAccessProperties - Are set as SettingsObject<T> so it doesn't need to be reapplied on Changing Settings
 			//Usable like Settings.RightKey
 			//Use this:
-			UpKey = SettingsManager.GetSetting<Keys>("upKey");
-			//Or this:
-			DownKey = (Keys) SettingsList["downKey"];
-			LeftKey = (Keys) SettingsList["leftKey"];
-			RightKey = (Keys) SettingsList["rightKey"];
-			ExitKey = (Keys) SettingsList["exitKey"];
+			UpKey = GetSetting<Keys>("upKey");
+			DownKey = GetSetting<Keys>("downKey");
+			LeftKey = GetSetting<Keys>("leftKey");
+			RightKey = GetSetting<Keys>("rightKey");
+			ExitKey = GetSetting<Keys>("exitKey");
 		}
 
 		public override bool CheckForUserSettings()

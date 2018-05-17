@@ -12,7 +12,7 @@ namespace Singularity.Utilities
 	public abstract class SettingsTemplate
 	{
 		public Dictionary<string, object> SettingsList = new Dictionary<string, object>();
-		public List<Type> KnownTypes = new List<Type>();
+		public List<Type> KnownTypes = new List<Type>() {typeof(Dictionary<string, object>)};
 
 		/// <summary>
 		/// Set all default Settings und put Types into KnownType-List
@@ -80,6 +80,92 @@ namespace Singularity.Utilities
 			{
 				return (T)serializer.ReadObject(stm);
 			}
+		}
+
+		/// <summary>
+		/// Create Setting of type T with specified name/identifier and given Value
+		/// </summary>
+		/// <typeparam name="T">type of setting</typeparam>
+		/// <param name="name">identifier/name of setting</param>
+		/// <param name="setting">value of Setting</param>
+		protected void AddSetting<T>(string name, T setting)
+		{
+			SettingsList.Add(name, new SettingsObject<T>(setting));
+			KnownTypes.Add(typeof(T));
+			KnownTypes.Add(typeof(SettingsObject<T>));
+		}
+
+		/// <summary>
+		/// Get named setting & Check for correct type
+		/// </summary>
+		/// <typeparam name="T">assumed type</typeparam>
+		/// <param name="name">name/identifier</param>
+		/// <returns></returns>
+		public SettingsObject<T> GetSetting<T>(string name)
+		{
+			if (SettingsList.ContainsKey(name))
+			{
+				if (SettingsList[name] is SettingsObject<T> data)
+				{
+					return data;
+				}
+				else throw new Exception("Setting not of specified type");
+			}
+			else throw new Exception("Named Setting not found");
+		}
+
+		/// <summary>
+		/// Change Value of an existing setting
+		/// </summary>
+		/// <typeparam name="T">assumed type</typeparam>
+		/// <param name="name">name/identifier</param>
+		/// <param name="setting">new setting value</param>
+		public void SetSetting<T>(string name, T setting)
+		{
+			if (SettingsList.ContainsKey(name))
+			{
+				if (SettingsList[name] is SettingsObject<T> data)
+				{
+					data.SetValue(setting);
+				}
+				else throw new Exception("Setting not of specified type");
+			}
+			else throw new Exception("Named Setting not found");
+		}
+	}
+
+	/// <summary>
+	/// Base object for all settings
+	/// </summary>
+	/// <typeparam name="T">type to be stored</typeparam>
+	public class SettingsObject<T>
+	{
+		public T Setting;
+
+		public SettingsObject() { }
+
+		public SettingsObject(T value)
+		{
+			Setting = value;
+		}
+
+		/// <summary>
+		/// Implicit Conversion of this SettingsObject to contained value for ease of use on QuickAccess
+		/// </summary>
+		/// <param name="obj"></param>
+		public static implicit operator T(SettingsObject<T> obj)
+		{
+			return obj.GetValue();
+		}
+
+		public void SetValue(T value)
+		{
+			Setting = value;
+		}
+
+		public T GetValue()
+		{
+			return Setting;
 		}
 	}
 }

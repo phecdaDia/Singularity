@@ -48,19 +48,9 @@ namespace Singularity
 		/// <returns>Setting if it exists and is same type as specified</returns>
 		public static T GetSetting<T>(string name)
 		{
-			//Check if SetUp
-			//Check if Exist & is assumed type
-			//Return
 			CheckSetUp();
 
-			if (_settings.SettingsList.TryGetValue(name, out var data))
-			{
-				if (data is T setting)
-					return setting;
-				throw new Exception("Setting not of specified type");
-			}
-
-			throw new Exception("Named Setting not found");
+			return _settings.GetSetting<T>(name);
 		}
 
 		/// <summary>
@@ -71,22 +61,9 @@ namespace Singularity
 		/// <param name="value"></param>
 		public static void SetSetting<T>(string name, T value)
 		{
-			//Check Setup
-			//Check if exists & is of Type
-			//Then set
 			CheckSetUp();
 
-			if(_settings.SettingsList.ContainsKey(name))
-			{
-				if (_settings.SettingsList[name] is T)
-				{
-					_settings.SettingsList[name] = value;
-				}
-				else throw new Exception("Setting not of specified type");
-			}
-			else throw new Exception("Named Setting not found");
-
-			_settings.SetQuickAccessProperties();
+			_settings.SetSetting(name, value);
 		}
 
 		/// <summary>
