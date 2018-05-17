@@ -17,6 +17,7 @@ namespace SingularityTest
         public TestGame() : base()
         {
 	        this.IsMouseVisible = true;
+			SettingsManager.SetUp<Settings>();
 		}
 
         /// <summary>

@@ -76,11 +76,13 @@
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
+    <Compile Include="Code\SettingsManager.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
     <Compile Include="Code\Utilities\XmlManager.cs" />
+    <Compile Include="Code\Utilities\SettingsTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\SingularityGame.cs" />
   </ItemGroup>
