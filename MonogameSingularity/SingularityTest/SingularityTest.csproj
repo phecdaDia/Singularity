@@ -50,10 +50,16 @@
     <Compile Include="GameObjects\CollidableTestObject.cs" />
     <Compile Include="GameObjects\TestBallObject.cs" />
     <Compile Include="GameObjects\TestSpriteObject.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="LoadingScreen.cs" />
     <Compile Include="Scenes\CollisionTestScene.cs" />
     <Compile Include="ScreenEffect\ColorScreenEffect.cs" />
     <Compile Include="ScreenEffect\ShakeScreenEffect.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="TestGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,6 +125,10 @@
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\TestScene.csx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

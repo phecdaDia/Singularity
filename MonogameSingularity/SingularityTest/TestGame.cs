@@ -18,10 +18,8 @@ namespace SingularityTest
         public TestGame() : base()
         {
 	        this.IsMouseVisible = true;
-	        IsFixedTimeStep = false;
-			GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
-			GraphicsDeviceManager.ApplyChanges();
-        }
+			SettingsManager.SetUp<Settings>();
+		}
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
