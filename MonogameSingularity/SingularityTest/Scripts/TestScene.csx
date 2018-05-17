@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,18 +9,27 @@ using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
 
 using Singularity;
+using Singularity.Scripting;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 
-public class TestSceneScript : Singularity.GameScene
+public class TestSceneScript : ScriptingTemplate
 {
-	public TestSceneScript(SingularityGame game) : base(game, "test")
+	private SceneSettings _settings;
+	public override void Init(SingularityGame game)
 	{
+		base.Init(game);
+		_settings = new SceneSettings {SceneKey = "TestScene"};
 	}
 
-	protected override void AddGameObjects()
+	public override SceneSettings GetSettings()
 	{
-		AddObject(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
+		return _settings;
+	}
+
+	public override void AddGameObjects(List<GameObject> objectList)
+	{
+		objectList.Add(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
 		{
 			if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
@@ -38,27 +48,26 @@ public class TestSceneScript : Singularity.GameScene
 				Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 		}));
 
-		AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
-		AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
-		AddObject(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
-		AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
-		AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
-		
-		AddObject(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
-			.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8)))
-		);
+		objectList.Add(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
+		objectList.Add(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
+		objectList.Add(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
+		objectList.Add(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
+		objectList.Add(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 
-		AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
+		objectList.Add(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
+			.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8))));
+
+		objectList.Add(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 		{
 			if (KeyboardManager.IsKeyPressed(Keys.Escape))
 				Game.Exit();
 		}));
 
-		AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+		objectList.Add(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
 			((scene, o, arg3) => o.AddRotation(0, (float)arg3.ElapsedGameTime.TotalSeconds, 0))
 		).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
-		AddObject(new TestSpriteObject().SetPosition(10, 10));
+		objectList.Add(new TestSpriteObject().SetPosition(10, 10));
 	}
 
 	public override void AddLightningToEffect(BasicEffect effect)

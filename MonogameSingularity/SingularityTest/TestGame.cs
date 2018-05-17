@@ -18,6 +18,9 @@ namespace SingularityTest
         public TestGame() : base()
         {
 	        this.IsMouseVisible = true;
+	        IsFixedTimeStep = false;
+			GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
+			GraphicsDeviceManager.ApplyChanges();
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace SingularityTest
 		{
 			base.LoadContent();
 
-			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, "testScene", @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly()));
+			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly()));
 		}
 
         /// <summary>

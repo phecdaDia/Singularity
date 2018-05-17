@@ -51,7 +51,6 @@
     <Compile Include="GameObjects\TestBallObject.cs" />
     <Compile Include="GameObjects\TestSpriteObject.cs" />
     <Compile Include="Scenes\CollisionTestScene.cs" />
-    <Compile Include="Scenes\ExScene.cs" />
     <Compile Include="ScreenEffect\ColorScreenEffect.cs" />
     <Compile Include="ScreenEffect\ShakeScreenEffect.cs" />
     <Compile Include="TestGame.cs" />

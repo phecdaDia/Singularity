@@ -32,25 +32,32 @@ namespace Singularity.Scripting
 		private Assembly _curAssembly;
 		private GameScene _newScene;
 
-		public ScriptLoadingScene(SingularityGame game, string sceneKey, string pathToLoadingScript, Assembly currentAssembly) : base(game, sceneKey)
+		public ScriptLoadingScene(SingularityGame game, string pathToLoadingScript, Assembly currentAssembly) : base(game, "ScriptLoading")
 		{
 			_state = State.Loading;
 			_scriptPath = pathToLoadingScript;
 			_curAssembly = currentAssembly;
+
+			//Load script async
 			Task.Run(new Action(RunScript));
 		}
 
 		public void RunScript()
 		{
-			var scriptText = File.ReadAllText(_scriptPath);
-			var script = CSharpScript.Create(scriptText, ScriptOptions.Default
+			if(!File.Exists(_scriptPath))
+				throw new Exception("Script does not exist");
+			var scriptCode = File.ReadAllText(_scriptPath);
+
+			var script = CSharpScript.Create(scriptCode, ScriptOptions.Default
 				.WithReferences(Assembly.GetCallingAssembly(), Assembly.GetExecutingAssembly(), Assembly.GetAssembly(typeof(Game)), _curAssembly)
 				);
 			script.Compile();
-			var testScene = (Type) script.RunAsync().Result.ReturnValue;
 
-			var scene = (GameScene) Activator.CreateInstance(testScene, args: Game);
-			_newScene = scene;
+			var scriptType = (Type) script.RunAsync().Result.ReturnValue;
+
+			var scriptScene = (ScriptingTemplate) Activator.CreateInstance(scriptType);
+
+			_newScene = new ScriptScene(Game, scriptScene);
 			_state = State.Done;
 		}
 
@@ -64,6 +71,8 @@ namespace Singularity.Scripting
 					Game.SceneManager.AddSceneToStack(_newScene);
 				}
 			}));
+
+			//TODO LoadingScreen
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)

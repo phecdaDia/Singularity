@@ -18,7 +18,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-	<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -81,7 +81,9 @@
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
+    <Compile Include="Code\Scripting\ScriptingTemplate.cs" />
     <Compile Include="Code\Scripting\ScriptLoadingScene.cs" />
+    <Compile Include="Code\Scripting\ScriptScene.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
