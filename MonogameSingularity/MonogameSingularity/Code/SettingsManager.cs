@@ -88,5 +88,26 @@ namespace Singularity
 
 			_settings.SetQuickAccessProperties();
 		}
+
+		/// <summary>
+		/// Save Settings as Specified in Settings-Class
+		/// </summary>
+		public static void SaveSetting()
+		{
+			CheckSetUp();
+
+			_settings.SaveUserSettings();
+		}
+
+		/// <summary>
+		/// Reload Settings
+		/// </summary>
+		public static void LoadSettings()
+		{
+			CheckSetUp();
+
+			_settings.LoadUserSettings();
+			_settings.SetQuickAccessProperties();
+		}
 	}
 }
