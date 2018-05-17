@@ -44,7 +44,7 @@ namespace SingularityTest
 		{
 			base.LoadContent();
 
-			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly()));
+			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly(), typeof(LoadingScreen)));
 		}
 
         /// <summary>

@@ -31,12 +31,21 @@ namespace Singularity.Scripting
 		private string _scriptPath;
 		private Assembly _curAssembly;
 		private GameScene _newScene;
+		private Type _loadingScreenType;
+		private LoadingScreenTemplate _loadingScreen;
 
-		public ScriptLoadingScene(SingularityGame game, string pathToLoadingScript, Assembly currentAssembly) : base(game, "ScriptLoading")
+		public ScriptLoadingScene(SingularityGame game, string pathToLoadingScript, Assembly currentAssembly, Type loadingScreen) : base(game, "ScriptLoading")
 		{
+			if(loadingScreen == null || !loadingScreen.IsSubclassOf(typeof(LoadingScreenTemplate)))
+				throw new Exception("LoadingScreen null or not subclass of LoadingScreenTemplate");
+
+			_loadingScreenType = loadingScreen;
 			_state = State.Loading;
 			_scriptPath = pathToLoadingScript;
 			_curAssembly = currentAssembly;
+
+			_loadingScreen = (LoadingScreenTemplate) Activator.CreateInstance(loadingScreen);
+			_loadingScreen.Init(Game);
 
 			//Load script async
 			Task.Run(new Action(RunScript));
@@ -57,7 +66,7 @@ namespace Singularity.Scripting
 
 			var scriptScene = (ScriptingTemplate) Activator.CreateInstance(scriptType);
 
-			_newScene = new ScriptScene(Game, scriptScene);
+			_newScene = new ScriptScene(Game, scriptScene, _scriptPath, _curAssembly, _loadingScreenType);
 			_state = State.Done;
 		}
 
@@ -72,11 +81,18 @@ namespace Singularity.Scripting
 				}
 			}));
 
-			//TODO LoadingScreen
+
+			var gameObjects = new List<GameObject>();
+			_loadingScreen.AddGameObjects(gameObjects);
+			foreach (var gameObject in gameObjects)
+			{
+				AddObject(gameObject);
+			}
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)
 		{
+			_loadingScreen.AddLightningToEffect(effect);
 		}
 	}
 }
