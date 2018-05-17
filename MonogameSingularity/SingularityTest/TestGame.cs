@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
@@ -11,6 +12,8 @@ namespace SingularityTest
     /// </summary>
     public class TestGame : SingularityGame
     {
+	    private Savegame Savegame;
+
         public TestGame() : base()
         {
 	        this.IsMouseVisible = true;
@@ -25,20 +28,30 @@ namespace SingularityTest
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+			// TODO: Add your initialization logic here
 
-            base.Initialize();
-        }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
-        protected override void LoadContent()
+			base.Initialize();
+
+			this.Savegame = Savegame.LoadFromXml("savefile1.xml");
+
+			this.Exiting += this.GameExiting;
+
+	        this.SceneManager.AddSceneToStack(new TestScene(this));
+		}
+
+		private void GameExiting(Object sender, EventArgs e)
+		{
+			Savegame.SaveToXml("savefile1.xml", Savegame);
+		}
+
+		/// <summary>
+		/// LoadContent will be called once per game and is the place to load
+		/// all of your content.
+		/// </summary>
+		protected override void LoadContent()
 		{
 			base.LoadContent();
-
-			this.SceneManager.AddSceneToStack(new TestScene(this));
 		}
 
         /// <summary>

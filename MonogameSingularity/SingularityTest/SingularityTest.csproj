@@ -45,6 +45,7 @@
     <Compile Include="GameObjects\CollidableTestObject.cs" />
     <Compile Include="GameObjects\TestBallObject.cs" />
     <Compile Include="GameObjects\TestSpriteObject.cs" />
+    <Compile Include="Savegame.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -64,6 +65,7 @@
       <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
