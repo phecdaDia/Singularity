@@ -11,6 +11,9 @@ namespace Singularity.Collisions.CollisionTypes
 
 			if (SphereOnPlaneCollision.GetCollision(collidableA, collidableB, out position, out normal, out scale1, out scale2))
 			{
+				//Console.WriteLine($"SOBPC @{collidableB.Position + collidableB.Origin} + {scale1} * {collidableB.SpanVector1} + {scale2} * {collidableB.SpanVector2} = {position}");
+				
+
 				return collidableB.Restriction(scale1, scale2);
 			}
 

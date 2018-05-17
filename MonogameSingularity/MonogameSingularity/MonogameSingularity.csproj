@@ -61,6 +61,7 @@
     <Compile Include="Code\Collisions\PlaneCollision.cs" />
     <Compile Include="Code\Collisions\RingCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
+    <Compile Include="Code\Events\CollisionEventArgs.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
