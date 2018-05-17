@@ -28,14 +28,16 @@ namespace SingularityTest
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+			// TODO: Add your initialization logic here
 
 
-	        this.Savegame = Savegame.LoadFromXml("savefile1.xml");
+			base.Initialize();
+
+			this.Savegame = Savegame.LoadFromXml("savefile1.xml");
 
 			this.Exiting += this.GameExiting;
 
-	        base.Initialize();
+	        this.SceneManager.AddSceneToStack(new TestScene(this));
 		}
 
 		private void GameExiting(Object sender, EventArgs e)
@@ -50,8 +52,6 @@ namespace SingularityTest
 		protected override void LoadContent()
 		{
 			base.LoadContent();
-
-			this.SceneManager.AddSceneToStack(new TestScene(this));
 		}
 
         /// <summary>
