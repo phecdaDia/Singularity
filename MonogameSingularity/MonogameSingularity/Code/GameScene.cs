@@ -228,7 +228,7 @@ namespace Singularity
 		/// Creates a <seealso cref="Matrix"/> with all camera options set.
 		/// </summary>
 		/// <returns></returns>
-		public Matrix GetViewMatrix()
+		public virtual Matrix GetViewMatrix()
 		{
 			Vector3 targetVector =
 				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
@@ -249,7 +249,7 @@ namespace Singularity
 		/// Creates a <seealso cref="Matrix"/>
 		/// </summary>
 		/// <returns></returns>
-		public Matrix GetProjectionMatrix()
+		public virtual Matrix GetProjectionMatrix()
 		{
 			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance, this.MaximumCullingDistance);
 		}
