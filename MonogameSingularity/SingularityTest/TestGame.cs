@@ -41,8 +41,8 @@ namespace SingularityTest
 
 			this.Exiting += this.GameExiting;
 
-      //this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly(), typeof(LoadingScreen)));
-	        this.SceneManager.AddSceneToStack(new TestScene(this));
+			this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly(), typeof(LoadingScreen)));
+	        //this.SceneManager.AddSceneToStack(new TestScene(this));
 		}
 
 		private void GameExiting(Object sender, EventArgs e)
