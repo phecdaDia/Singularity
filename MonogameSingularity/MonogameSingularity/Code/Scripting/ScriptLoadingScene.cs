@@ -82,6 +82,7 @@ namespace Singularity.Scripting
 			var scriptType = (Type) script.RunAsync().Result.ReturnValue;
 
 			var scriptScene = (ScriptingTemplate) Activator.CreateInstance(scriptType);
+			scriptScene.Init(Game);
 
 			_newScene = new ScriptScene(Game, scriptScene, _scriptPath, _curAssembly, _loadingScreenType);
 			_state = State.Done;

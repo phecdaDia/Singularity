@@ -36,7 +36,6 @@ namespace Singularity.Scripting
 			_pathToScript = pathToScript;
 			_currentAssembly = currentAssembly;
 			_loadingScreen = loadingScreen;
-			script.Init(game);
 		}
 
 		protected override void AddGameObjects()
