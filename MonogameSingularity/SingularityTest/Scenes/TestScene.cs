@@ -19,7 +19,7 @@ namespace SingularityTest.Scenes
 	{
 		public TestScene(SingularityGame game) : base(game, "test")
 		{
-			this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 
 		}
 

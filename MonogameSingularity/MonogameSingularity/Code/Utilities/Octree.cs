@@ -286,7 +286,9 @@ namespace Singularity.Utilities
 			if (Children != null)
 			{
 				for (int i = 0; i < 8; i++)
-				{
+				{	
+					if(Children[i] == null)
+						continue;
 					Children[i].Clear();
 					Children[i] = null; // helping the gc a bit
 				}
