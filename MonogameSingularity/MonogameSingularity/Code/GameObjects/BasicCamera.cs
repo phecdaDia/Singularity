@@ -114,7 +114,7 @@ namespace Singularity.GameObjects
 			
 			this.AddPosition(movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f);
 
-			Console.WriteLine($"Positions: {HorizontalRotation}, {VerticalRotation}");
+			//Console.WriteLine($"Positions: {HorizontalRotation}, {VerticalRotation}");
 			// update relative camera
 			scene.SetCamera(this.Position, target);
 		}
@@ -128,17 +128,17 @@ namespace Singularity.GameObjects
 
 		public BasicCamera SetCameraTarget(Vector3 target)
 		{
-			Console.WriteLine($"Cpos1: {target}");
+			//Console.WriteLine($"Cpos1: {target}");
 
 			target.Normalize();
 
-			Console.WriteLine($"Campos: {target}");
+			//Console.WriteLine($"Campos: {target}");
 
 			var horizontal = (float)Math.Acos(target.X);
 			var vertical = (float)Math.Asin(target.Y);
 
-			var h2 = (float) Math.Asin(target.Z);
-			Console.WriteLine($"{horizontal} == {h2}?, {vertical}");
+			//var h2 = (float) Math.Asin(target.Z);
+			//Console.WriteLine($"{horizontal} == {h2}?, {vertical}");
 
 			return this.SetCameraTarget(horizontal, vertical);
 		}
