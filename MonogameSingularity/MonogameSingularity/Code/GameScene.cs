@@ -265,7 +265,7 @@ namespace Singularity
 			// load content
 			foreach (var obj in ColliderObjects.GetAllObjects())
 			{
-				obj.LoadContent(this.Game.Content);
+				obj.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
 			}
 		}
 
@@ -290,7 +290,7 @@ namespace Singularity
 			// add our buffered objects
 			foreach (GameObject obj in BufferedObjects)
 			{
-				obj.LoadContent(this.Game.Content);
+				obj.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
 				this.AddObject(obj);
 			}
 

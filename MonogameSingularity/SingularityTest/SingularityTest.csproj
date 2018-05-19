@@ -48,6 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameObjects\CollidableTestObject.cs" />
+    <Compile Include="GameObjects\MappingTestObject.cs" />
     <Compile Include="GameObjects\TestBallObject.cs" />
     <Compile Include="GameObjects\TestSpriteObject.cs" />
     <Compile Include="Savegame.cs" />

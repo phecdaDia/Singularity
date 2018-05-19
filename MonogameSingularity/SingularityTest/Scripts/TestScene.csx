@@ -68,6 +68,8 @@ public class TestSceneScript : ScriptingTemplate
 		).AddChild(new ModelObject("sphere").SetPosition(5, 0, 0)));
 
 		objectList.Add(new TestSpriteObject().SetPosition(10, 10));
+
+		objectList.Add(new MappingTestObject().SetPosition(0, 2, 0));
 	}
 
 	public override void AddLightningToEffect(BasicEffect effect)

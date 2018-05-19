@@ -33,9 +33,9 @@ namespace SingularityTest.GameObjects
 			spriteBatch.DrawString(this.TestFont, $"Test String!", new Vector2(pos.X, pos.Y), Color.White);
 		}
 
-		public override void LoadContent(ContentManager contentManager)
+		public override void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
 		{
-			base.LoadContent(contentManager);
+			base.LoadContent(contentManager, graphicsDevice);
 			this.TestFont = contentManager.Load<SpriteFont>("testfont");
 		}
 	}

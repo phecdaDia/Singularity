@@ -648,7 +648,7 @@ namespace Singularity
 
 		}
 
-		public virtual void LoadContent(ContentManager contentManager) { }
+		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice) { }
 		public virtual void UnloadContent() { }
 
 		#endregion
