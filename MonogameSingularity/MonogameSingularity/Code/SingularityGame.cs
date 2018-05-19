@@ -22,7 +22,7 @@ namespace Singularity
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
 
-	    protected RenderTarget2D RenderTarget;
+	    public RenderTarget2D RenderTarget;
 		private RenderTarget2D _tempRenderTarget;
 		private Texture2D _lastFrame;
 		public readonly List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();

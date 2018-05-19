@@ -77,6 +77,7 @@
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameObjects\SpriteObject.cs" />
     <Compile Include="Code\GameScene.cs" />
+    <Compile Include="Code\Helpers\VectorHelper.cs" />
     <Compile Include="Code\ImageManager.cs" />
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />

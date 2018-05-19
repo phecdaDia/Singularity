@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity;
 using Singularity.GameObjects;
+using Singularity.Helpers;
 
 namespace SingularityTest.GameObjects
 {
@@ -25,20 +26,13 @@ namespace SingularityTest.GameObjects
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			var screenPosition = new Vector4(this.GetHierarchyPosition(), 1);
 
-			// push through the caera transformations
-			screenPosition = Vector4.Transform(screenPosition, scene.GetViewMatrix());
-			screenPosition = Vector4.Transform(screenPosition, scene.GetProjectionMatrix());
-
-			// prevent dividing by 0
-			if (Math.Abs(screenPosition.W) > float.Epsilon) screenPosition /= Math.Abs(screenPosition.W);
-
-			_position = new Vector2(960 * screenPosition.X + 960, 540 * -screenPosition.Y + 540);
-			
-
-			//Console.WriteLine($"{pos}");
-
+			_position = this.GetHierarchyPosition().GetScreenPosition(
+				scene.GetViewMatrix(), 
+				scene.GetProjectionMatrix(),
+				scene.Game.RenderTarget.Width,
+				scene.Game.RenderTarget.Height
+			);
 		}
 
 		protected override void Draw2D(SpriteBatch spriteBatch)
