@@ -34,9 +34,11 @@ namespace Singularity.GameObjects
 		/// Enables <see cref="VerticalRotation"/>
 		/// </summary>
 		/// <param name="enable"></param>
-		public void Set3DEnabled(Boolean enable)
+		public BasicCamera Set3DEnabled(Boolean enable)
 		{
 			this.Is3DEnabled = enable;
+
+			return this;
 		}
 
 		private Boolean firstFrame = true;
