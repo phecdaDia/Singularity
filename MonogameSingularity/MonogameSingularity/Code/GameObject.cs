@@ -31,18 +31,20 @@ namespace Singularity
 
 		public String DebugName { get; private set; } // Used for debugging.
 
-		public Matrix GetScaleMatrix
+		public Matrix ScaleMatrix
 		{
-			get { return Matrix.CreateScale(this.Scale); }
+			get { return Matrix.CreateScale(this.GetHierarchyScale()); }
 		}
 
-		public Matrix GetRotationMatrix
+		public Matrix RotationMatrix
 		{
 			get
 			{
-				return Matrix.CreateRotationX(this.Rotation.X)
-				       * Matrix.CreateRotationY(this.Rotation.Y)
-				       * Matrix.CreateRotationZ(this.Rotation.Z);
+				var rotation = this.GetHierarchyRotation();
+
+				return Matrix.CreateRotationX(rotation.X)
+				       * Matrix.CreateRotationY(rotation.Y)
+				       * Matrix.CreateRotationZ(rotation.Z);
 			}
 		}
 
@@ -448,6 +450,17 @@ namespace Singularity
 		}
 		#endregion
 
+		#region SetEnableCollision
+
+		public GameObject SetEnableCollision(Boolean enable)
+		{
+			this.EnablePushCollision = enable;
+
+			return this;
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>
@@ -459,7 +472,7 @@ namespace Singularity
 			if (this.ParentObject == null) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
-		
+
 		/// <summary>
 		/// Return the added <see cref="Position"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyPosition()"/>
 		/// </summary>
@@ -467,10 +480,17 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return Vector3.Transform(this.Position, this.ParentObject.GetRotationMatrix) + this.ParentObject.GetHierarchyPosition();
+			return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
 		}
 
-		
+
+		public Vector3 GetHierarchyRotation()
+		{
+			if (this.ParentObject == null) return this.Rotation;
+			return this.Rotation + this.ParentObject.GetHierarchyRotation();
+		}
+
+
 		/// <summary>
 		/// Gets all <see cref="Action"/>scripts set to this <see cref="GameObject"/>
 		/// </summary>
@@ -621,11 +641,9 @@ namespace Singularity
 					// calculating the full rotation of our object.
 					//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
 
-					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
-
 					effect.World = transformMatrices[mesh.ParentBone.Index]
-					               * Matrix.CreateScale(this.GetHierarchyScale())
-					               * totalRotation
+					               * this.ScaleMatrix
+					               * this.RotationMatrix
 								   * Matrix.CreateTranslation(this.GetHierarchyPosition());
 
 					effect.View = scene.GetViewMatrix();

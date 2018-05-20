@@ -15,7 +15,7 @@ namespace Singularity.Code.Collisions.CollisionTypes
 		{
 
 			// transformation matrix 1
-			var tm = collidableB.Parent.GetScaleMatrix * collidableB.Parent.GetRotationMatrix;
+			var tm = collidableB.Parent.ScaleMatrix * collidableB.Parent.RotationMatrix;
 
 			var pos = collidableA.Position;
 			var origin = collidableB.Position + Vector3.Transform(collidableB.Origin, tm);

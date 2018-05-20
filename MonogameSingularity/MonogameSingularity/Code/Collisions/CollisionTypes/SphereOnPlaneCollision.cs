@@ -10,10 +10,10 @@ namespace Singularity.Collisions.CollisionTypes
 		{
 
 			// transformation matrix 1
-			var tm1 = collidableA.Parent.GetScaleMatrix * collidableA.Parent.GetRotationMatrix;
+			var tm1 = collidableA.Parent.ScaleMatrix * collidableA.Parent.RotationMatrix;
 
 			// transformation matrix 2
-			var tm2 = collidableB.Parent.GetScaleMatrix * collidableB.Parent.GetRotationMatrix;
+			var tm2 = collidableB.Parent.ScaleMatrix * collidableB.Parent.RotationMatrix;
 
 			normal = Vector3.Transform(collidableB.Normal, tm2);
 			normal.Normalize();

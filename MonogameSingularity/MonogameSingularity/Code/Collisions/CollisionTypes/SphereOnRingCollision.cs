@@ -16,10 +16,10 @@ namespace Singularity.Collisions.CollisionTypes
 			// Now get distance from our origin to the point planeCollision
 
 			// transformation matrix 1
-			var tm1 = collidableA.Parent.GetScaleMatrix * collidableA.Parent.GetRotationMatrix;
+			var tm1 = collidableA.Parent.ScaleMatrix * collidableA.Parent.RotationMatrix;
 
 			// transformation matrix 2
-			var tm2 = collidableB.Parent.GetScaleMatrix * collidableB.Parent.GetRotationMatrix;
+			var tm2 = collidableB.Parent.ScaleMatrix * collidableB.Parent.RotationMatrix;
 
 			var sv1 = Vector3.Transform(collidableB.SpanVector1, tm2);
 			var sv2 = Vector3.Transform(collidableB.SpanVector2, tm2);
