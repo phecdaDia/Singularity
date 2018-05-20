@@ -30,7 +30,7 @@ namespace Singularity
 
 		public SingularityGame() : base()
 		{
-			this.SceneManager = new SceneManager();
+			this.SceneManager = new SceneManager(this);
 			this.ModelManager = new ModelManager(Content);
 			ImageManager.SetContentManager(Content);
 
