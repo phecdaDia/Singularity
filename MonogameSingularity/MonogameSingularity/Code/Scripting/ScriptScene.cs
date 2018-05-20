@@ -46,8 +46,8 @@ namespace Singularity.Scripting
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.O))
 				{
-					Game.SceneManager.CloseScene();
-					Game.SceneManager.AddSceneToStack(new ScriptLoadingScene(Game, _pathToScript, _currentAssembly, _loadingScreen));
+					SceneManager.CloseScene();
+					SceneManager.AddSceneToStack(new ScriptLoadingScene(Game, _pathToScript, _currentAssembly, _loadingScreen));
 				}
 			}));
 #endif
