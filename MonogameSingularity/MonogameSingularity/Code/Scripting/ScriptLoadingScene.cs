@@ -95,8 +95,8 @@ namespace Singularity.Scripting
 				//CHeck if loading finished. if done -> close loading and open script-scene
 				if (this._state == State.Done)
 				{
-					Game.SceneManager.CloseScene();
-					Game.SceneManager.AddSceneToStack(_newScene);
+					SceneManager.CloseScene();
+					SceneManager.AddSceneToStack(_newScene);
 				}
 			}));
 
