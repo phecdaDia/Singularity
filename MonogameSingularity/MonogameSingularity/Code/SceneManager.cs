@@ -119,6 +119,14 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
+			if (this.SceneStack.Count == 0)
+			{
+				// close game, as there are no scenes left
+				Game.Exit();
+
+				return;
+			}
+
 			this._GetCurrentScene().Draw(spriteBatch);
 		}
 	}

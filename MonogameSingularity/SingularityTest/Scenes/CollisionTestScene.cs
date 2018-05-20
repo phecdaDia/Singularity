@@ -30,7 +30,7 @@ namespace SingularityTest.Scenes
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.Escape)) scene.Game.Exit();
+				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
 			}));
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50).SetEnableCollision(false));

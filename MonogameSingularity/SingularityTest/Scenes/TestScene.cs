@@ -78,7 +78,7 @@ namespace SingularityTest.Scenes
 				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
 				 */
                 if(KeyboardManager.IsKeyPressed(Settings.ExitKey))
-                    Game.Exit();
+                    SceneManager.CloseScene();
 				if(KeyboardManager.IsKeyPressed(Keys.I))
 					SettingsManager.SetSetting("exitKey", Keys.P);
 		    }));
