@@ -109,8 +109,7 @@ namespace Singularity
 
 				return;
 			}
-
-			this.GetCurrentScene().Update(gameTime);
+			
 			this._GetCurrentScene().Update(gameTime);
 		}
 
