@@ -7,12 +7,15 @@ namespace Singularity
 {
 	public class SceneManager
 	{
+		private SingularityGame Game;
+
 		private readonly Dictionary<String, GameScene> GameScenes;
 
 		private readonly Stack<GameScene> SceneStack;
 
-		public SceneManager()
+		public SceneManager(SingularityGame game)
 		{
+			this.Game = game;
 			this.GameScenes = new Dictionary<string, GameScene>();
 			this.SceneStack = new Stack<GameScene>();
 		}
@@ -62,7 +65,6 @@ namespace Singularity
 		{
 			GameScene scene = this.SceneStack.Pop();
 			scene.UnloadContent();
-
 			// unload content from the scene.
 			
 		}
@@ -86,6 +88,14 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
+			if (this.SceneStack.Count == 0)
+			{
+				// close game, as there are no scenes left
+				Game.Exit();
+
+				return;
+			}
+
 			this.GetCurrentScene().Update(gameTime);
 		}
 
