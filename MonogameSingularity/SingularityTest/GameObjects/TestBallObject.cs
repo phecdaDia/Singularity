@@ -27,7 +27,7 @@ namespace SingularityTest.GameObjects
 		{
 			this.AddInertia(new Vector3(0, -20, 0) * (float) gameTime.ElapsedGameTime.TotalSeconds);
 
-			Console.WriteLine($"Inertia Energy: {(this.Inertia + new Vector3(this.Position.Y + 8)).Length()}");
+			//Console.WriteLine($"Inertia Energy: {(this.Inertia + new Vector3(this.Position.Y + 8)).Length()}");
 		}
 
 		public void HandleCollisionEvent(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal)
