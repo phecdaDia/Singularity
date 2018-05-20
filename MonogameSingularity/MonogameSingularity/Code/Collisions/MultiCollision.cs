@@ -32,6 +32,18 @@ namespace Singularity.Collisions
 			}
 		}
 
+		public override object Clone()
+		{
+			List<Collision> _collidables = new List<Collision>();
+
+			foreach (var coll in this.Collidables)
+			{
+				_collidables.Add((Collision) coll.Clone());
+			}
+
+			return new MultiCollision(_collidables.ToArray());
+		}
+
 		public List<Collision> GetCollidables()
 		{
 			return this.Collidables;
