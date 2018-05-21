@@ -56,12 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonogameSingularity\MonogameSingularity.csproj">
-      <Project>{ab7db8a4-1e27-41be-be2b-c600955be843}</Project>
-      <Name>MonogameSingularity</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
