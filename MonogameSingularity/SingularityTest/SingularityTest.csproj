@@ -138,7 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonogameSingularity\MonogameSingularity.csproj">
-      <Project>{ab7db8a4-1e27-41be-be2b-c600955be843}</Project>
+      <Project>{06a6aaec-d41c-4e5b-bb37-125e66293994}</Project>
       <Name>MonogameSingularity</Name>
     </ProjectReference>
   </ItemGroup>
