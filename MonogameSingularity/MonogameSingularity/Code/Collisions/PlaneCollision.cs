@@ -18,5 +18,10 @@ namespace Singularity.Collisions
 			
 			Normal.Normalize();
 		}
+
+		public override object Clone()
+		{
+			return new PlaneCollision(this.Origin, this.SpanVector1, this.SpanVector2);
+		}
 	}
 }

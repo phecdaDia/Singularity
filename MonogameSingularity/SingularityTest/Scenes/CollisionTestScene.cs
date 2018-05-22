@@ -43,42 +43,42 @@ namespace SingularityTest.Scenes
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(-8, 0, 0)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(0, 0, -MathHelper.PiOver2)
 			);
 
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(8, 0, 0)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(0, 0, MathHelper.PiOver2)
 			);
 
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(0, 8, 0)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(0, 0, MathHelper.Pi)
 			);
 
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(0, -8, 0)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(0, 0, 0)
 			);
 
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(0, 0, 8)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(-MathHelper.PiOver2, 0, 0)
 			);
 
 			AddObject(
 				new CollidableModelObject("planes/plane1")
 					.SetPosition(0, 0, -8)
-					.SetCollision(new BoundPlaneCollision(new Vector3(), new Vector3(8, 0, 0), new Vector3(0, 0, 8), (f1, f2) => -1 <= f1 && f1 <= 1 && -1 <= f2 && f2 <= 1))
+					.SetCollision(planeCollision)
 					.SetRotation(MathHelper.PiOver2, 0, 0)
 			);
 

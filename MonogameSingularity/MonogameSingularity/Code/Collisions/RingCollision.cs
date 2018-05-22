@@ -19,5 +19,10 @@ namespace Singularity.Code.Collisions
 			Radius = radius;
 			InnerRadius = innerRadius;
 		}
+
+		public override object Clone()
+		{
+			return new RingCollision(this.Origin, this.SpanVector1, this.SpanVector2, this.Radius, this.InnerRadius);
+		}
 	}
 }

@@ -4,14 +4,14 @@
 	{
 		public float Radius { get; private set; }
 
-		public SphereCollision() : base()
-		{
-			this.Radius = 1.0f; // default?
-		}
-
-		public SphereCollision(float radius) : base()
+		public SphereCollision(float radius = 1.0f) : base()
 		{
 			this.Radius = radius;
+		}
+
+		public override object Clone()
+		{
+			return new SphereCollision(this.Radius);
 		}
 	}
 }

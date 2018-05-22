@@ -23,5 +23,10 @@ namespace Singularity.Code.Collisions
 			this.Distance = distance;
 
 		}
+
+		public override object Clone()
+		{
+			return new EdgeCollision(this.Origin, this.SpanVector, this.Distance);
+		}
 	}
 }

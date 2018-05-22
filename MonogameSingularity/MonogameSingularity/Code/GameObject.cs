@@ -406,7 +406,7 @@ namespace Singularity
 
 		public GameObject SetCollision(Collision collision)
 		{
-			this.Collision = collision;
+			this.Collision = (Collision) collision.Clone();
 			this.Collision.SetParent(this);
 			return this;
 		}

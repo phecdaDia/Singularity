@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Singularity.Collisions
 {
-	public abstract class Collision
+	public abstract class Collision : ICloneable
 	{
 		public Vector3 Position
 		{
@@ -29,5 +29,6 @@ namespace Singularity.Collisions
 			return CollisionManager.DoesCollide(this, collidable, callback, invertNormal);
 		}
 
+		public abstract object Clone();
 	}
 }
