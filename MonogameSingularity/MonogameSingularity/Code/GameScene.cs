@@ -295,7 +295,7 @@ namespace Singularity
 		public void Update(GameTime gameTime)
 		{
 			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
-			Console.WriteLine($"{objs.Length} objects in the octree.");
+			//Console.WriteLine($"{objs.Length} objects in the octree.");
 
 			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
 
