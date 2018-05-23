@@ -63,8 +63,10 @@ namespace Singularity
 		/// Spawns a new <seealso cref="GameObject"/> on the next frame.
 		/// </summary>
 		/// <param name="gameObject"></param>
-		public void SpawnObject(GameObject gameObject)
+		public void SpawnObject(GameObject gameObject, GameObject parent = null)
 		{
+			if (parent != null)
+				gameObject.SetParent(parent);
 			this.BufferedObjects.Add(gameObject);
 		}
 
@@ -76,8 +78,10 @@ namespace Singularity
 		/// <param name="previousPosition"></param>
 		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
 		{
-			this.ColliderObjects.RemoveObject(gameObject, previousPosition);
-			this.AddObject(gameObject);
+			//this.ColliderObjects.RemoveObject(gameObject, previousPosition);
+			//this.AddObject(gameObject);
+
+			this.ColliderObjects.MoveObject(gameObject, gameObject.ModelRadius, previousPosition, gameObject.GetHierarchyPosition());
 		}
 
 		public void RemoveObject(GameObject gameObject)
@@ -97,6 +101,12 @@ namespace Singularity
 		/// <param name="gameObject"></param>
 		protected void AddObject(GameObject gameObject)
 		{
+			foreach (var children in gameObject.ChildObjects)
+			{
+				AddObject(children);
+			}
+
+
 			if (gameObject.Collision == null)
 			{
 				this.ColliderObjects.AddObject(gameObject, gameObject.Position, 0.0f);
@@ -284,8 +294,10 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
+			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
+			Console.WriteLine($"{objs.Length} objects in the octree.");
 
-			foreach (GameObject obj in this.ColliderObjects.GetAllObjects().ToArray()) obj.UpdateLogic(this, gameTime);
+			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
 			foreach (GameObject obj in BufferedObjects)
@@ -304,7 +316,7 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.DrawLogic(this, spriteBatch);
+			foreach (GameObject obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
 		}
 
 	}

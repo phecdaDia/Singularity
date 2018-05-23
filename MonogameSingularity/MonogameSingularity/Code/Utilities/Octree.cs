@@ -244,6 +244,8 @@ namespace Singularity.Utilities
 		private Boolean ShouldSubpartition(Vector3 position, float radius)
 		{
 
+			if (this.CurrentSize <= this.MinimumSize) return false;
+
 			// We use a maximum of 3 control points to see if we should subpartition this tree for a new object
 			// first we need to get the intended quadrant.
 

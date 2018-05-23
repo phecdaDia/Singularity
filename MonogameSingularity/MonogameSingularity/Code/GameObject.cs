@@ -101,8 +101,9 @@ namespace Singularity
 
 			this.ModelRadius = rm;
 
-			if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
-				this.Collision = new SphereCollision(this.ModelRadius);
+			if (this is ICollidable || this is ICollider
+			) // everything that has something to do with collisions gets a sphere at the beginning
+				this.SetCollision(new SphereCollision(this.ModelRadius));
 			return this;
 		}
 
