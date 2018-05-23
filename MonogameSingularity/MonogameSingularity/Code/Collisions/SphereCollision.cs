@@ -4,14 +4,14 @@
 	{
 		public float Radius { get; private set; }
 
-		public SphereCollision(GameObject parent) : base(parent)
-		{
-			this.Radius = parent.ModelRadius;
-		}
-
-		public SphereCollision(GameObject parent, float radius) : base(parent)
+		public SphereCollision(float radius = 1.0f) : base()
 		{
 			this.Radius = radius;
+		}
+
+		public override object Clone()
+		{
+			return new SphereCollision(this.Radius);
 		}
 	}
 }

@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using Singularity.Code.Collisions.Multi;
+using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
@@ -17,66 +19,84 @@ namespace SingularityTest.Scenes
 	{
 		public TestScene(SingularityGame game) : base(game, "test")
 		{
-			this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 
 		}
 
 		protected override void AddGameObjects()
 		{
-			AddObject(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
-			{
-				if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
+			// load the savegame
+			Savegame sg = Savegame.GetSavegame();
 
+			Mouse.SetPosition(200, 200);
 
-				if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
-				if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+			AddObject(new BasicCamera()
+				.SetCameraTarget(sg.IsValidSavegame ? sg.CameraTarget : new Vector3(-1, 0, 0))
+				.SetPosition(sg.IsValidSavegame ? sg.Position : new Vector3(0, 0, 10))
+				.AddScript((scene, obj, time) =>
+				{
+					// enable or disable 3d.
+					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
-				if (KeyboardManager.IsKeyDown(Keys.F2)) scene.SpawnObject(new CollidableModelObject("unit-cube-small")
-					.SetPosition(obj.Position + new Vector3(0, 0, -5)));
+					// some more movement options
+					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
 
-                if(KeyboardManager.IsKeyPressed(Keys.Y))
-                    Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.X))
-                    Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
-                if(KeyboardManager.IsKeyPressed(Keys.C))
-                    Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-			})
-				//.AddChild(
-				//	new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
-				//	.AddChild(
-				//		new ModelObject("cubes/cube1").SetPosition(5, 0, 0)
-				//	)
-				//)
+					// screen effects
+
+					if(KeyboardManager.IsKeyPressed(Keys.Y))
+						Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
+					if(KeyboardManager.IsKeyPressed(Keys.X))
+						Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
+					if(KeyboardManager.IsKeyPressed(Keys.C))
+						Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+
+					// savegame stuff
+					sg.Position = obj.Position;
+					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
+
+				})
 			);
-
-
-			//AddObject(new CollidableModelObject("sphere").SetPosition(-5, 0, 0).SetScale(2.0f));
-			//AddObject(new CollidableModelObject("sphere").SetPosition(10, 1, 0).SetScale(2));
 
 			AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
 			AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
 			AddObject(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
 			AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
-			
-			AddObject(new ModelObject("cubes/cube5").SetPosition(0, -9, 0).AddScript((scene, go, time) =>
-			{
-				if (KeyboardManager.IsKeyPressed(Keys.K)) go.AddPosition(0, 0.05f, 0);
-				if (KeyboardManager.IsKeyPressed(Keys.L)) go.AddPosition(0, -0.05f, 0);
-			}));
+
+			//AddObject(new TestBallObject().SetPosition(2, 3, 0));
+
+			AddObject(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
+				//.SetRotation(0, 0, 0.4f)
+				.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8)))
+			);
 
 			//AddObject(new SpriteObject());
-		    AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
+			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 		    {
-                if(KeyboardManager.IsKeyPressed(Keys.Escape))
-                    Game.Exit();
+				/* Close Game with Settings.ExitKey
+				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
+				 */
+                if(KeyboardManager.IsKeyPressed(Settings.ExitKey))
+                    SceneManager.CloseScene();
+				if(KeyboardManager.IsKeyPressed(Keys.I))
+					SettingsManager.SetSetting("exitKey", Keys.P);
 		    }));
 
 
-			//AddObject(new CollidableModelObject("sphere").SetPosition(9, 0, 0).SetScale(2.0f));
-			//AddObject(new CollidableModelObject("sphere").SetPosition(11, 0, 0).SetScale(2.0f));
+			// orbiting object.
+			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+				((scene, o, arg3) => o.AddRotation(0, (float) arg3.ElapsedGameTime.TotalSeconds, 0))
+			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0)));
 
-			AddObject(new CollidableTestObject().SetPosition(10, 0, 0));
+			// inertia test
+			//AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
+
+			AddObject(new TestSpriteObject().SetPosition(10, 10));
+
+			//AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
+
+			//AddObject(new CofTestObject().SetPosition(30, 0, 0));
 
 		}
 

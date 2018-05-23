@@ -13,15 +13,16 @@ namespace Singularity
 		/// <summary>
 		/// Current Version of Singularity
 		/// </summary>
-		public static readonly String SINGULARITY_VERSION = "v0.07";
+		public static readonly String SINGULARITY_VERSION = "v0.08";
 		
-		protected readonly SceneManager SceneManager;
+		private readonly SceneManager SceneManager;
+
 		protected readonly ModelManager ModelManager;
 
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
 		protected SpriteBatch SpriteBatch;
 
-	    protected RenderTarget2D RenderTarget;
+	    public RenderTarget2D RenderTarget;
 		private RenderTarget2D _tempRenderTarget;
 		private Texture2D _lastFrame;
 		public readonly List<Func<GameTime, Texture2D, ScreenEffectData>> ScreenEffectList = new List<Func<GameTime, Texture2D, ScreenEffectData>>();
@@ -29,7 +30,7 @@ namespace Singularity
 
 		public SingularityGame() : base()
 		{
-			this.SceneManager = new SceneManager();
+			this.SceneManager = new SceneManager(this);
 			this.ModelManager = new ModelManager(Content);
 			ImageManager.SetContentManager(Content);
 
@@ -57,6 +58,7 @@ namespace Singularity
             RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
             _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
 			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+
 			base.Initialize();
 	    }
 

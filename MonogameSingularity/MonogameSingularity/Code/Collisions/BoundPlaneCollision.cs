@@ -7,9 +7,14 @@ namespace Singularity.Collisions
 	{
 		public Func<float, float, Boolean> Restriction { get; private set; }
 
-		public BoundPlaneCollision(GameObject parent, Vector3 origin, Vector3 spanVector1, Vector3 spanVector2, Func<float, float, Boolean> restriction) : base(parent, origin, spanVector1, spanVector2)
+		public BoundPlaneCollision(Vector3 origin, Vector3 spanVector1, Vector3 spanVector2, Func<float, float, Boolean> restriction) : base(origin, spanVector1, spanVector2)
 		{
 			this.Restriction = restriction;
+		}
+
+		public override object Clone()
+		{
+			return new BoundPlaneCollision(this.Origin, this.SpanVector1, this.SpanVector2, this.Restriction);
 		}
 	}
 }

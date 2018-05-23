@@ -166,7 +166,7 @@ namespace Singularity.Utilities
 			{
 				// removed object, we can return.
 				return true;
-			} 
+			}
 
 			// it's not in this part, get the children.
 
@@ -174,6 +174,8 @@ namespace Singularity.Utilities
 			if (this.Children == null) return false;
 
 			var id = this.GetQuadrantNumber(position);
+
+			if (this.Children[id] == null) return false;
 			return this.Children[id].RemoveObject(obj, position);
 		}
 
@@ -242,6 +244,8 @@ namespace Singularity.Utilities
 		private Boolean ShouldSubpartition(Vector3 position, float radius)
 		{
 
+			if (this.CurrentSize <= this.MinimumSize) return false;
+
 			// We use a maximum of 3 control points to see if we should subpartition this tree for a new object
 			// first we need to get the intended quadrant.
 
@@ -284,7 +288,9 @@ namespace Singularity.Utilities
 			if (Children != null)
 			{
 				for (int i = 0; i < 8; i++)
-				{
+				{	
+					if(Children[i] == null)
+						continue;
 					Children[i].Clear();
 					Children[i] = null; // helping the gc a bit
 				}

@@ -11,7 +11,12 @@ namespace Singularity.GameObjects
 		public Vector2 Origin { get; private set; }
 		public float Depth { get; private set; }
 
-		public SpriteObject(Texture2D texture) : base()
+		public SpriteObject() : base()
+		{
+
+		}
+
+		public SpriteObject(Texture2D texture) : this()
 		{
 			this.Texture = texture;
 		}

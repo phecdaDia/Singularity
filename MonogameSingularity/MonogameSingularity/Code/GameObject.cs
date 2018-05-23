@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Code.Events;
 using Singularity.Collisions;
 using Singularity.GameObjects.Interfaces;
 
@@ -17,25 +21,30 @@ namespace Singularity
 		public Vector3 Position { get; private set; } // Current position of the model
 		public Vector3 Rotation { get; private set; } // Current rotation of the model
 		public Vector3 Scale { get; private set; } // Scale of the model
+		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
+
+		public Boolean EnablePushCollision { get; set; }
 
 		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
 		public String DebugName { get; private set; } // Used for debugging.
 
-		public Matrix GetScaleMatrix
+		public Matrix ScaleMatrix
 		{
-			get { return Matrix.CreateScale(this.Scale); }
+			get { return Matrix.CreateScale(this.GetHierarchyScale()); }
 		}
 
-		public Matrix GetRotationMatrix
+		public Matrix RotationMatrix
 		{
 			get
 			{
-				return Matrix.CreateRotationX(this.Rotation.X)
-				       * Matrix.CreateRotationY(this.Rotation.Y)
-				       * Matrix.CreateRotationZ(this.Rotation.Z);
+				var rotation = this.GetHierarchyRotation();
+
+				return Matrix.CreateRotationX(rotation.X)
+				       * Matrix.CreateRotationY(rotation.Y)
+				       * Matrix.CreateRotationZ(rotation.Z);
 			}
 		}
 
@@ -53,11 +62,14 @@ namespace Singularity
 			this.Position = new Vector3();
 			this.Rotation = new Vector3();
 			this.Scale = Vector3.One;
+			this.Inertia = new Vector3();
+			this.EnablePushCollision = true;
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
+			
 
 		}
 
@@ -89,8 +101,9 @@ namespace Singularity
 
 			this.ModelRadius = rm;
 
-			if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
-				this.Collision = new SphereCollision(this);
+			if (this is ICollidable || this is ICollider
+			) // everything that has something to do with collisions gets a sphere at the beginning
+				this.SetCollision(new SphereCollision(this.ModelRadius));
 			return this;
 		}
 
@@ -350,6 +363,18 @@ namespace Singularity
 
 		#endregion
 
+		#region AddCollisionEvent
+
+		public GameObject AddCollisionEvent(Action<GameObject, GameScene, Vector3, Vector3> collEvent)
+		{
+			Debug.Assert(collEvent != null, nameof(collEvent) + " != null");
+
+			this.OnCollisionEvent += (s, e) => collEvent(e.Collidable, e.Scene, e.Position, e.Normal);
+			return this;
+		}
+
+		#endregion
+
 		#region AddChild
 
 		/// <summary>
@@ -382,7 +407,56 @@ namespace Singularity
 
 		public GameObject SetCollision(Collision collision)
 		{
-			this.Collision = collision;
+			this.Collision = (Collision) collision.Clone();
+			this.Collision.SetParent(this);
+			return this;
+		}
+
+		#endregion
+
+		#region SetInertia
+		public GameObject SetInertia(float x, float y) => SetInertia(x, y, 0);
+
+		public GameObject SetInertia(float x, float y, float z) => SetInertia(new Vector3(x, y, z));
+
+		public GameObject SetInertia(Vector3 inertia)
+		{
+			if (!(this is IInertia))
+			{
+				// give out a warning, that inertia should not be used
+				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
+			}
+
+
+			this.Inertia = inertia;
+			return this;
+		}
+		#endregion
+
+		#region AddInertia
+		public GameObject AddInertia(float x, float y) => AddInertia(x, y, 0);
+
+		public GameObject AddInertia(float x, float y, float z) => AddInertia(new Vector3(x, y, z));
+
+		public GameObject AddInertia(Vector3 inertia)
+		{
+			if (!(this is IInertia))
+			{
+				// give out a warning, that inertia should not be used
+				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
+			}
+
+			this.Inertia += inertia;
+			return this;
+		}
+		#endregion
+
+		#region SetEnableCollision
+
+		public GameObject SetEnableCollision(Boolean enable)
+		{
+			this.EnablePushCollision = enable;
+
 			return this;
 		}
 
@@ -399,7 +473,7 @@ namespace Singularity
 			if (this.ParentObject == null) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
-		
+
 		/// <summary>
 		/// Return the added <see cref="Position"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyPosition()"/>
 		/// </summary>
@@ -407,10 +481,17 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return this.Position + this.ParentObject.GetHierarchyPosition();
+			return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
 		}
 
-		
+
+		public Vector3 GetHierarchyRotation()
+		{
+			if (this.ParentObject == null) return this.Rotation;
+			return this.Rotation + this.ParentObject.GetHierarchyRotation();
+		}
+
+
 		/// <summary>
 		/// Gets all <see cref="Action"/>scripts set to this <see cref="GameObject"/>
 		/// </summary>
@@ -493,6 +574,10 @@ namespace Singularity
 
 			Update(scene, gameTime);
 
+			// add inertia.
+			if (this is IInertia)
+				this.Position += this.Inertia * (float) gameTime.ElapsedGameTime.TotalSeconds;
+
 			// execute scripts
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
 
@@ -557,11 +642,9 @@ namespace Singularity
 					// calculating the full rotation of our object.
 					//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
 
-					Matrix totalRotation = Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z);
-
 					effect.World = transformMatrices[mesh.ParentBone.Index]
-					               * Matrix.CreateScale(this.GetHierarchyScale())
-					               * totalRotation
+					               * this.ScaleMatrix
+					               * this.RotationMatrix
 								   * Matrix.CreateTranslation(this.GetHierarchyPosition());
 
 					effect.View = scene.GetViewMatrix();
@@ -584,18 +667,20 @@ namespace Singularity
 
 		}
 
+		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice) { }
+		public virtual void UnloadContent() { }
+
 		#endregion
 
 		#region Events
 
-		// currently unused.
-		//protected event EventHandler<GameObjectCollisionEvent> OnCollision;
+		protected event EventHandler<CollisionEventArgs> OnCollisionEvent;
 
-		//public virtual void OnGameObjectCollision(GameObject gameObject, GameScene scene, Vector3 movement) =>
-		//	OnGameObjectCollision(new GameObjectCollisionEvent(gameObject, scene, movement));
+		public virtual void OnCollision(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal) =>
+			OnCollision(new CollisionEventArgs(position, normal, collidable, scene));
 
-		//public virtual void OnGameObjectCollision(GameObjectCollisionEvent e) => 
-		//	OnCollision?.Invoke(this, e);
+		public virtual void OnCollision(CollisionEventArgs e) =>
+			OnCollisionEvent?.Invoke(this, e);
 
 		#endregion
 

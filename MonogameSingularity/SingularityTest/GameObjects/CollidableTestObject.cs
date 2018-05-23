@@ -21,9 +21,7 @@ namespace SingularityTest.GameObjects
 
 			this.SetModel("cylinders/cylinder5");
 			this.SetScale(1f, 1, 1f);
-			this.SetCollision(
-				new CylinderCollision(this, 4.0f, 1.0f)
-			);
+
 
 			//this.SetRotation(MathHelper.PiOver2, 0, 0);
 			this.AddScript((scene, go, time) => AddRotation(new Vector3(0.4f, 0.6f, 1f) * (float) time.ElapsedGameTime.TotalSeconds));

@@ -51,6 +51,7 @@ namespace Singularity
 		/// </summary>
 		public void SetupScene()
 		{
+			UnloadContent();
 			// clear all current objects.
 			this.ColliderObjects.Clear();
 
@@ -62,8 +63,10 @@ namespace Singularity
 		/// Spawns a new <seealso cref="GameObject"/> on the next frame.
 		/// </summary>
 		/// <param name="gameObject"></param>
-		public void SpawnObject(GameObject gameObject)
+		public void SpawnObject(GameObject gameObject, GameObject parent = null)
 		{
+			if (parent != null)
+				gameObject.SetParent(parent);
 			this.BufferedObjects.Add(gameObject);
 		}
 
@@ -75,8 +78,16 @@ namespace Singularity
 		/// <param name="previousPosition"></param>
 		public void MoveOctree(GameObject gameObject, Vector3 previousPosition)
 		{
-			this.ColliderObjects.RemoveObject(gameObject, previousPosition);
-			this.AddObject(gameObject);
+			//this.ColliderObjects.RemoveObject(gameObject, previousPosition);
+			//this.AddObject(gameObject);
+
+			this.ColliderObjects.MoveObject(gameObject, gameObject.ModelRadius, previousPosition, gameObject.GetHierarchyPosition());
+		}
+
+		public void RemoveObject(GameObject gameObject)
+		{
+			gameObject.UnloadContent();
+			this.ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 		}
 
 		/// <summary>
@@ -90,6 +101,12 @@ namespace Singularity
 		/// <param name="gameObject"></param>
 		protected void AddObject(GameObject gameObject)
 		{
+			foreach (var children in gameObject.ChildObjects)
+			{
+				AddObject(children);
+			}
+
+
 			if (gameObject.Collision == null)
 			{
 				this.ColliderObjects.AddObject(gameObject, gameObject.Position, 0.0f);
@@ -183,7 +200,7 @@ namespace Singularity
 			do
 			{
 				DidCollide = false;
-				if (++collisionFixes >= 10)
+				if (++collisionFixes >= 2)
 				{
 					//Console.WriteLine($"Could not fix collision!");
 					// couldn't escape collision after n tries. Escaping to a safe position
@@ -202,7 +219,12 @@ namespace Singularity
 					(collider, collidable, pos, nor) =>
 					{
 						//Console.WriteLine("Collision");
-						gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+
+						if (gameObject.EnablePushCollision)
+							gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+						
+						gameObject.OnCollision(go, this, pos, nor);
+
 						DidCollide = true;
 					});
 
@@ -216,7 +238,7 @@ namespace Singularity
 		/// Creates a <seealso cref="Matrix"/> with all camera options set.
 		/// </summary>
 		/// <returns></returns>
-		public Matrix GetViewMatrix()
+		public virtual Matrix GetViewMatrix()
 		{
 			Vector3 targetVector =
 				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
@@ -237,7 +259,7 @@ namespace Singularity
 		/// Creates a <seealso cref="Matrix"/>
 		/// </summary>
 		/// <returns></returns>
-		public Matrix GetProjectionMatrix()
+		public virtual Matrix GetProjectionMatrix()
 		{
 			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance, this.MaximumCullingDistance);
 		}
@@ -248,6 +270,23 @@ namespace Singularity
 		/// <param name="effect"></param>
 		public abstract void AddLightningToEffect(BasicEffect effect);
 
+		public virtual void LoadContent()
+		{
+			// load content
+			foreach (var obj in ColliderObjects.GetAllObjects())
+			{
+				obj.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
+			}
+		}
+
+		public virtual void UnloadContent()
+		{
+			foreach (var obj in ColliderObjects.GetAllObjects())
+			{
+				obj.UnloadContent();
+			}
+		}
+
 
 		/// <summary>
 		/// Updates all <seealso cref="GameObject"/> and adds <see cref="BufferedObjects"/>
@@ -255,11 +294,17 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
+			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
+			//Console.WriteLine($"{objs.Length} objects in the octree.");
 
-			foreach (GameObject obj in this.ColliderObjects.GetAllObjects().ToArray()) obj.UpdateLogic(this, gameTime);
+			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
-			foreach (GameObject obj in BufferedObjects) this.AddObject(obj);
+			foreach (GameObject obj in BufferedObjects)
+			{
+				obj.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
+				this.AddObject(obj);
+			}
 
 			// clear buffers
 			this.BufferedObjects.Clear();
@@ -271,7 +316,7 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			foreach (GameObject obj in this.ColliderObjects.GetAllObjects()) obj.DrawLogic(this, spriteBatch);
+			foreach (GameObject obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
 		}
 
 	}
