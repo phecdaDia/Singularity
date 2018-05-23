@@ -13,7 +13,7 @@ namespace Singularity
 		/// <summary>
 		/// Current Version of Singularity
 		/// </summary>
-		public static readonly String SINGULARITY_VERSION = "v0.07";
+		public static readonly String SINGULARITY_VERSION = "v0.08";
 		
 		private readonly SceneManager SceneManager;
 
