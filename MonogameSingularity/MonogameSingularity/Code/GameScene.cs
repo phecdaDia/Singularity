@@ -231,7 +231,7 @@ namespace Singularity
 
 				}
 
-			} while (DidCollide);
+			} while (DidCollide && gameObject.EnablePushCollision);
 
 		}
 
