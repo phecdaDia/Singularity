@@ -30,9 +30,19 @@ namespace SingularityTest.Scenes
 
 			Mouse.SetPosition(200, 200);
 
+			Vector3 camTarget = sg.IsValidSavegame ? sg.CameraTarget : new Vector3(-1, 0, 0);
+			Vector3 camPosition = new Vector3();
+			if (entranceId == 0)
+			{
+				camPosition = sg.IsValidSavegame ? sg.Position : new Vector3(0, 0, 10);
+			} else if (entranceId == 1)
+			{
+				camPosition = new Vector3(10);
+			}
+
 			AddObject(new BasicCamera()
-				.SetCameraTarget(sg.IsValidSavegame ? sg.CameraTarget : new Vector3(-1, 0, 0))
-				.SetPosition(sg.IsValidSavegame ? sg.Position : new Vector3(0, 0, 10))
+				.SetCameraTarget(camTarget)
+				.SetPosition(camPosition)
 				.AddScript((scene, obj, time) =>
 				{
 					// enable or disable 3d.
@@ -44,16 +54,16 @@ namespace SingularityTest.Scenes
 
 					// screen effects
 
-					if(KeyboardManager.IsKeyPressed(Keys.Y))
+					if (KeyboardManager.IsKeyPressed(Keys.Y))
 						Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
-					if(KeyboardManager.IsKeyPressed(Keys.X))
+					if (KeyboardManager.IsKeyPressed(Keys.X))
 						Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
-					if(KeyboardManager.IsKeyPressed(Keys.C))
+					if (KeyboardManager.IsKeyPressed(Keys.C))
 						Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 
 					// savegame stuff
 					sg.Position = obj.Position;
-					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
+					sg.CameraTarget = ((BasicCamera)obj).GetCameraTarget();
 
 				})
 			);
