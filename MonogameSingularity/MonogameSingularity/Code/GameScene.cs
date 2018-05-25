@@ -191,7 +191,7 @@ namespace Singularity
 		{
 			if (!(gameObject is ICollider)) return;
 
-			List<GameObject> colliders = new List<GameObject>();
+			List<GameObject> collidables = new List<GameObject>();
 
 			int collisionFixes = 0;
 
@@ -210,9 +210,9 @@ namespace Singularity
 				}
 				// get list of collidables.
 
-				colliders = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+				collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
-				foreach (var go in colliders)
+				foreach (var go in collidables)
 				{
 
 					CollisionManager.DoesCollide(gameObject.Collision, go.Collision,
@@ -223,7 +223,8 @@ namespace Singularity
 						if (gameObject.EnablePushCollision)
 							gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 						
-						gameObject.OnCollision(go, this, pos, nor);
+						gameObject.OnCollision(gameObject, go, this, pos, nor);
+						go.OnCollision(gameObject, go, this, pos, nor);
 
 						DidCollide = true;
 					});

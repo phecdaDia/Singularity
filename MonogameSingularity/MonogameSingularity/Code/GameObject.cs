@@ -676,8 +676,8 @@ namespace Singularity
 
 		protected event EventHandler<CollisionEventArgs> OnCollisionEvent;
 
-		public virtual void OnCollision(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal) =>
-			OnCollision(new CollisionEventArgs(position, normal, collidable, scene));
+		public virtual void OnCollision(GameObject collider, GameObject collidable, GameScene scene, Vector3 position, Vector3 normal) =>
+			OnCollision(new CollisionEventArgs(position, normal, collider, collidable, scene));
 
 		public virtual void OnCollision(CollisionEventArgs e) =>
 			OnCollisionEvent?.Invoke(this, e);
