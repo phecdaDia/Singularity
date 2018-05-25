@@ -23,7 +23,7 @@ namespace SingularityTest.Scenes
 
 		}
 
-		protected override void AddGameObjects()
+		protected override void AddGameObjects(int entranceId)
 		{
 			// load the savegame
 			Savegame sg = Savegame.GetSavegame();

@@ -37,30 +37,32 @@ namespace Singularity
 			return SceneStack.Peek();
 		}
 
-		public static void AddSceneToStack(GameScene scene) => Instance._AddSceneToStack(scene);
+		public static void AddSceneToStack(GameScene scene, int entranceId = 0) => Instance._AddSceneToStack(scene, entranceId);
 
 		/// <summary>
 		/// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/>
 		/// </summary>
 		/// <param name="scene"></param>
-		public void _AddSceneToStack(GameScene scene)
+		/// <param name="entranceId"></param>
+		public void _AddSceneToStack(GameScene scene, int entranceId)
 		{
 			// pause the current scene
-			this._GetCurrentScene().OnScenePause();
+			this._GetCurrentScene()?.OnScenePause();
 
-			scene.SetupScene();
+			scene.SetupScene(entranceId);
 			scene.LoadContent();
 			this.SceneStack.Push(scene);
 		}
 
-		public static void AddSceneToStack(String sceneKey) => Instance._AddSceneToStack(sceneKey);
+		public static void AddSceneToStack(String sceneKey, int entranceId = 0) => Instance._AddSceneToStack(sceneKey, entranceId);
 
 		/// <summary>
 		/// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/><para />
 		/// Requires that the <seealso cref="GameScene"/> has been registered. <seealso cref="RegisterScene"/>
 		/// </summary>
 		/// <param name="sceneKey"></param>
-		public void _AddSceneToStack(String sceneKey)
+		/// <param name="entranceId"></param>
+		public void _AddSceneToStack(String sceneKey, int entranceId)
 		{
 			if (!GameScenes.ContainsKey(sceneKey))
 			{
@@ -70,7 +72,7 @@ namespace Singularity
 				return;
 			}
 
-			AddSceneToStack(GameScenes[sceneKey]);
+			AddSceneToStack(GameScenes[sceneKey], entranceId);
 		}
 
 		public static void CloseScene() => Instance._CloseScene();

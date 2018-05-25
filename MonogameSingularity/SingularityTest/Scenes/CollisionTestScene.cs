@@ -26,7 +26,7 @@ namespace SingularityTest.Scenes
 			effect.EnableDefaultLighting();
 		}
 
-		protected override void AddGameObjects()
+		protected override void AddGameObjects(int entranceId)
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{

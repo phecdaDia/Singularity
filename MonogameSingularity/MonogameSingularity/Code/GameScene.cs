@@ -49,14 +49,14 @@ namespace Singularity
 		/// <summary>
 		/// Clears all <seealso cref="GameObject"/> and calls <see cref="AddGameObjects"/>
 		/// </summary>
-		public void SetupScene()
+		public void SetupScene(int entranceId)
 		{
 			UnloadContent();
 			// clear all current objects.
 			this.ColliderObjects.Clear();
 
 			// Now setup the new objects
-			AddGameObjects();
+			AddGameObjects(entranceId);
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace Singularity
 		/// <summary>
 		/// Adds all <seealso cref="GameObject"/>
 		/// </summary>
-		protected abstract void AddGameObjects();
+		protected abstract void AddGameObjects(int entranceId);
 
 		/// <summary>
 		/// Adds a <seealso cref="GameObject"/>

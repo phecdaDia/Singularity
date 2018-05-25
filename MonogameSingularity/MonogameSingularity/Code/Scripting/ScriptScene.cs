@@ -38,7 +38,7 @@ namespace Singularity.Scripting
 			_loadingScreen = loadingScreen;
 		}
 
-		protected override void AddGameObjects()
+		protected override void AddGameObjects(int entranceId)
 		{
 			//Reload script in Debug mode with O
 #if DEBUG
@@ -47,13 +47,13 @@ namespace Singularity.Scripting
 				if (KeyboardManager.IsKeyPressed(Keys.O))
 				{
 					SceneManager.CloseScene();
-					SceneManager.AddSceneToStack(new ScriptLoadingScene(Game, _pathToScript, _currentAssembly, _loadingScreen));
+					SceneManager.AddSceneToStack(new ScriptLoadingScene(Game, _pathToScript, _currentAssembly, _loadingScreen), entranceId);
 				}
 			}));
 #endif
 			//Get all objects from script and use them
 			var gameObjects = new List<GameObject>();
-			_script.AddGameObjects(gameObjects);
+			_script.AddGameObjects(gameObjects, entranceId);
 
 			foreach (var gameObject in gameObjects)
 			{

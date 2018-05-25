@@ -88,7 +88,7 @@ namespace Singularity.Scripting
 			_state = State.Done;
 		}
 
-		protected override void AddGameObjects()
+		protected override void AddGameObjects(int entranceId)
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
 			{
@@ -96,7 +96,7 @@ namespace Singularity.Scripting
 				if (this._state == State.Done)
 				{
 					SceneManager.CloseScene();
-					SceneManager.AddSceneToStack(_newScene);
+					SceneManager.AddSceneToStack(_newScene, entranceId);
 				}
 			}));
 
