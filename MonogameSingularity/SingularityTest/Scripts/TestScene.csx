@@ -27,7 +27,7 @@ public class TestSceneScript : ScriptingTemplate
 		return _settings;
 	}
 
-	public override void AddGameObjects(List<GameObject> objectList)
+	public override void AddGameObjects(List<GameObject> objectList, int entranceId)
 	{
 		objectList.Add(new BasicCamera().SetPosition(0, 0, 10).AddScript((scene, obj, time) =>
 		{
