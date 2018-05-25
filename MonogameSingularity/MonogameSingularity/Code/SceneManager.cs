@@ -32,6 +32,8 @@ namespace Singularity
 		/// <returns></returns>
 		public GameScene _GetCurrentScene()
 		{
+			if (this.SceneStack.Count == 0) return null;
+
 			return SceneStack.Peek();
 		}
 
@@ -43,6 +45,9 @@ namespace Singularity
 		/// <param name="scene"></param>
 		public void _AddSceneToStack(GameScene scene)
 		{
+			// pause the current scene
+			this._GetCurrentScene().OnScenePause();
+
 			scene.SetupScene();
 			scene.LoadContent();
 			this.SceneStack.Push(scene);
@@ -79,6 +84,9 @@ namespace Singularity
 			scene.UnloadContent();
 			// unload content from the scene.
 			
+			// get current scene and call OnResume if possible
+			this._GetCurrentScene()?.OnSceneResume();
+
 		}
 
 		public static Boolean RegisterScene(GameScene scene) => Instance._RegisterScene(scene);
@@ -102,7 +110,9 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
-			if (this.SceneStack.Count == 0)
+			var scene = this._GetCurrentScene();
+
+			if (scene == null)
 			{
 				// close game, as there are no scenes left
 				Game.Exit();
@@ -110,7 +120,7 @@ namespace Singularity
 				return;
 			}
 			
-			this._GetCurrentScene().Update(gameTime);
+			scene.Update(gameTime);
 		}
 
 		/// <summary>
@@ -119,7 +129,9 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			if (this.SceneStack.Count == 0)
+			var scene = this._GetCurrentScene();
+
+			if (scene == null)
 			{
 				// close game, as there are no scenes left
 				Game.Exit();
@@ -127,7 +139,7 @@ namespace Singularity
 				return;
 			}
 
-			this._GetCurrentScene().Draw(spriteBatch);
+			scene.Draw(spriteBatch);
 		}
 	}
 }

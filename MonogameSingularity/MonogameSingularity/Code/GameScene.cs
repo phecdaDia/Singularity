@@ -319,5 +319,14 @@ namespace Singularity
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
 		}
 
+
+		protected event EventHandler<EventArgs> ScenePauseEvent;
+
+		public virtual void OnScenePause() => ScenePauseEvent?.Invoke(this, EventArgs.Empty);
+
+		protected event EventHandler<EventArgs> SceneResumeEvent;
+
+		public virtual void OnSceneResume() => SceneResumeEvent?.Invoke(this, EventArgs.Empty);
+
 	}
 }
