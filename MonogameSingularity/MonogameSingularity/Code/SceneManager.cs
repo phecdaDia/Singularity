@@ -15,6 +15,10 @@ namespace Singularity
 
 		private readonly Stack<GameScene> SceneStack;
 
+		private Boolean IsSceneClosing = false;
+
+		private Queue<GameScene> SceneQueue;
+
 		public SceneManager(SingularityGame game)
 		{
 			this.Game = game;
@@ -22,6 +26,7 @@ namespace Singularity
 
 			this.GameScenes = new Dictionary<string, GameScene>();
 			this.SceneStack = new Stack<GameScene>();
+			this.SceneQueue = new Queue<GameScene>();
 		}
 
 		public static GameScene GetCurrentScene() => Instance._GetCurrentScene();
@@ -46,12 +51,13 @@ namespace Singularity
 		/// <param name="entranceId"></param>
 		public void _AddSceneToStack(GameScene scene, int entranceId)
 		{
+			// add scene to queue first..
 			// pause the current scene
 			this._GetCurrentScene()?.OnScenePause();
 
 			scene.SetupScene(entranceId);
 			scene.LoadContent();
-			this.SceneStack.Push(scene);
+			this.SceneQueue.Enqueue(scene);
 		}
 
 		public static void AddSceneToStack(String sceneKey, int entranceId = 0) => Instance._AddSceneToStack(sceneKey, entranceId);
@@ -82,13 +88,7 @@ namespace Singularity
 		/// </summary>
 		public void _CloseScene()
 		{
-			GameScene scene = this.SceneStack.Pop();
-			scene.UnloadContent();
-			// unload content from the scene.
-			
-			// get current scene and call OnResume if possible
-			this._GetCurrentScene()?.OnSceneResume();
-
+			this.IsSceneClosing = true;
 		}
 
 		public static Boolean RegisterScene(GameScene scene) => Instance._RegisterScene(scene);
@@ -112,6 +112,12 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
+			// add scenes to the stack
+			while (this.SceneQueue.Count > 0)
+			{
+				this.SceneStack.Push(this.SceneQueue.Dequeue());
+			}
+
 			var scene = this._GetCurrentScene();
 
 			if (scene == null)
@@ -123,6 +129,26 @@ namespace Singularity
 			}
 			
 			scene.Update(gameTime);
+
+			// close scene is it's schedules to close
+
+			if (this.IsSceneClosing)
+			{
+				this.IsSceneClosing = false;
+				this.SceneStack.Pop();
+				scene.UnloadContent();
+				// unload content from the scene.
+
+				// get current scene and call OnResume if possible
+				// check if we don't add any new scenes
+				if (this.SceneQueue.Count == 0)
+					this._GetCurrentScene()?.OnSceneResume();
+			}
+
+			while (this.SceneQueue.Count > 0)
+			{
+				this.SceneStack.Push(this.SceneQueue.Dequeue());
+			}
 		}
 
 		/// <summary>

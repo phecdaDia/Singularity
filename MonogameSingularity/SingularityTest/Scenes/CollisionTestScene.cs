@@ -16,7 +16,7 @@ namespace SingularityTest.Scenes
 {
 	public class CollisionTestScene : GameScene
 	{
-		public CollisionTestScene(SingularityGame game) : base(game, "collision", 10, -2, 0.1f)
+		public CollisionTestScene(SingularityGame game) : base(game, "collision-test", 10, -2, 0.1f)
 		{
 
 		}
@@ -28,9 +28,15 @@ namespace SingularityTest.Scenes
 
 		protected override void AddGameObjects(int entranceId)
 		{
+
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
+				if (KeyboardManager.IsKeyPressed(Keys.O))
+				{
+					SceneManager.CloseScene();
+					SceneManager.AddSceneToStack("collision-test");
+				}
 			}));
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50).SetEnableCollision(false));

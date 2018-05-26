@@ -54,7 +54,7 @@ namespace Singularity
 			UnloadContent();
 			// clear all current objects.
 			this.ColliderObjects.Clear();
-
+			
 			// Now setup the new objects
 			AddGameObjects(entranceId);
 		}
@@ -297,6 +297,8 @@ namespace Singularity
 		{
 			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
 			//Console.WriteLine($"{objs.Length} objects in the octree.");
+
+			//Console.WriteLine($"{objs.Length}");
 
 			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
 
