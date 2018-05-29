@@ -6,19 +6,27 @@ using System.Threading.Tasks;
 
 namespace Singularity.Scripting
 {
+    using System.IO;
+    using System.Reflection;
+    using Microsoft.CodeAnalysis.CSharp.Scripting;
+    using Microsoft.CodeAnalysis.Scripting;
+    using Microsoft.Xna.Framework;
+
     public static class ScriptManager
     {
         private static bool   _isSetUp = false;
         private static string _loadingKey;
         private static Dictionary<string, ScriptData> _scriptList;
+        private static Assembly _runningAssembly;
 
-        public static void SetUp<TLoadingScene>(params object[] argumentsForLoadingScene)
+        public static void SetUp<TLoadingScene>(Assembly currentAssembly, params object[] argumentsForLoadingScene)
             where TLoadingScene : GameScene, ILoadingScreen
         {
             _loadingKey =
                 SceneManager.RegisterScene((GameScene) Activator.CreateInstance(typeof(TLoadingScene),
                                                                                 argumentsForLoadingScene));
             _scriptList = new Dictionary<string, ScriptData>();
+            _runningAssembly = currentAssembly;
             _isSetUp = true;
         }
 
@@ -83,9 +91,36 @@ namespace Singularity.Scripting
             SceneManager.AddSceneToStack(_loadingKey);
             Task.Run(() =>
                      {
+                         var loadingScreen = (ILoadingScreen) SceneManager.GetScene(_loadingKey);
                          foreach (var key in _scriptList.Keys)
                          {
+							 loadingScreen.CurrentlyLoading(key);
+
+                             var scriptData = _scriptList[key];
+
+							 if(!File.Exists(key))
+                                 throw new Exception("Script does not exist");
+                             var scriptCode = File.ReadAllText(key);
+
+                             var script =
+                                 CSharpScript.Create(scriptCode,
+                                                     ScriptOptions.Default.WithReferences(Assembly.GetCallingAssembly(),
+                                                                                          Assembly
+                                                                                              .GetExecutingAssembly(),
+                                                                                          Assembly
+                                                                                              .GetAssembly(typeof(Game
+                                                                                                           )),
+                                                                                          _runningAssembly));
+                             script.Compile();
+                             var scriptType = (Type) script.RunAsync().Result.ReturnValue;
+
+                             scriptData.Template = (ScriptingTemplate) Activator.CreateInstance(scriptType);
+                             scriptData.IsLoaded = true;
+
+                             _scriptList[key] = scriptData;
                          }
+
+						 loadingScreen.LoadingDone();
                      });
         }
 
