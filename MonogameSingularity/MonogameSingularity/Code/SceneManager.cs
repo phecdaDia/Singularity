@@ -91,7 +91,7 @@ namespace Singularity
 			this.IsSceneClosing = true;
 		}
 
-		public static Boolean RegisterScene(GameScene scene) => Instance._RegisterScene(scene);
+		public static string RegisterScene(GameScene scene) => Instance._RegisterScene(scene);
 
 		/// <summary>
 		/// Registers a <seealso cref="GameScene"/> so it can be added to the <see cref="SceneStack"/><para/>
@@ -99,11 +99,11 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <returns></returns>
-		public Boolean _RegisterScene(GameScene scene)
+		public string _RegisterScene(GameScene scene)
 		{
-			if (GameScenes.ContainsKey(scene.SceneKey)) return false; // Scene is either already registered or the key is double. 
+			if (GameScenes.ContainsKey(scene.SceneKey)) return null; // Scene is either already registered or the key is double. 
 			GameScenes[scene.SceneKey] = scene;
-			return true;
+			return scene.SceneKey;
 		}
 
 		/// <summary>
