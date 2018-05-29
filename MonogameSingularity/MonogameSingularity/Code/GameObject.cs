@@ -593,8 +593,11 @@ namespace Singularity
 			} 
 
 			// if we are allowed to move the camera, do it
+
+			scene.CameraLocked = false;
 			if (this is ICameraController controller) controller.SetCamera(scene);
 
+			scene.CameraLocked = true;
 
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
 		}

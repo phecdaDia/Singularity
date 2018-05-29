@@ -115,10 +115,6 @@ namespace Singularity.GameObjects
 			if (movement.LengthSquared() > 0f) movement.Normalize();
 			
 			this.AddPosition(movement * (float)gameTime.ElapsedGameTime.TotalSeconds * 5f);
-
-			//Console.WriteLine($"Positions: {HorizontalRotation}, {VerticalRotation}");
-			// update relative camera
-			scene.SetCamera(this.Position, target);
 		}
 
 		public void SetCamera(GameScene scene)

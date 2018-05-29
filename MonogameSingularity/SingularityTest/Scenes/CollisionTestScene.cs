@@ -34,9 +34,10 @@ namespace SingularityTest.Scenes
 				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
 				if (KeyboardManager.IsKeyPressed(Keys.O))
 				{
-					SceneManager.CloseScene();
-					SceneManager.AddSceneToStack("collision-test");
+                    SceneManager.ChangeScene("collision-test");
 				}
+                if(KeyboardManager.IsKeyPressed(Keys.F4))
+                    SceneManager.ClearStack();
 			}));
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50).SetEnableCollision(false));
