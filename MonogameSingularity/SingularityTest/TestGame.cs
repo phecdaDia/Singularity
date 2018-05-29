@@ -45,7 +45,6 @@ namespace SingularityTest
 			// register scenes
 	        SceneManager.RegisterScene(new CollisionTestScene(this));
 
-
 	        SceneManager.AddSceneToStack("collision-test", 0);
 		}
 
