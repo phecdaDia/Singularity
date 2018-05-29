@@ -24,6 +24,8 @@ namespace Singularity
 		private float MinimumCullingDistance = 0.05f;
 		private float MaximumCullingDistance = 100.0f;
 
+		public Boolean CameraLocked { get; set; }
+
 
 		/// <summary>
 		/// Creates a new <see cref="GameScene"/>
@@ -153,6 +155,12 @@ namespace Singularity
 		/// <param name="cameraPosition"></param>
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.CameraPosition = cameraPosition;
 		}
 
@@ -162,6 +170,12 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetCameraTarget(Vector3 cameraTarget)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.UseAbsoluteCameraTarget = false;
 			this.CameraTarget = cameraTarget;
 		}
@@ -172,6 +186,12 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCameraTarget(Vector3 cameraTarget)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.UseAbsoluteCameraTarget = true;
 			this.CameraTarget = cameraTarget;
 		}
@@ -241,18 +261,7 @@ namespace Singularity
 		/// <returns></returns>
 		public virtual Matrix GetViewMatrix()
 		{
-			Vector3 targetVector =
-				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
-
-			// transform camera position because of some black magic
-			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Y, this.CameraPosition.Z);
-
-
-			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
-
-			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
-
-			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
+			return Matrix.CreateLookAt(this.CameraPosition, this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget, Vector3.Up);
 
 		}
 
