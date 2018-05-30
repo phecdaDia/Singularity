@@ -7,6 +7,7 @@ namespace Singularity.Scripting
 {
     using System.IO;
     using System.Reflection;
+    using System.Threading;
     using Microsoft.CodeAnalysis.CSharp.Scripting;
     using Microsoft.CodeAnalysis.Scripting;
     using Microsoft.Xna.Framework;
@@ -198,6 +199,46 @@ namespace Singularity.Scripting
             }
 
             ((LoadingScreenTemplate) SceneManager.GetScene(_loadingKey))?.LoadingDone();
+        }
+
+        public static void LoadAllAndStart(string start, int entranceId = 0)
+        {
+            CheckSetUp();
+            var LoadingScene = (LoadingScreenTemplate)SceneManager.GetScene(_loadingKey);
+            LoadingScreenTemplate.DoneLoading = false;
+            SceneManager.AddSceneToStack(new StartingScene(_game, start));
+			SceneManager.AddSceneToStack(_loadingKey);
+            Task.Run(() =>
+                     {
+                         Thread.Sleep(100);
+                         var paths = new string[_scriptList.Keys.Count];
+                         _scriptList.Keys.CopyTo(paths, 0);
+
+                         foreach (var path in paths)
+                         {
+                             LoadingScene.CurrentlyLoading(path);
+
+                             var scriptData = _scriptList[path];
+                             var scriptCode = File.ReadAllText(path);
+                             var script =
+                                 CSharpScript.Create(scriptCode, ScriptOptions.Default.WithReferences(Assembly.GetCallingAssembly(),
+                                                                                                      Assembly
+                                                                                                          .GetExecutingAssembly(),
+                                                                                                      Assembly
+                                                                                                          .GetAssembly(typeof(Game
+                                                                                                                       )),
+                                                                                                      _runningAssembly));
+                             script.Compile();
+                             var scriptType = (Type)script.RunAsync().Result.ReturnValue;
+                             scriptData.Template = (ScriptingTemplate)Activator.CreateInstance(scriptType);
+
+                             scriptData.Scene = new ScriptScene(_game, path, scriptData.Template);
+                             SceneManager.RegisterScene(scriptData.Scene, SceneManager.RegisterBehavior.Overwrite);
+                             _scriptList[path] = scriptData;
+                         }
+
+                         LoadingScene.LoadingDone();
+					 });
         }
 
         /// <summary>

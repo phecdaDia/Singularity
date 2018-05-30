@@ -45,10 +45,10 @@ namespace SingularityTest
 			// register scenes
 	        //SceneManager.RegisterScene(new CollisionTestScene(this));
 	        //SceneManager.AddSceneToStack("collision-test", 0);
-            SceneManager.AddSceneToStack(SceneManager.RegisterScene(new TestScene(this)));
+            //SceneManager.AddSceneToStack(SceneManager.RegisterScene(new TestScene(this)));
 
             ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
-            ScriptManager.LoadAllScripts();
+            ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
 		}
 
 		private void GameExiting(Object sender, EventArgs e)

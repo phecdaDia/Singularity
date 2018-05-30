@@ -24,7 +24,8 @@ public class CollisionTestSceneScript : ScriptingTemplate
 		{
 			if (KeyboardManager.IsKeyPressed(Keys.Escape))
 				SceneManager.CloseScene();
-			
+			if (KeyboardManager.IsKeyPressed(Keys.T))
+				SceneManager.AddSceneToStack("Scripts/CollisionTestSceneScript.csx");
 
 			if (KeyboardManager.IsKeyPressed(Keys.F4))
 				SceneManager.ClearStack();
