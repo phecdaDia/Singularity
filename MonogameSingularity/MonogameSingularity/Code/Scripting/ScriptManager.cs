@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Singularity.Scripting
@@ -18,15 +17,16 @@ namespace Singularity.Scripting
         private static string _loadingKey;
         private static Dictionary<string, ScriptData> _scriptList;
         private static Assembly _runningAssembly;
+        private static SingularityGame _game;
 
-        public static void SetUp<TLoadingScene>(Assembly currentAssembly, params object[] argumentsForLoadingScene)
-            where TLoadingScene : GameScene, ILoadingScreen
+        public static void SetUp<TLoadingScene>(Assembly currentAssembly, SingularityGame game)
+            where TLoadingScene : ALoadingScreen
         {
             _loadingKey =
-                SceneManager.RegisterScene((GameScene) Activator.CreateInstance(typeof(TLoadingScene),
-                                                                                argumentsForLoadingScene));
+                SceneManager.RegisterScene((GameScene) Activator.CreateInstance(typeof(TLoadingScene), game));
             _scriptList = new Dictionary<string, ScriptData>();
             _runningAssembly = currentAssembly;
+            _game = game;
             _isSetUp = true;
         }
 
@@ -59,7 +59,7 @@ namespace Singularity.Scripting
                         return;
 					case AddBehavior.Overwrite:
 					    _scriptList.Remove(path);
-                        _AddScript(path);
+                        _AddScriptToDict(path);
                         break;
 					case AddBehavior.ThrowException:
                         throw new Exception("Script with path \"" + path + "\" already added");
@@ -68,43 +68,54 @@ namespace Singularity.Scripting
                 }
             }
 
-            _AddScript(path);
+            _AddScriptToDict(path);
         }
 
-        private static void _AddScript(string path)
+        private static void _AddScriptToDict(string path)
         {
-            _scriptList.Add(path, new ScriptData(){IsLoaded = false, IsRegistered = false, Template = null, Scene = null});
+            if(!File.Exists(path))
+                throw new Exception("Script does not exist \"" + path + "\"");
+
+			_scriptList.Add(path, new ScriptData(){IsLoaded = false, IsRegistered = false, Template = null, Scene = null});
         }
 
-        public static void LoadScript(AddBehavior existsAlready = AddBehavior.Ignore, LoadBehavior alreadyLoaded = LoadBehavior.Ignore, params string[] paths)
-        {
-            CheckSetUp();
-
-            SceneManager.AddSceneToStack(_loadingKey);
-            //TODO LOAD
-
-        }
-
-        public static void LoadAllScripts(LoadBehavior alreadyLoaded = LoadBehavior.Ignore)
+        public static void LoadAllScripts(AddBehavior existsAlready = AddBehavior.Ignore, 
+                                          LoadBehavior alreadyLoaded = LoadBehavior.Reload)
         {
             CheckSetUp();
+            _LoadScripts(_scriptList.Keys, alreadyLoaded);
+        }
+
+        private static void _LoadScripts(IEnumerable<string> scriptPaths, LoadBehavior alredyLoaded = LoadBehavior.Reload)
+        {
             SceneManager.AddSceneToStack(_loadingKey);
             Task.Run(() =>
                      {
-                         var loadingScreen = (ILoadingScreen) SceneManager.GetScene(_loadingKey);
-                         foreach (var key in _scriptList.Keys)
+                         var loadingScreen = (ALoadingScreen) SceneManager.GetScene(_loadingKey);
+                         var tempDic = new Dictionary<string, ScriptingTemplate>();
+
+                         foreach (var scriptPath in scriptPaths)
                          {
-							 loadingScreen.CurrentlyLoading(key);
+                             var scriptData = _scriptList[scriptPath];
+                             if(scriptData.IsLoaded)
+                                 switch (alredyLoaded)
+                                 {
+									 case LoadBehavior.Ignore:
+                                         continue;
+									 case LoadBehavior.Reload:
+									     break;
+									 case LoadBehavior.ThrowException:
+                                         throw new Exception("Script already loaded \"" + scriptPath + "\"");
+                                     default:
+                                         throw new ArgumentOutOfRangeException(nameof(alredyLoaded), alredyLoaded, null);
+                                 }
 
-                             var scriptData = _scriptList[key];
+                             loadingScreen.CurrentlyLoading(scriptPath);
 
-							 if(!File.Exists(key))
-                                 throw new Exception("Script does not exist");
-                             var scriptCode = File.ReadAllText(key);
-
-                             var script =
-                                 CSharpScript.Create(scriptCode,
-                                                     ScriptOptions.Default.WithReferences(Assembly.GetCallingAssembly(),
+                             var scriptCode = File.ReadAllText(scriptPath);
+                             var script = CSharpScript.Create(scriptCode,
+                                                              ScriptOptions
+                                                                  .Default.WithReferences(Assembly.GetCallingAssembly(),
                                                                                           Assembly
                                                                                               .GetExecutingAssembly(),
                                                                                           Assembly
@@ -112,26 +123,81 @@ namespace Singularity.Scripting
                                                                                                            )),
                                                                                           _runningAssembly));
                              script.Compile();
-                             var scriptType = (Type) script.RunAsync().Result.ReturnValue;
+                             var tempScriptType = script.RunAsync().Result.ReturnValue;
+                             if (!(tempScriptType is Type))
+                             {
+                                 throw new Exception("Return type of Script \"" + scriptPath + "\n is not correct");
+                             }
 
-                             scriptData.Template = (ScriptingTemplate) Activator.CreateInstance(scriptType);
-                             scriptData.IsLoaded = true;
+                             var scriptType = (Type)tempScriptType;
 
-                             _scriptList[key] = scriptData;
+                             tempDic[scriptPath] = (ScriptingTemplate) Activator.CreateInstance(scriptType);
                          }
 
-						 loadingScreen.LoadingDone();
+
+                         foreach (var tempDicKey in tempDic.Keys)
+                         {
+                             var data = _scriptList[tempDicKey];
+                             data.Template = tempDic[tempDicKey];
+                             data.IsLoaded = true;
+                             _scriptList[tempDicKey] = data;
+                         }
+                         loadingScreen.LoadingDone();
                      });
-        }
-
-        public static void RegisterScript(params string[] paths)
-        {
-
         }
 
         public static void RegisterAllScripts()
         {
+            var paths = _scriptList.Keys;
+            var tempDict = new Dictionary<string, ScriptScene>();
 
+            foreach (var path in paths)
+            {
+                var scriptData = _scriptList[path];
+                var scriptScene = new ScriptScene(_game, path, scriptData.Template);
+                SceneManager.RegisterScene(scriptScene, SceneManager.RegisterBehavior.Overwrite);
+                tempDict[path] = scriptScene;
+            }
+
+            foreach (var key in tempDict.Keys)
+            {
+                var scriptData = _scriptList[key];
+                scriptData.Scene = tempDict[key];
+                scriptData.IsRegistered = true;
+                _scriptList[key] = scriptData;
+            }
+        }
+
+        public static void ReloadScript(params string[] paths)
+        {
+            CheckSetUp();
+            SceneManager.AddSceneToStack(_loadingKey);
+            var LoadingScene = (ALoadingScreen) SceneManager.GetScene(_loadingKey);
+
+            foreach (var path in paths)
+            {
+                LoadingScene.CurrentlyLoading(path);
+
+                var scriptData = _scriptList[path];
+                var scriptCode = File.ReadAllText(path);
+                var script =
+                    CSharpScript.Create(scriptCode, ScriptOptions.Default.WithReferences(Assembly.GetCallingAssembly(),
+                                                                                         Assembly
+                                                                                             .GetExecutingAssembly(),
+                                                                                         Assembly
+                                                                                             .GetAssembly(typeof(Game
+                                                                                                          )),
+                                                                                         _runningAssembly));
+                script.Compile();
+                var scriptType = (Type) script.RunAsync().Result.ReturnValue;
+                scriptData.Template = (ScriptingTemplate) Activator.CreateInstance(scriptType);
+
+                scriptData.Scene = new ScriptScene(_game, path, scriptData.Template);
+                SceneManager.RegisterScene(scriptData.Scene, SceneManager.RegisterBehavior.Overwrite);
+                _scriptList[path] = scriptData;
+            }
+
+            ((ALoadingScreen) SceneManager.GetScene(_loadingKey))?.LoadingDone();
         }
 
         /// <summary>

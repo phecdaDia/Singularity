@@ -110,10 +110,8 @@
     <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
-    <Compile Include="Code\Scripting\ILoadingScreen.cs" />
-    <Compile Include="Code\Scripting\LoadingScreenTemplate.cs" />
+    <Compile Include="Code\Scripting\ALoadingScreen.cs" />
     <Compile Include="Code\Scripting\ScriptingTemplate.cs" />
-    <Compile Include="Code\Scripting\ScriptLoadingScene.cs" />
     <Compile Include="Code\Scripting\ScriptManager.cs" />
     <Compile Include="Code\Scripting\ScriptScene.cs" />
     <Compile Include="Code\SettingsManager.cs" />

@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity
 {
-    using System.Runtime.CompilerServices;
 
     public class SceneManager
 	{
@@ -101,12 +100,33 @@ namespace Singularity
 	    /// Returns Key of GameScene
 	    /// </summary>
 	    /// <param name="scene"></param>
+	    /// <param name="behavior"></param>
 	    /// <returns></returns>
-		public static string RegisterScene(GameScene scene) => Instance._RegisterScene(scene);
+	    public static string RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore) => Instance._RegisterScene(scene, behavior);
 
-		public string _RegisterScene(GameScene scene)
+	    public enum RegisterBehavior
+	    {
+            Ignore,
+            Overwrite,
+            ThrowException
+	    }
+
+		public string _RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore)
 		{
-			if (GameScenes.ContainsKey(scene.SceneKey)) return null; // Scene is either already registered or the key is double. 
+		    if (GameScenes.ContainsKey(scene.SceneKey))
+		    {
+		        switch (behavior)
+		        {
+					case RegisterBehavior.Ignore:
+					    return null;
+					case RegisterBehavior.Overwrite:
+                        break;
+					case RegisterBehavior.ThrowException:
+                        throw new Exception($"Scene \"{scene.SceneKey}\" already registered");
+		            default:
+		                throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null);
+		        }
+		    }
 			GameScenes[scene.SceneKey] = scene;
 			return scene.SceneKey;
 		}

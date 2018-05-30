@@ -91,6 +91,10 @@ namespace SingularityTest.Scenes
                     SceneManager.CloseScene();
 				if(KeyboardManager.IsKeyPressed(Keys.I))
 					SettingsManager.SetSetting("exitKey", Keys.P);
+		        if (KeyboardManager.IsKeyPressed(Keys.L))
+		        {
+		            SceneManager.ChangeScene("Scripts/CollisionTestSceneScript.csx");
+		        }
 		    }));
 
 
