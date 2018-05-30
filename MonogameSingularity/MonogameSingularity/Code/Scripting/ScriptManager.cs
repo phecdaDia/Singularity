@@ -20,7 +20,7 @@ namespace Singularity.Scripting
         private static SingularityGame _game;
 
         public static void SetUp<TLoadingScene>(Assembly currentAssembly, SingularityGame game)
-            where TLoadingScene : ALoadingScreen
+            where TLoadingScene : LoadingScreenTemplate
         {
             _loadingKey =
                 SceneManager.RegisterScene((GameScene) Activator.CreateInstance(typeof(TLoadingScene), game));
@@ -91,7 +91,7 @@ namespace Singularity.Scripting
             SceneManager.AddSceneToStack(_loadingKey);
             Task.Run(() =>
                      {
-                         var loadingScreen = (ALoadingScreen) SceneManager.GetScene(_loadingKey);
+                         var loadingScreen = (LoadingScreenTemplate) SceneManager.GetScene(_loadingKey);
                          var tempDic = new Dictionary<string, ScriptingTemplate>();
 
                          foreach (var scriptPath in scriptPaths)
@@ -172,7 +172,7 @@ namespace Singularity.Scripting
         {
             CheckSetUp();
             SceneManager.AddSceneToStack(_loadingKey);
-            var LoadingScene = (ALoadingScreen) SceneManager.GetScene(_loadingKey);
+            var LoadingScene = (LoadingScreenTemplate) SceneManager.GetScene(_loadingKey);
 
             foreach (var path in paths)
             {
@@ -197,7 +197,7 @@ namespace Singularity.Scripting
                 _scriptList[path] = scriptData;
             }
 
-            ((ALoadingScreen) SceneManager.GetScene(_loadingKey))?.LoadingDone();
+            ((LoadingScreenTemplate) SceneManager.GetScene(_loadingKey))?.LoadingDone();
         }
 
         /// <summary>

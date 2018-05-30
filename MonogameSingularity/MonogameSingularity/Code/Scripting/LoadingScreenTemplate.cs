@@ -2,9 +2,9 @@
 {
     using Microsoft.Xna.Framework;
 
-    public abstract class ALoadingScreen : GameScene
+    public abstract class LoadingScreenTemplate : GameScene
 	{
-	    protected ALoadingScreen(SingularityGame game) : base(game, "loadingScene")
+	    protected LoadingScreenTemplate(SingularityGame game) : base(game, "loadingScene")
 	    {
 
 	    }

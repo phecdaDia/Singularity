@@ -9,7 +9,7 @@ using SingularityTest.GameObjects;
 
 namespace SingularityTest
 {
-	public class LoadingScreen : ALoadingScreen
+	public class LoadingScreen : LoadingScreenTemplate
 	{
 	    public LoadingScreen(SingularityGame game) : base(game)
 	    {
