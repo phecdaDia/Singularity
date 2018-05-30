@@ -13,7 +13,7 @@ namespace Singularity.Scripting
     {
 
         private string _start;
-	    public StartingScene(SingularityGame game, string start) : base(game, "startingScene")
+	    public StartingScene(SingularityGame game, string start) : base(game, "startingScene|" + start)
 	    {
 	        _start = start;
 	    }
