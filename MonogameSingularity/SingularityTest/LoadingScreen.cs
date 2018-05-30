@@ -9,19 +9,20 @@ using SingularityTest.GameObjects;
 
 namespace SingularityTest
 {
-	/// <summary>
-	/// Example Loading Screen -> just adds TestSpriteObject at 200, 200
-	/// </summary>
 	public class LoadingScreen : LoadingScreenTemplate
 	{
-		public override void AddGameObjects(List<GameObject> objectList)
-		{
-			objectList.Add(new TestSpriteObject().SetPosition(200,200));
-		}
+	    public LoadingScreen(SingularityGame game) : base(game)
+	    {
+	    }
 
-		public override void AddLightningToEffect(BasicEffect effect)
-		{
-			
-		}
+	    protected override void AddGameObjects(int entranceId)
+	    {
+	        AddObject(new TestSpriteObject());
+	    }
+
+	    public override void AddLightningToEffect(BasicEffect effect)
+	    {
+	        
+	    }
 	}
 }

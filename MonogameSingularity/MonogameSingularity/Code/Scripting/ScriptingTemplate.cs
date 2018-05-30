@@ -31,7 +31,7 @@ namespace Singularity.Scripting
 		/// </summary>
 		/// <param name="objectList">a complete instanciated objectList. don't delete. just add</param>
 		/// <param name="entranceId"></param>
-		public abstract void AddGameObjects(List<GameObject> objectList, int entranceId);
+		public abstract List<GameObject> AddGameObjects(int entranceId);
 
 		/// <summary>
 		/// Define lighting
@@ -45,7 +45,6 @@ namespace Singularity.Scripting
 	/// </summary>
 	public struct SceneSettings
 	{
-		public string SceneKey;
 		public int? SceneSize;
 		public int? MinPartition;
 		public float? Precision;

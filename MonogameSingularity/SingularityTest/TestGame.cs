@@ -22,6 +22,7 @@ namespace SingularityTest
         {
 	        this.IsMouseVisible = true;
 			SettingsManager.SetUp<Settings>();
+            ScriptManager.SetUp<LoadingScreen>(Assembly.GetCallingAssembly(), this);
 		}
 
         /// <summary>
@@ -41,11 +42,13 @@ namespace SingularityTest
 
 			this.Exiting += this.GameExiting;
 
-			//this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly(), typeof(LoadingScreen)));
 			// register scenes
-	        SceneManager.RegisterScene(new CollisionTestScene(this));
+	        //SceneManager.RegisterScene(new CollisionTestScene(this));
+	        //SceneManager.AddSceneToStack("collision-test", 0);
+            //SceneManager.AddSceneToStack(SceneManager.RegisterScene(new TestScene(this)));
 
-	        SceneManager.AddSceneToStack("collision-test", 0);
+            ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
+            ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
 		}
 
 		private void GameExiting(Object sender, EventArgs e)

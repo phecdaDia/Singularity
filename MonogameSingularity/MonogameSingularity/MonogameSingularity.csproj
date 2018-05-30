@@ -112,8 +112,9 @@
     <Compile Include="Code\SceneManager.cs" />
     <Compile Include="Code\Scripting\LoadingScreenTemplate.cs" />
     <Compile Include="Code\Scripting\ScriptingTemplate.cs" />
-    <Compile Include="Code\Scripting\ScriptLoadingScene.cs" />
+    <Compile Include="Code\Scripting\ScriptManager.cs" />
     <Compile Include="Code\Scripting\ScriptScene.cs" />
+    <Compile Include="Code\Scripting\StartingScene.cs" />
     <Compile Include="Code\SettingsManager.cs" />
     <Compile Include="Code\SingularityGame.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />

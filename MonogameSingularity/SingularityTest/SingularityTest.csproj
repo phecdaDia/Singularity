@@ -62,6 +62,9 @@
     <Compile Include="Scenes\CollisionTestScene.cs" />
     <Compile Include="ScreenEffect\ColorScreenEffect.cs" />
     <Compile Include="ScreenEffect\ShakeScreenEffect.cs" />
+    <None Include="Scripts\CollisionTestSceneScript.csx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Settings.cs" />
     <Compile Include="TestGame.cs" />
     <Compile Include="Program.cs" />
@@ -132,9 +135,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Scripts\TestScene.csx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
