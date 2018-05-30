@@ -197,7 +197,7 @@ namespace Singularity.Scripting
             var LoadingScene = (LoadingScreenTemplate)SceneManager.GetScene(_loadingKey);
             LoadingScreenTemplate.DoneLoading = false;
 
-            SceneManager.AddSceneToStack(new StartingScene(_game, start));
+            SceneManager.AddSceneToStack(new StartingScene(_game, start, entranceId));
 			SceneManager.AddSceneToStack(_loadingKey);
 
             Task.Run(() =>

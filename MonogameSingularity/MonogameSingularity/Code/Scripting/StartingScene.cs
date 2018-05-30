@@ -12,10 +12,12 @@ namespace Singularity.Scripting
     internal class StartingScene : GameScene
     {
 
-        private string _start;
-	    public StartingScene(SingularityGame game, string start) : base(game, "startingScene|" + start)
+        private readonly string _start;
+        private readonly int _entranceId;
+	    public StartingScene(SingularityGame game, string start, int entranceID) : base(game, "startingScene|" + start + "|" + entranceID)
 	    {
 	        _start = start;
+	        _entranceId = entranceID;
 	    }
 
 	    protected override void AddGameObjects(int entranceId)
@@ -24,7 +26,7 @@ namespace Singularity.Scripting
 			                                          {
 			                                              if (LoadingScreenTemplate.DoneLoading)
 			                                              {
-			                                                  SceneManager.ChangeScene(_start, entranceId, true);
+			                                                  SceneManager.ChangeScene(_start, _entranceId);
 			                                                  LoadingScreenTemplate.DoneLoading = false;
 			                                              }
 			                                          }));
