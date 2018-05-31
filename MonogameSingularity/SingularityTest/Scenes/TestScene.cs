@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
-using Singularity.Code.Collisions.Multi;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using SingularityTest.GameObjects;

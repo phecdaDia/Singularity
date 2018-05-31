@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Singularity.Code.Collisions;
 
 namespace Singularity.Collisions.CollisionTypes
 {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Singularity.Collisions;
+﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Code.Collisions
+namespace Singularity.Collisions
 {
 	public class EdgeCollision : Collision
 	{

@@ -1,7 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Singularity.Code.Collisions;
-using Singularity.Code.Collisions.CollisionTypes;
 using Singularity.Collisions.CollisionTypes;
 
 namespace Singularity.Collisions

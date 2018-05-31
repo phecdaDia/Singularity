@@ -5,8 +5,8 @@ using System.Runtime.Remoting.Channels;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Events;
 using Singularity.Collisions;
+using Singularity.Events;
 using Singularity.GameObjects.Interfaces;
 
 namespace Singularity
