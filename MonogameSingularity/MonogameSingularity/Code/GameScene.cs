@@ -341,4 +341,6 @@ namespace Singularity
 		public virtual void OnSceneResume() => SceneResumeEvent?.Invoke(this, EventArgs.Empty);
 
 	}
+
+	public interface ITransparent { }
 }

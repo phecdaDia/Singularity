@@ -19,7 +19,7 @@ namespace SingularityTest.Scenes
 		public TestScene(SingularityGame game) : base(game, "test")
 		{
 			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
-
+			this.SceneResumeEvent += (s, e) => { Mouse.SetPosition(200, 200); };
 		}
 
 		protected override void AddGameObjects(int entranceId)
@@ -59,6 +59,10 @@ namespace SingularityTest.Scenes
 						Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
 					if (KeyboardManager.IsKeyPressed(Keys.C))
 						Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+
+
+					if (KeyboardManager.IsKeyPressed(Keys.O))
+						SceneManager.AddSceneToStack("transparency");
 
 					// savegame stuff
 					sg.Position = obj.Position;

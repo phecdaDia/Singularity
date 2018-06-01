@@ -22,6 +22,8 @@ namespace Singularity
 
 		private Queue<GameScene> SceneQueue;
 
+		private RenderTarget2D SceneRender;
+
 		public SceneManager(SingularityGame game)
 		{
 			this.Game = game;
@@ -192,17 +194,49 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			var scene = this._GetCurrentScene();
-
-			if (scene == null)
+			if (this.SceneStack.Count == 0)
 			{
-				// close game, as there are no scenes left
 				Game.Exit();
-
 				return;
 			}
 
-			scene.Draw(spriteBatch);
+			Stack<GameScene> drawScenes = new Stack<GameScene>();
+			while (this.SceneStack.Count > 0 && this.SceneStack.Peek() is ITransparent)
+			{	// add scenes we want to draw.
+				drawScenes.Push(this.SceneStack.Pop());
+			}
+
+			// add one more scene, if there is any
+			if (this.SceneStack.Count > 0)
+				drawScenes.Push(this.SceneStack.Pop()); // this is the lowest scene
+
+			// now work these scenes from down to top
+			while (drawScenes.Count > 0)
+			{
+				// render it on our temporary rendertarget first
+				// will be used later for shadows.
+				Game.GraphicsDevice.SetRenderTarget(this.SceneRender);
+				spriteBatch.Begin(SpriteSortMode.FrontToBack);	// allows for better 2d drawing.
+
+				Game.GraphicsDevice.Clear(Color.Transparent);	// sets everything to transparent, clears the entire RenderTarget
+
+				this.SceneStack.Push(drawScenes.Pop());			// puts scene back on the sceneStack so it doesn't go missing
+				this.SceneStack.Peek().Draw(spriteBatch);		// draws the entire scene to our RenderTarget
+				
+				spriteBatch.End();
+				Game.GraphicsDevice.SetRenderTarget(Game.RenderTarget);
+
+
+				spriteBatch.Begin();							// draws the scene on top of everything else that was already drawn
+				spriteBatch.Draw(								// causes a layered effect. We can see the scenes below
+					texture: this.SceneRender,
+					destinationRectangle: new Rectangle(0, 0, Game.RenderTarget.Width, Game.RenderTarget.Height),
+					sourceRectangle: new Rectangle(0, 0, this.SceneRender.Width, this.SceneRender.Height),
+					color: Color.White
+				);
+				spriteBatch.End();
+			}
+
 		}
 
 		/// <summary>
@@ -258,5 +292,10 @@ namespace Singularity
             _CloseScene();
             _AddSceneToStack(newSceneKey, entranceId);
 	    }
+
+		public static void SetSceneRender(RenderTarget2D render)
+		{
+			Instance.SceneRender = render;
+		}
 	}
 }

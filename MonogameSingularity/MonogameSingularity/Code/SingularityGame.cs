@@ -54,8 +54,10 @@ namespace Singularity
 		/// Initialize Basic Structures
 		/// </summary>
 	    protected override void Initialize()
-	    {
-            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
+		{
+			SceneManager.SetSceneRender(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents));
+
+            RenderTarget = new RenderTarget2D(GraphicsDevice, 1920,1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PreserveContents);
             _tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
 			this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -77,11 +79,8 @@ namespace Singularity
 			BeginRender3D();
 
 			// Add Drawing stuff here!
-			SpriteBatch.Begin(SpriteSortMode.FrontToBack);
 
 			SceneManager.Draw(this.SpriteBatch);
-
-			SpriteBatch.End();
 			
 			//Apply each function for 2D Screenwide effects
 			foreach (var func in ScreenEffectList)
