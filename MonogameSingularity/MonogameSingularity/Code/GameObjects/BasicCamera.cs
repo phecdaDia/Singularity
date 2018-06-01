@@ -65,7 +65,23 @@ namespace Singularity.GameObjects
 			if (this.Is3DEnabled)
 				this.VerticalRotation += dy / 100f;
 
-			Mouse.SetPosition(200, 200);
+			DefaultX = mouseState.X;
+			DefaultY = mouseState.Y;
+
+			if (mouseState.X <= 100 || mouseState.X >= 300)
+			{
+				Mouse.SetPosition(200, mouseState.Y);
+				DefaultX = 200;
+			}
+
+			mouseState = Mouse.GetState();
+
+			if (mouseState.Y <= 100 || mouseState.Y >= 300)
+			{
+				Mouse.SetPosition(mouseState.X, 200);
+				DefaultY = 200;
+
+			}
 
 			//MouseState ms = Mouse.GetState();
 			//DefaultX = ms.X;
