@@ -297,6 +297,11 @@ namespace Singularity
 			}
 		}
 
+		public List<GameObject> GetAllObjects(Func<GameObject, Boolean> predicate)
+		{
+			return this.ColliderObjects.GetAllObjects(predicate);
+		}
+
 
 		/// <summary>
 		/// Updates all <seealso cref="GameObject"/> and adds <see cref="BufferedObjects"/>
