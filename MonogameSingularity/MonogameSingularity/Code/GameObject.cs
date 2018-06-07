@@ -630,7 +630,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		private void Draw(GameScene scene)
+		protected virtual void Draw(GameScene scene)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 
