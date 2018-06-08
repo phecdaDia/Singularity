@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,10 +11,10 @@ using Singularity.Utilities;
 
 namespace Singularity.Collisions.RayCollisions
 {
-	internal class RayOnPlaneCollision
+	internal static class RayOnPlaneCollision
 	{
 
-		public static Boolean DoesCollide(Ray ray, PlaneCollision plane, out RayCollisionPoint collisionPoint)
+		public static RayCollisionPoint GetCollision(Ray ray, PlaneCollision plane, out float scale1, out float scale2)
 		{
 			try
 			{
@@ -24,20 +25,33 @@ namespace Singularity.Collisions.RayCollisions
 
 				// point of collision
 				Vector3 poc = ray.Position + eq.X * ray.Direction;
-				collisionPoint = new RayCollisionPoint(poc, plane.Normal, eq.X);
 
-				return true;
+				scale1 = eq.Y;
+				scale2 = eq.Z;
+
+				return new RayCollisionPoint(poc, plane.Normal, eq.X);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				// equation could not be solved or an error occured.
+
 				Console.WriteLine($"Unable to collide ray with plane.");
-				
-				collisionPoint = new RayCollisionPoint();
-				return false;
+#if __DEBUG__
+				Console.WriteLine($"Ray: {ray.Position} + t * {ray.Direction}");
+				Console.WriteLine($"Plane: {plane.Origin} + u * {plane.SpanVector1} + v * {plane.SpanVector2} (Normal: {plane.Normal})");
+#endif
+				scale1 = 0.0f;
+				scale2 = 0.0f;
+
+				return new RayCollisionPoint();
 			}
 
 
+		}
+
+		public static RayCollisionPoint GetCollision(Ray ray, PlaneCollision plane)
+		{
+			return GetCollision(ray, plane, out float s1, out float s2);
 		}
 	}
 }

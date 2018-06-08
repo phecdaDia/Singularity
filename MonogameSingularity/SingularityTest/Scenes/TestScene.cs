@@ -68,6 +68,18 @@ namespace SingularityTest.Scenes
 					sg.Position = obj.Position;
 					sg.CameraTarget = ((BasicCamera)obj).GetCameraTarget();
 
+
+					if (KeyboardManager.IsKeyPressed(Keys.M))
+					{
+						// run a ray and get the closest collision
+						Ray r = new Ray(obj.Position, ((BasicCamera) obj).GetCameraTarget());
+						var rcp = scene.CollideRay(r);
+						if (rcp.DidCollide)
+						{
+							Console.WriteLine($"Did collide! @{rcp.Position}");
+						}
+					}
+
 				})
 			);
 

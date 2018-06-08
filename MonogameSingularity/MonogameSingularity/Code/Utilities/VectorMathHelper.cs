@@ -17,6 +17,7 @@ namespace Singularity.Utilities
 		{
 			// check if this equation system is solvable
 
+			
 			if (a.LengthSquared() < float.Epsilon) throw new ArgumentException("Vector a is of length 0");
 			if (b.LengthSquared() < float.Epsilon) throw new ArgumentException("Vector b is of length 0");
 			if (c.LengthSquared() < float.Epsilon) throw new ArgumentException("Vector c is of length 0");
@@ -30,7 +31,8 @@ namespace Singularity.Utilities
 				a.W, b.W, c.W, d.W
 			);
 
-			if (equationMatrix.Determinant() < float.Epsilon) throw new ArgumentException("Deteminant of Matrix is 0");
+			// not an error? *insert shrug emote*
+			//if (equationMatrix.Determinant() < float.Epsilon) throw new ArgumentException("Deteminant of Matrix is 0");
 
 			Vector4 solution = Vector4.Transform(x, equationMatrix);
 

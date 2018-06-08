@@ -24,7 +24,13 @@ namespace Singularity.Collisions
 
 		public RayCollisionPoint()
 		{
+			this.RayDistance = float.PositiveInfinity;
 			DidCollide = false;
+		}
+
+		public void SetCollide(Boolean collide)
+		{
+			this.DidCollide = collide;
 		}
 	}
 }

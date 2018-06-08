@@ -253,6 +253,30 @@ namespace Singularity
 
 		}
 
+		public RayCollisionPoint CollideRay(Ray ray)
+		{
+			// get all objects
+			var collidables = ColliderObjects.GetAllObjects((GameObject go) => go is ICollidable);
+
+			var nearestCollision = new RayCollisionPoint();
+
+			foreach (var collidable in collidables)
+			{
+				//Console.WriteLine($"Testing RCP with {collidable}");
+
+				RayCollisionPoint rcp = CollisionManager.GetRayCollision(ray, collidable.Collision);
+
+				// check if the point is closer
+				if (rcp.DidCollide && rcp.RayDistance < nearestCollision.RayDistance)
+				{
+					nearestCollision = rcp;
+				}
+			}
+
+
+			return nearestCollision;
+		}
+
 		/// <summary>
 		/// Creates a <seealso cref="Matrix"/> with all camera options set.
 		/// </summary>
