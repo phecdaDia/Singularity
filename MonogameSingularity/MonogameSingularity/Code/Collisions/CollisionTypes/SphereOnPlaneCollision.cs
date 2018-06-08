@@ -22,7 +22,7 @@ namespace Singularity.Collisions.CollisionTypes
 			scale1 = eq.Y;
 			scale2 = eq.Z;
 
-			return Math.Abs(eq.X) < collidableA.Radius * collidableA.Parent.Scale.X + 0.01f;
+			return Math.Abs(eq.X) < collidableA.Radius * collidableA.Parent.Scale.X;
 
 		}
 
