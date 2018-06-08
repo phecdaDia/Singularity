@@ -211,8 +211,6 @@ namespace Singularity
 		{
 			if (!(gameObject is ICollider)) return;
 
-			List<GameObject> collidables = new List<GameObject>();
-
 			int collisionFixes = 0;
 
 			Boolean DidCollide = false;
@@ -230,7 +228,7 @@ namespace Singularity
 				}
 				// get list of collidables.
 
-				collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+				var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
 				foreach (var go in collidables)
 				{
