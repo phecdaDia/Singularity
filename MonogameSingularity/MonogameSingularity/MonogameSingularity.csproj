@@ -94,6 +94,7 @@
     <Compile Include="Code\Collisions\RayCollisionPoint.cs" />
     <Compile Include="Code\Collisions\RayCollisions\RayOnBoundPlaneCollision.cs" />
     <Compile Include="Code\Collisions\RayCollisions\RayOnPlaneCollision.cs" />
+    <Compile Include="Code\Collisions\RayCollisions\RayOnSphereCollision.cs" />
     <Compile Include="Code\Collisions\RingCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\Events\CollisionEventArgs.cs" />

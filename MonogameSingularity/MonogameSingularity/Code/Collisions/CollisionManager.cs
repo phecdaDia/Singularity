@@ -197,10 +197,12 @@ namespace Singularity.Collisions
 			//	return new RayCollisionPoint();
 			//}
 
-			if (collision.GetType() == PlaneCollision)
-				return RayOnPlaneCollision.GetCollision(ray, collision as PlaneCollision);
+			if (collision.GetType() == SphereCollision)
+				return RayOnSphereCollision.GetCollision(ray, collision as SphereCollision); 
 			else if (collision.GetType() == BoundPlaneCollision)
 				return RayOnBoundPlaneCollision.GetCollision(ray, collision as BoundPlaneCollision);
+			else if (collision.GetType() == PlaneCollision)
+				return RayOnPlaneCollision.GetCollision(ray, collision as PlaneCollision);
 			else if (collision.GetType() == MultiCollision)
 			{
 				// we only want the closest RCP!
