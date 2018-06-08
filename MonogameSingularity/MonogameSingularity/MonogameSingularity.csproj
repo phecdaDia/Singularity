@@ -91,6 +91,8 @@
     <Compile Include="Code\Collisions\Multi\BoxCollision.cs" />
     <Compile Include="Code\Collisions\Multi\CylinderCollision.cs" />
     <Compile Include="Code\Collisions\PlaneCollision.cs" />
+    <Compile Include="Code\Collisions\RayCollisionPoint.cs" />
+    <Compile Include="Code\Collisions\RayCollisions\RayOnPlaneCollision.cs" />
     <Compile Include="Code\Collisions\RingCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\Events\CollisionEventArgs.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
     <Compile Include="Code\Utilities\SettingsTemplate.cs" />
+    <Compile Include="Code\Utilities\VectorMathHelper.cs" />
     <Compile Include="Code\Utilities\XmlManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -136,9 +139,7 @@
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Code\Collisions\RayCollisions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.3.0.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.0.3\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
