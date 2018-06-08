@@ -34,7 +34,7 @@ namespace Singularity.Collisions
 			// Sphere on Sphere Collision
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			if (typeof(T) == SphereCollision && typeof(U) == SphereCollision)
+			if (collidableA.GetType() == SphereCollision && collidableB.GetType() == SphereCollision)
 			{
 				if (!SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision,
 					out position, out normal)) return false;
@@ -48,7 +48,7 @@ namespace Singularity.Collisions
 			// Sphere on Plane Collision
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeof(T) == SphereCollision && typeof(U) == PlaneCollision)
+			else if (collidableA.GetType() == SphereCollision && collidableB.GetType() == PlaneCollision)
 			{
 				if (!SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision,
 					out position, out normal)) return false;
@@ -57,14 +57,14 @@ namespace Singularity.Collisions
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeof(T) == PlaneCollision && typeof(U) == SphereCollision)
+			else if (collidableA.GetType() == PlaneCollision && collidableB.GetType() == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Sphere on Bound Plane Collision
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeof(T) == SphereCollision && typeof(U) == BoundPlaneCollision)
+			else if (collidableA.GetType() == SphereCollision && collidableB.GetType() == BoundPlaneCollision)
 			{
 				if (!SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision,
 					out position, out normal)) return false;
@@ -73,7 +73,7 @@ namespace Singularity.Collisions
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeof(T) == BoundPlaneCollision && typeof(U) == SphereCollision)
+			else if (collidableA.GetType() == BoundPlaneCollision && collidableB.GetType() == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ namespace Singularity.Collisions
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-			else if (typeof(T) == SphereCollision && typeof(U) == EdgeCollision)
+			else if (collidableA.GetType() == SphereCollision && collidableB.GetType() == EdgeCollision)
 			{
 				if (!SphereOnEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as EdgeCollision,
 					out position, out normal)) return false;
@@ -90,7 +90,7 @@ namespace Singularity.Collisions
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeof(T) == EdgeCollision && typeof(U) == SphereCollision)
+			else if (collidableA.GetType() == EdgeCollision && collidableB.GetType() == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 
@@ -99,7 +99,7 @@ namespace Singularity.Collisions
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-			else if (typeof(T) == SphereCollision && typeof(U) == BoundEdgeCollision)
+			else if (collidableA.GetType() == SphereCollision && collidableB.GetType() == BoundEdgeCollision)
 			{
 				if (!SphereOnBoundEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundEdgeCollision,
 					out position, out normal)) return false;
@@ -108,7 +108,7 @@ namespace Singularity.Collisions
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeof(T) == BoundEdgeCollision && typeof(U) == SphereCollision)
+			else if (collidableA.GetType() == BoundEdgeCollision && collidableB.GetType() == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 
@@ -117,7 +117,7 @@ namespace Singularity.Collisions
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-			else if (typeof(T) == SphereCollision && typeof(U) == RingCollision)
+			else if (collidableA.GetType() == SphereCollision && collidableB.GetType() == RingCollision)
 			{
 				if (!SphereOnRingCollision.GetCollision(collidableA as SphereCollision, collidableB as RingCollision,
 					out position, out normal)) return false;
@@ -126,7 +126,7 @@ namespace Singularity.Collisions
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
-			else if (typeof(T) == RingCollision && typeof(U) == SphereCollision)
+			else if (collidableA.GetType() == RingCollision && collidableB.GetType() == SphereCollision)
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			#endregion
@@ -136,7 +136,7 @@ namespace Singularity.Collisions
 			// Multiple collision handlers Collision
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			else if (typeof(U) == MultiCollision || typeof(U).IsSubclassOf(MultiCollision))
+			else if (collidableB.GetType() == MultiCollision || collidableB.GetType().IsSubclassOf(MultiCollision))
 			{
 				var didCollide = false;
 				foreach (var coll in (collidableB as MultiCollision).GetCollidables())
@@ -147,7 +147,7 @@ namespace Singularity.Collisions
 				return didCollide;
 			}
 				
-			else if (typeof(T) == MultiCollision || typeof(T).IsSubclassOf(MultiCollision))
+			else if (collidableA.GetType() == MultiCollision || collidableA.GetType().IsSubclassOf(MultiCollision))
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,22 +162,22 @@ namespace Singularity.Collisions
 			// check for the different types.
 			// the normal vector should ALWAYS be from collidableA to collidableB
 
-			if (typeof(T) == SphereCollision && typeof(U) == SphereCollision)
+			if (collider.GetType() == SphereCollision && collidable.GetType() == SphereCollision)
 				return SphereOnSphereCollision.HandleCollision(collider as SphereCollision, collidable as SphereCollision, position, normal);
 
-			else if (typeof(T) == SphereCollision && typeof(U) == PlaneCollision)
+			else if (collider.GetType() == SphereCollision && collidable.GetType() == PlaneCollision)
 				return SphereOnPlaneCollision.HandleCollision(collider as SphereCollision, collidable as PlaneCollision, position, normal);
 
-			else if (typeof(T) == SphereCollision && typeof(U) == BoundPlaneCollision)
+			else if (collider.GetType() == SphereCollision && collidable.GetType() == BoundPlaneCollision)
 				return SphereOnBoundPlaneCollision.HandleCollision(collider as SphereCollision, collidable as BoundPlaneCollision, position, normal);
 
-			else if (typeof(T) == SphereCollision && typeof(U) == EdgeCollision)
+			else if (collider.GetType() == SphereCollision && collidable.GetType() == EdgeCollision)
 				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
 
-			else if (typeof(T) == SphereCollision && typeof(U) == BoundEdgeCollision)
+			else if (collider.GetType() == SphereCollision && collidable.GetType() == BoundEdgeCollision)
 				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
 
-			else if (typeof(T) == SphereCollision && typeof(U) == RingCollision)
+			else if (collider.GetType() == SphereCollision && collidable.GetType() == RingCollision)
 				return SphereOnRingCollision.HandleCollision(collider as SphereCollision, collidable as RingCollision, position, normal);
 
 
