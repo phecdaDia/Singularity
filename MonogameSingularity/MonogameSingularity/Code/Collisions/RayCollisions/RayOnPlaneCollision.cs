@@ -28,6 +28,7 @@ namespace Singularity.Collisions.RayCollisions
 
 				scale1 = eq.Y;
 				scale2 = eq.Z;
+				
 
 				return new RayCollisionPoint(poc, plane.Normal, eq.X);
 			}
@@ -35,11 +36,7 @@ namespace Singularity.Collisions.RayCollisions
 			{
 				// equation could not be solved or an error occured.
 
-				Console.WriteLine($"Unable to collide ray with plane.");
-#if __DEBUG__
-				Console.WriteLine($"Ray: {ray.Position} + t * {ray.Direction}");
-				Console.WriteLine($"Plane: {plane.Origin} + u * {plane.SpanVector1} + v * {plane.SpanVector2} (Normal: {plane.Normal})");
-#endif
+				//Console.WriteLine($"Unable to collide ray with plane.");
 				scale1 = 0.0f;
 				scale2 = 0.0f;
 

@@ -10,19 +10,17 @@ namespace Singularity.Collisions.CollisionTypes
 			out Vector3 normal, out float scale1, out float scale2)
 		{
 
-			normal = collidableB.Normal;
-			normal.Normalize();
-			Vector3 eq = VectorMathHelper.SolveLinearEquation(normal, collidableB.SpanVector1, collidableB.SpanVector2,
-				collidableA.Position - collidableB.Origin);
+			Vector3 eq = VectorMathHelper.SolveLinearEquation(collidableB.Normal, collidableB.SpanVector1,
+				collidableB.SpanVector2, collidableA.Position - collidableB.Origin);
 
-			// point of collision
-
+			// get the point of collision
 			position = collidableB.Origin + eq.Y * collidableB.SpanVector1 + eq.Z * collidableB.SpanVector2;
-			normal = eq.X < 0 ? -normal : normal;
+			normal = (eq.X < 0 ? -1 : 1) * collidableB.Normal; // invert normal if the scalar is negative
+
 			scale1 = eq.Y;
 			scale2 = eq.Z;
 
-			return Math.Abs(eq.X) < collidableA.Radius * collidableA.Parent.Scale.X;
+			return Math.Abs(eq.X) < collidableA.Radius;
 
 		}
 

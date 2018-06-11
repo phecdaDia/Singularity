@@ -25,22 +25,24 @@ namespace Singularity.Utilities
 
 			// build the Matrix A to transform this into Ab = x 
 			Matrix equationMatrix = new Matrix(
-				a.X, b.X, c.X, d.X,
-				a.Y, b.Y, c.Y, d.Y,
-				a.Z, b.Z, c.Z, d.Z,
-				a.W, b.W, c.W, d.W
+				a, b, c, d
 			);
 
 			// not an error? *insert shrug emote*
 			//if (equationMatrix.Determinant() < float.Epsilon) throw new ArgumentException("Deteminant of Matrix is 0");
 
-			Vector4 solution = Vector4.Transform(x, equationMatrix);
+			Vector4 solution = Vector4.Transform(x, Matrix.Invert(equationMatrix));
 
 			// divide each parameter by the square length of the start vector
-			solution.X /= a.LengthSquared();
-			solution.Y /= b.LengthSquared();
-			solution.Z /= c.LengthSquared();
-			solution.W /= d.LengthSquared();
+			//solution.X /= Vector4.Dot(a, a);
+			//solution.Y /= Vector4.Dot(b, b);
+			//solution.Z /= Vector4.Dot(c, c);
+			//solution.W /= Vector4.Dot(d, d);
+
+			//Console.WriteLine($"{solution}");
+
+			//Console.WriteLine($"B: {x} => {solution}");
+			//Console.WriteLine($"Merged: {solution.X * a + solution.Y * b + solution.Z * c + solution.W * d}");
 
 			return solution;
 		}
@@ -57,7 +59,7 @@ namespace Singularity.Utilities
 				new Vector4(b, 0),
 				new Vector4(c, 0),
 				new Vector4(0, 0, 0, 1),
-				new Vector4(x, 0)
+				new Vector4(x, 1)
 			);
 
 			return new Vector3(v4solution.X, v4solution.Y, v4solution.Z);
@@ -75,7 +77,7 @@ namespace Singularity.Utilities
 				new Vector4(b, 0, 0),
 				new Vector4(0, 0, 1, 0),
 				new Vector4(0, 0, 0, 1),
-				new Vector4(x, 0, 0)
+				new Vector4(x, 1, 1)
 			);
 
 			return new Vector2(v4solution.X, v4solution.Y);

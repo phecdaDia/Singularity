@@ -43,7 +43,7 @@ namespace Singularity.Collisions
 
 		public override object Clone()
 		{
-			return new PlaneCollision(this.Origin, this._spanVector1, this._spanVector2);
+			return new PlaneCollision(this._origin, this._spanVector1, this._spanVector2);
 		}
 	}
 }
