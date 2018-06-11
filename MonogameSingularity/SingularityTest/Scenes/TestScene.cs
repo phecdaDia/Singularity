@@ -7,8 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using Singularity.Collisions;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
+using Singularity.Utilities;
 using SingularityTest.GameObjects;
 using SingularityTest.ScreenEffect;
 
@@ -68,6 +70,23 @@ namespace SingularityTest.Scenes
 					sg.Position = obj.Position;
 					sg.CameraTarget = ((BasicCamera)obj).GetCameraTarget();
 
+
+					if (KeyboardManager.IsKeyDown(Keys.M))
+					{
+						// run a ray and get the closest collision
+						Ray r = new Ray(obj.Position, ((BasicCamera) obj).GetCameraTarget());
+						var rcp = scene.CollideRay(r);
+						if (rcp.DidCollide)
+						{
+							//Console.WriteLine($"Did collide! @{rcp.Position}");
+							SpawnObject(new ModelObject("cubes/cube1").SetPosition(rcp.Position).SetScale(0.1f).AddScript(
+								(GameScene s, GameObject o, GameTime t) =>
+								{
+									if (KeyboardManager.IsKeyPressed(Keys.OemSemicolon)) s.RemoveObject(o);
+								}));
+						}
+					}
+
 				})
 			);
 
@@ -81,7 +100,7 @@ namespace SingularityTest.Scenes
 
 			AddObject(new CollidableModelObject("cubes/cube5").SetPosition(0, -9, 0)
 				//.SetRotation(0, 0, 0.4f)
-				.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8)))
+				.SetCollision(new BoxCollision(new Vector3(-8), new Vector3(8))) //
 			);
 
 			//AddObject(new SpriteObject());
@@ -94,26 +113,42 @@ namespace SingularityTest.Scenes
                     SceneManager.CloseScene();
 				if(KeyboardManager.IsKeyPressed(Keys.I))
 					SettingsManager.SetSetting("exitKey", Keys.P);
-		        if (KeyboardManager.IsKeyPressed(Keys.L))
-		        {
-		            SceneManager.ChangeScene("Scripts/CollisionTestSceneScript.csx");
-		        }
-		    }));
 
+			    if (KeyboardManager.IsKeyPressed(Keys.NumPad1))
+			    {
+				    // create a plane that spans over the x axis
 
-			// orbiting object.
+				    // p: x = ZERO3 + (0, 1, 0) + (0, 0, 1)
+
+				    // create the plane
+				    Vector3 planeOrigin = new Vector3(0, 0, 0);
+				    Vector3 planeParameter1 = new Vector3(1, 0, 1);
+				    Vector3 planeParameter2 = new Vector3(0, 1, 1);
+				    Vector3 planeNormal = new Vector3(0, 1, 0); // pp1 x pp2
+
+				    // create our point of interest
+				    Vector3 sphere = new Vector3(2, 3, 5);
+
+				    // We want to solve Ax = b
+				    // create our Vector "b", which is our solution
+				    Vector3 b = sphere - planeOrigin;
+
+				    // now we can create a room with our plane and the normal which contains all points in R3
+				    Vector3 solution = VectorMathHelper.SolveLinearEquation(planeParameter1, planeParameter2, planeNormal, b);
+
+				    // now we should have a solution. (-1, 0, 0)
+				    
+					Console.WriteLine($"Solved {b} = {solution.X} * {planeParameter1} + {solution.Y} * {planeParameter2} + {solution.Z} * {planeNormal}");
+					Console.WriteLine($"Calculated: {solution.X * planeParameter1 + solution.Y * planeParameter2 + solution.Z * planeNormal}");
+				    //Console.WriteLine($"Solution: {solution}");
+				    //Console.WriteLine(planeOrigin + solution.X * planeParameter1 + solution.Y * planeParameter2 + solution.Z * planeNormal);
+				}
+
+			}));
+
 			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
-				((scene, o, arg3) => o.AddRotation(0, (float) arg3.ElapsedGameTime.TotalSeconds, 0))
+				((scene, o, arg3) => o.AddRotation(0, (float)arg3.ElapsedGameTime.TotalSeconds, 0))
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0)));
-
-			// inertia test
-			//AddObject(new InertiaTestObject().SetPosition(-7.5f, 0, 0));
-
-			AddObject(new TestSpriteObject().SetPosition(10, 10));
-
-			//AddObject(new CollidableTestObject().SetPosition(10, 0, 0).SetCollision(new CylinderCollision(4.0f, 1.0f)));
-
-			//AddObject(new CofTestObject().SetPosition(30, 0, 0));
 
 		}
 

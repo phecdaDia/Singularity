@@ -211,8 +211,6 @@ namespace Singularity
 		{
 			if (!(gameObject is ICollider)) return;
 
-			List<GameObject> collidables = new List<GameObject>();
-
 			int collisionFixes = 0;
 
 			Boolean DidCollide = false;
@@ -230,7 +228,7 @@ namespace Singularity
 				}
 				// get list of collidables.
 
-				collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+				var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
 				foreach (var go in collidables)
 				{
@@ -253,6 +251,30 @@ namespace Singularity
 
 			} while (DidCollide && gameObject.EnablePushCollision);
 
+		}
+
+		public RayCollisionPoint CollideRay(Ray ray)
+		{
+			// get all objects
+			var collidables = ColliderObjects.GetAllObjects((GameObject go) => go is ICollidable);
+
+			var nearestCollision = new RayCollisionPoint();
+
+			foreach (var collidable in collidables)
+			{
+				//Console.WriteLine($"Testing RCP with {collidable}");
+
+				RayCollisionPoint rcp = CollisionManager.GetRayCollision(ray, collidable.Collision);
+
+				// check if the point is closer
+				if (rcp.DidCollide && rcp.RayDistance < nearestCollision.RayDistance)
+				{
+					nearestCollision = rcp;
+				}
+			}
+
+
+			return nearestCollision;
 		}
 
 		/// <summary>

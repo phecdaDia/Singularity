@@ -48,6 +48,11 @@ namespace Singularity
 			}
 		}
 
+		public Matrix TransformationMatrix
+		{
+			get { return ScaleMatrix * RotationMatrix; }
+		}
+
 		public float ModelRadius { get; private set; }
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts

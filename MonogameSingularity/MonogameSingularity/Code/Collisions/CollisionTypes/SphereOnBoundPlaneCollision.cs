@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Singularity.Collisions.CollisionTypes
 {
-	public static class SphereOnBoundPlaneCollision
+	internal static class SphereOnBoundPlaneCollision
 	{
 		public static Boolean GetCollision(SphereCollision collidableA, BoundPlaneCollision collidableB, out Vector3 position,
 			out Vector3 normal, out float scale1, out float scale2)
