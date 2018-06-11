@@ -146,6 +146,10 @@ namespace SingularityTest.Scenes
 
 			}));
 
+			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+				((scene, o, arg3) => o.AddRotation(0, (float)arg3.ElapsedGameTime.TotalSeconds, 0))
+			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0)));
+
 		}
 
 		public override void AddLightningToEffect(BasicEffect effect)
