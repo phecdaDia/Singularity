@@ -152,8 +152,10 @@ namespace SingularityTest.Scenes
 
 		}
 
-		public override void AddLightningToEffect(BasicEffect effect)
+		public override void AddLightningToEffect(Effect eff)
 		{
+			var effect = (BasicEffect) eff;
+
 			effect.DirectionalLight0.DiffuseColor = new Vector3(0.15f, 0.15f, 0.15f); // some diffuse light
 			effect.DirectionalLight0.Direction = new Vector3(1, -2, 1);  // 
 			effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]

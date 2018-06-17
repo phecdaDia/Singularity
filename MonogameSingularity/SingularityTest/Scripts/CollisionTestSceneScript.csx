@@ -101,9 +101,10 @@ public class CollisionTestSceneScript : ScriptingTemplate
         return objList;
     }
 
-	public override void AddLightningToEffect(BasicEffect effect)
+	public override void AddLightningToEffect(Effect effect)
     {
-        effect.EnableDefaultLighting();
+		var eff = (BasicEffect)effect;
+        eff.EnableDefaultLighting();
     }
 }
 

@@ -300,7 +300,7 @@ namespace Singularity
 		/// Adds lightning to the <seealso cref="GameObject"/>
 		/// </summary>
 		/// <param name="effect"></param>
-		public abstract void AddLightningToEffect(BasicEffect effect);
+		public abstract void AddLightningToEffect(Effect effect);
 
 		public virtual void LoadContent()
 		{

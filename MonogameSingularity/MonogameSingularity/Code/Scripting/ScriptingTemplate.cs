@@ -37,7 +37,7 @@ namespace Singularity.Scripting
 		/// Define lighting
 		/// </summary>
 		/// <param name="effect">BasicEffect</param>
-		public abstract void AddLightningToEffect(BasicEffect effect);
+		public abstract void AddLightningToEffect(Effect effect);
 	}
 
 	/// <summary>

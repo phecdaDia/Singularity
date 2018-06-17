@@ -20,7 +20,7 @@ namespace SingularityTest
 	        AddObject(new TestSpriteObject());
 	    }
 
-	    public override void AddLightningToEffect(BasicEffect effect)
+	    public override void AddLightningToEffect(Effect effect)
 	    {
 	        
 	    }
