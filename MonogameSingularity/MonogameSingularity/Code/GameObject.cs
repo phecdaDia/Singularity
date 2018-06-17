@@ -33,7 +33,7 @@ namespace Singularity
 
 		public Effect Effect { get; private set; } //Shader of Object
 		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
-
+		public bool ApplySceneLight { get; private set; } = true;
 		public String DebugName { get; private set; } // Used for debugging.
 
 		public Matrix ScaleMatrix
@@ -498,6 +498,16 @@ namespace Singularity
 
 		#endregion
 
+		#region SetSceneLight
+
+		public GameObject SetSceneLight(bool set)
+		{
+			this.ApplySceneLight = set;
+			return this;
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>
@@ -704,7 +714,7 @@ namespace Singularity
 						part.Effect = this.Effect;
 
 						this.EffectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
-						scene.AddLightningToEffect(part.Effect);
+						if(ApplySceneLight) scene.AddLightningToEffect(part.Effect);
 					}
 
 				mesh.Draw();
