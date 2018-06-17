@@ -61,6 +61,7 @@
     <Compile Include="LoadingScreen.cs" />
     <Compile Include="Scenes\CollisionTestScene.cs" />
     <Compile Include="Scenes\RayTestScene.cs" />
+    <Compile Include="Scenes\ShaderTestScene.cs" />
     <Compile Include="Scenes\TransparencyTestScene.cs" />
     <Compile Include="ScreenEffect\ColorScreenEffect.cs" />
     <Compile Include="ScreenEffect\ShakeScreenEffect.cs" />

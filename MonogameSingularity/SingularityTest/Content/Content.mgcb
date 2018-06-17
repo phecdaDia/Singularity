@@ -393,3 +393,9 @@
 /processorParam:TextureFormat=Compressed
 /build:testfont.spritefont
 
+#begin effects/Diffuse.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:effects/Diffuse.fx
+

@@ -32,6 +32,7 @@ namespace Singularity
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
 		public Effect Effect { get; private set; } //Shader of Object
+		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
 
 		public String DebugName { get; private set; } // Used for debugging.
 
@@ -488,9 +489,10 @@ namespace Singularity
 
 		#region SetEffect
 
-		public GameObject SetEffect(Effect effect)
+		public GameObject SetEffect(Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams)
 		{
 			this.Effect = effect;
+			this.EffectParams = effectParams;
 			return this;
 		}
 
@@ -701,26 +703,12 @@ namespace Singularity
 					{
 						part.Effect = this.Effect;
 
-						this.AddEffectParameters(part.Effect, transformMatrices, mesh, scene);
+						this.EffectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
 						scene.AddLightningToEffect(part.Effect);
 					}
 
 				mesh.Draw();
 			}
-		}
-
-		/// <summary>
-		/// Add all parameters to the effect for the current Object. (Except Scenewide parameters. In that case Scene.AddLightningToEffect.)
-		/// </summary>
-		/// <param name="effect"></param>
-		protected virtual void AddEffectParameters(Effect effect, Matrix[] transformMatrices, ModelMesh mesh, GameScene scene)
-		{
-			effect.Parameters["World"].SetValue(transformMatrices[mesh.ParentBone.Index]
-												* this.ScaleMatrix
-			                                    * this.RotationMatrix
-			                                    * Matrix.CreateTranslation(this.GetHierarchyPosition()));
-			effect.Parameters["View"].SetValue(scene.GetViewMatrix());
-			effect.Parameters["Projection"].SetValue(scene.GetProjectionMatrix());
 		}
 
 		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)

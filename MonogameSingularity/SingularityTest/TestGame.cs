@@ -48,8 +48,9 @@ namespace SingularityTest
 
 	        SceneManager.RegisterScene(new TestScene(this));
 	        SceneManager.RegisterScene(new TransparencyTestScene(this));
+	        SceneManager.RegisterScene(new ShaderTestScene(this));
 
-			SceneManager.AddSceneToStack("test");
+			SceneManager.AddSceneToStack("shadertest");
 
 			//ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
 			//ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
