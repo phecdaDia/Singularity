@@ -675,12 +675,13 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
 			//Console.WriteLine($"Drawing, Position: {this.Position}");
-			Draw(scene);
-			Draw2D(spriteBatch);
-			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
+			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene);
+			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
+
+			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
 		}
 
 		protected virtual void Draw2D(SpriteBatch spriteBatch)
@@ -775,5 +776,14 @@ namespace Singularity
 			OnCollisionEvent?.Invoke(this, e);
 
 		#endregion
+	}
+
+	public enum GameObjectDrawMode
+	{
+		Nothing     = 0b00000000,	// Object won't be drawn
+		Model       = 0b00000001,	// Only the 3d part will be drawn
+		SpriteBatch = 0b00000010,	// Only 2d will be drawn
+		All         = 0b11111111	// Everything will be drawn
+		
 	}
 }
