@@ -32,6 +32,7 @@ namespace Singularity
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
 		public Effect Effect { get; private set; } //Shader of Object
+		public bool CullingEnabled { get; private set; } = true;
 		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
 		public bool ApplySceneLight { get; private set; } = true;
 		public String DebugName { get; private set; } // Used for debugging.
@@ -508,6 +509,16 @@ namespace Singularity
 
 		#endregion
 
+		#region SetCulling
+
+		public GameObject SetCulling(bool enabled)
+		{
+			this.CullingEnabled = enabled;
+			return this
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>
@@ -689,6 +700,24 @@ namespace Singularity
 			var transformMatrices = new Matrix[this.Model.Bones.Count];
 			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
 
+			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
+
+			if (!CullingEnabled)
+			{
+				var newRastState = new RasterizerState
+				{
+					CullMode             = CullMode.None,
+					DepthBias            = originalRastState.DepthBias,
+					DepthClipEnable      = originalRastState.DepthClipEnable,
+					FillMode             = originalRastState.FillMode,
+					MultiSampleAntiAlias = originalRastState.MultiSampleAntiAlias,
+					ScissorTestEnable    = originalRastState.ScissorTestEnable,
+					SlopeScaleDepthBias  = originalRastState.SlopeScaleDepthBias
+				};
+
+				scene.Game.GraphicsDevice.RasterizerState = newRastState;
+			}
+
 			foreach (ModelMesh mesh in this.Model.Meshes)
 			{
 				if (this.Effect == null)
@@ -719,6 +748,9 @@ namespace Singularity
 
 				mesh.Draw();
 			}
+
+			if (!CullingEnabled)
+				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
 		}
 
 		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
