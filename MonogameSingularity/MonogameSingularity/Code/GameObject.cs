@@ -514,7 +514,7 @@ namespace Singularity
 		public GameObject SetCulling(bool enabled)
 		{
 			this.CullingEnabled = enabled;
-			return this
+			return this;
 		}
 
 		#endregion
