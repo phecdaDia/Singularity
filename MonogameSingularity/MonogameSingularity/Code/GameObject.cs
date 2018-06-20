@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Serialization.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -677,11 +678,18 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
+			DrawLogic(scene, spriteBatch, scene.GetViewMatrix(), scene.GetProjectionMatrix(), drawMode);
+		}
+
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, Matrix view, Matrix projection,
+			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
+		{
+
 			//Console.WriteLine($"Drawing, Position: {this.Position}");
-			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene);
+			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene, view, projection);
 			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
 
-			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
+			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
 		}
 
 		protected virtual void Draw2D(SpriteBatch spriteBatch)
@@ -693,7 +701,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		protected virtual void Draw(GameScene scene)
+		protected virtual void Draw(GameScene scene, Matrix view, Matrix projection)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 
@@ -722,20 +730,25 @@ namespace Singularity
 			foreach (ModelMesh mesh in this.Model.Meshes)
 			{
 				if (this.Effect == null)
-					foreach (BasicEffect effect in mesh.Effects)
+					foreach (Effect effect in mesh.Effects)
 					{
+						if (!(effect is BasicEffect))
+							continue;
+
+						BasicEffect basisEffect = (BasicEffect)effect;
+
 						// calculating the full rotation of our object.
 						//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
 
-						effect.World = transformMatrices[mesh.ParentBone.Index]
+						basisEffect.World = transformMatrices[mesh.ParentBone.Index]
 						               * this.ScaleMatrix
 						               * this.RotationMatrix
 						               * Matrix.CreateTranslation(this.GetHierarchyPosition());
 
-						effect.View       = scene.GetViewMatrix();
-						effect.Projection = scene.GetProjectionMatrix();
+						basisEffect.View = view;
+						basisEffect.Projection = projection;
 
-						scene.AddLightningToEffect(effect);
+						scene.AddLightningToEffect(basisEffect);
 
 					}
 				else

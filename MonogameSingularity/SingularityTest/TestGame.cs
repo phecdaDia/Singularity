@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using SingularityTest.GameObjects;
 using SingularityTest.Scenes;
 
 namespace SingularityTest
@@ -50,7 +51,7 @@ namespace SingularityTest
 	        SceneManager.RegisterScene(new TransparencyTestScene(this));
 	        SceneManager.RegisterScene(new ShaderTestScene(this));
 
-			SceneManager.AddSceneToStack("shadertest");
+			SceneManager.AddSceneToStack(new LightTestScene(this));
 
 			//ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
 			//ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);

@@ -21,8 +21,8 @@ namespace Singularity
 
 		private Boolean UseAbsoluteCameraTarget = false;
 
-		private float MinimumCullingDistance = 0.05f;
-		private float MaximumCullingDistance = 100.0f;
+		protected float MinimumCullingDistance = 0.05f;
+		protected float MaximumCullingDistance = 100.0f;
 
 		public Boolean CameraLocked { get; set; }
 
@@ -353,9 +353,20 @@ namespace Singularity
 		/// Draws all <seealso cref="GameObject"/>
 		/// </summary>
 		/// <param name="spriteBatch"></param>
-		public void Draw(SpriteBatch spriteBatch)
+		public virtual void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
 		{
+			// render it on our temporary rendertarget first
+			// will be used later for shadows.
+			Game.GraphicsDevice.SetRenderTarget(finalTarget);
+
+			spriteBatch.Begin(SpriteSortMode.FrontToBack);  // allows for better 2d drawing.
+
+			Game.GraphicsDevice.Clear(Color.Transparent);   // sets everything to transparent, clears the entire RenderTarget
+
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
+
+
+			spriteBatch.End();
 		}
 
 

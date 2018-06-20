@@ -213,19 +213,10 @@ namespace Singularity
 			// now work these scenes from down to top
 			while (drawScenes.Count > 0)
 			{
-				// render it on our temporary rendertarget first
-				// will be used later for shadows.
-				Game.GraphicsDevice.SetRenderTarget(this.SceneRender);
-				spriteBatch.Begin(SpriteSortMode.FrontToBack);	// allows for better 2d drawing.
-
-				Game.GraphicsDevice.Clear(Color.Transparent);	// sets everything to transparent, clears the entire RenderTarget
-
 				this.SceneStack.Push(drawScenes.Pop());			// puts scene back on the sceneStack so it doesn't go missing
-				this.SceneStack.Peek().Draw(spriteBatch);		// draws the entire scene to our RenderTarget
+				this.SceneStack.Peek().Draw(spriteBatch, this.SceneRender);		// draws the entire scene to our RenderTarget
 				
-				spriteBatch.End();
 				Game.GraphicsDevice.SetRenderTarget(Game.RenderTarget);
-
 
 				spriteBatch.Begin();							// draws the scene on top of everything else that was already drawn
 				spriteBatch.Draw(								// causes a layered effect. We can see the scenes below
