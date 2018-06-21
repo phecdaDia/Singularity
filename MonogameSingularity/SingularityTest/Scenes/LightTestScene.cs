@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Singularity;
 using Singularity.GameObjects;
 
-namespace SingularityTest.GameObjects
+namespace SingularityTest.Scenes
 {
 	public class LightTestScene : GameScene
 	{
