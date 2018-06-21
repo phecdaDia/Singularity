@@ -35,18 +35,18 @@ namespace SingularityTest.GameObjects
 		{
 			float width = 40.0f;
 			
-				int i = 0;
+			int i = 0;
 			
-				           while (width >= 1.0f)
-				           {
+			while (width >= 1.0f)
+			{
 				AddObject(new ModelObject("cubes/cube1")
-				                              .SetPosition(0, -0.5f + i, 0)
-					                   .SetScale(width, 1, width)
-					               );
+					.SetPosition(0, -0.5f + i, 0)
+					.SetScale(width, 1, width)
+				);
 				
-					i++;
+				i++;
 				width /= 1.2f;
-				           }
+			}
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetPosition(0, 10, 10));
 
