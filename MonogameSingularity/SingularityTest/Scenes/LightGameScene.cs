@@ -134,10 +134,4 @@ namespace SingularityTest.Scenes
 			effect.Parameters["Texture"]?.SetValue(gameObject.Texture);
 		}
 	}
-
-	public class LightSceneSettings
-	{
-
-
-	}
 }
