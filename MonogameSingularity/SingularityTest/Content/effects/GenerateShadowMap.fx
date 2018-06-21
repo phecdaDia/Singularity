@@ -83,8 +83,9 @@ struct VS_Scene_Input
 struct VS_Scene_Output
 {
     float4 position : SV_POSITION;
-    float4 lightPosition : TEXCOORD0;
-    float4 position2D : TEXCOORD1;
+    float4 lightPosition : TEXCOORD1;
+    float4 position2D : TEXCOORD0;
+    float4 Normal : COLOR;
 };
 
 // VECTOR SHADER METHOD
@@ -101,6 +102,8 @@ VS_Scene_Output VSShadowScene(in VS_Scene_Input input)
     output.lightPosition = mul(output.lightPosition, LightView);
     output.lightPosition = mul(output.lightPosition, LightProjection);
 
+    output.Normal = input.Normal;
+
     return output;
 }
 
@@ -108,21 +111,27 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
 {
     float visibility = 1.0f;
 
-    float depth = input.position2D.z / input.position2D.w;
-    float shadowDepth = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f)).z;
+    float depth = input.lightPosition.z / input.lightPosition.w;
+    float4 shadowMapColor = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f));
 	
-    if (depth - shadowDepth > 0.9f)
-    {
-        return float4(0, 0.1f, 0.1f, 1);
+    float4 color = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
+    if (depth > shadowMapColor.z + 0.05f)
+    {
+		// we are in the shadows
+        visibility = 0.5f;
+        color.r = 1.0f;	// debugging!
+        color.bg = 0.0f;
     }
 
-	return float4(0, 0.5f, 0.5f, 1);
 
-    //float4 temp = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(0.5f, 0.5f) + float2(0.5f, 0.5f));
-    //temp.w = 1.0f;
+	// recalculate color with new values!
 
-    //return temp;
+    color.rgb = color.rgb * visibility;
+
+    color.w = 1.0f;
+
+    return color;
 
 }
 

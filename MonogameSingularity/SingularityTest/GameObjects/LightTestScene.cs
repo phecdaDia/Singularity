@@ -21,11 +21,11 @@ namespace SingularityTest.GameObjects
 
 		public LightTestScene(SingularityGame game) : base(game, "light", 8, 0, 0.0f)
 		{
-			this.ShadowTarget2D = new RenderTarget2D(game.GraphicsDevice, 4096, 4096);
+			this.ShadowTarget2D = new RenderTarget2D(game.GraphicsDevice, 8192, 8192);
 			this.ShadowMapGenerateEffect = game.Content.Load<Effect>("effects/GenerateShadowMap");
 
-			this.SunViewMatrix = Matrix.CreateLookAt(new Vector3(10, 10, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-			this.SunProjectionMatrix = Matrix.CreateOrthographic(40, 40, 0.01f, 50.0f);
+			this.SunViewMatrix = Matrix.CreateLookAt(new Vector3(20, 20, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+			this.SunProjectionMatrix = Matrix.CreateOrthographic(40, 40, 0.01f, 100.0f);
 
 			this.SetAbsoluteCamera(new Vector3(-20, 20, 20), new Vector3(0, 0, 0));
 
@@ -34,24 +34,19 @@ namespace SingularityTest.GameObjects
 		protected override void AddGameObjects(int entranceId)
 		{
 			float width = 40.0f;
-
-			int i = 0;
-
-			while (width >= 1.0f)
-			{
+			
+				int i = 0;
+			
+				           while (width >= 1.0f)
+				           {
 				AddObject(new ModelObject("cubes/cube1")
-					.SetPosition(0, -0.5f + i, 0)
-					.SetScale(width, 1, width)
-				);
-
-			i++;
-			width /= 1.2f;
-			}
-
-			AddObject(new ModelObject("cubes/cube1")
-				.SetPosition(20, 20, 0)
-				.SetScale(width, 1, width)
-			);
+				                              .SetPosition(0, -0.5f + i, 0)
+					                   .SetScale(width, 1, width)
+					               );
+				
+					i++;
+				width /= 1.2f;
+				           }
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetPosition(0, 10, 10));
 
@@ -62,6 +57,14 @@ namespace SingularityTest.GameObjects
 
 		public override void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
 		{
+
+			Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+			Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+			Game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+			Game.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+			Game.GraphicsDevice.BlendState = BlendState.Opaque;
+			Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
 			// get all objects in the world.
 			var gameObjects = this.GetAllObjects(o => o.ParentObject == null);
 
@@ -88,7 +91,14 @@ namespace SingularityTest.GameObjects
 			spriteBatch.End();
 
 			Game.GraphicsDevice.SetRenderTarget(finalTarget);
-			
+
+
+			Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+			Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+			Game.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+			Game.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+			Game.GraphicsDevice.BlendState = BlendState.Opaque;
+			Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
 			spriteBatch.Begin(SpriteSortMode.FrontToBack);
 			Game.GraphicsDevice.Clear(Color.Transparent);
