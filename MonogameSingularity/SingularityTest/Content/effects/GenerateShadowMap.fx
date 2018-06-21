@@ -106,7 +106,7 @@ struct VS_Scene_Output
     float4 lightPosition : TEXCOORD1;
     float4 position2D : TEXCOORD0;
     float4 Normal : COLOR;
-	float2 TexCoords: TEXCOORD0;
+	float2 TexCoords: TEXCOORD2;
 };
 
 // VECTOR SHADER METHOD
