@@ -42,6 +42,19 @@ namespace SingularityTest.Scenes
 				width /= 1.2f;
 			}
 
+			AddObject(new EmptyGameObject()
+				.SetPosition(0, 10, 0)
+				.AddChild(
+					new ModelObject("sphere")
+						.SetScale(0.5f)
+					.SetPosition(5.0f, 0.0f)
+				).AddScript(((scene, o, arg3) => o.AddRotation(0.0f, (float)arg3.ElapsedGameTime.TotalSeconds, 0.0f)))
+			);
+
+			//AddObject(new ModelObject("sphere").SetPosition(0, 10, 0));
+
+
+
 			AddObject(new BasicCamera().Set3DEnabled(true).SetPosition(0, 10, 10));
 
 		}

@@ -56,7 +56,7 @@ namespace SingularityTest.Scenes
 			Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
 			// get all objects in the world.
-			var gameObjects = this.GetAllObjects(o => o.ParentObject == null);
+			var gameObjects = this.GetAllObjects();
 
 			// first we want to draw the shadow map
 			Game.GraphicsDevice.SetRenderTarget(this.ShadowTarget2D);
@@ -102,7 +102,7 @@ namespace SingularityTest.Scenes
 			}
 
 
-			//spriteBatch.Draw(, new Rectangle(0, 0, 512, 512), Color.White);
+			spriteBatch.Draw(this.ShadowTarget2D, new Rectangle(0, 0, 512, 512), Color.White);
 
 			spriteBatch.End();
 

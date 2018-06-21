@@ -319,7 +319,7 @@ namespace Singularity
 			}
 		}
 
-		public List<GameObject> GetAllObjects(Func<GameObject, Boolean> predicate)
+		public List<GameObject> GetAllObjects(Func<GameObject, Boolean> predicate = null)
 		{
 			return this.ColliderObjects.GetAllObjects(predicate);
 		}

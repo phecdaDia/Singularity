@@ -136,7 +136,7 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
     float visibility = 1.0f;
 
     float depth = input.lightPosition.z / input.lightPosition.w;
-    float4 shadowMapColor = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f));
+    float4 shadowMapColor = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(-0.5f, -0.5f) + float2(0.5f, 0.5f));
 	
     float4 color = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
