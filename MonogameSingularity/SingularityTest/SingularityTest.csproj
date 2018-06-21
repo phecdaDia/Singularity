@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="GameObjects\CofTestObject.cs" />
     <Compile Include="GameObjects\CollidableTestObject.cs" />
+    <Compile Include="Scenes\LightGameScene.cs" />
     <Compile Include="Scenes\LightTestScene.cs" />
     <Compile Include="GameObjects\MappingTestObject.cs" />
     <Compile Include="GameObjects\TestBallObject.cs" />

@@ -17,16 +17,25 @@ matrix Projection;
 matrix LightView;
 matrix LightProjection;
 
+float3 LightDirection;
+float3 CameraPosition;
+
 float1 MaxClippingDistance;
+
+float4 AmbientLightColor;
+float1 AmbientLightIntensity;
+
+float4 DiffuseLightColor;
+float1 DiffuseLightIntensity;
 
 Texture2D ShadowMap;
 
 sampler2D ShadowMapSampler = sampler_state
 {
     texture = <ShadowMap>;
-    //magfilter = LINEAR;
-    //minfilter = LINEAR;
-    //mipfilter = LINEAR;
+    magfilter = LINEAR;
+    minfilter = LINEAR;
+    mipfilter = LINEAR;
     //AddressU = clamp;
     //AddressV = clamp;
 };
@@ -116,18 +125,22 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
 	
     float4 color = float4(0.5f, 0.5f, 0.5f, 1.0f);
 
-    if (depth > shadowMapColor.z + 0.05f)
+    if (depth > shadowMapColor.z + 0.0025f)
     {
 		// we are in the shadows
         visibility = 0.5f;
-        color.r = 1.0f;	// debugging!
-        color.bg = 0.0f;
     }
 
+	// now get the dot product. We want this to be fully illuminated if the light shines directly at it.
+	// and only partially if it is at an angle!
+    float diffuseLighting = saturate(dot(input.Normal, -LightDirection));
 
-	// recalculate color with new values!
+    //diffuseLighting *= ((length(LightDirection) * length(LightDirection)) / dot(light.Position - Input.WorldPosition, light.Position - Input.WorldPosition));
+    float3 h = normalize(normalize(CameraPosition - input.position2D) - LightDirection);
+    float specLighting = pow(saturate(dot(h, input.Normal)), 2.0f);
 
-    color.rgb = color.rgb * visibility;
+    color.rgb = saturate(AmbientLightColor * AmbientLightIntensity + (DiffuseLightColor * diffuseLighting * DiffuseLightIntensity) + (specLighting * 0.5f)) * visibility;
+	
 
     color.w = 1.0f;
 
