@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Singularity;
 using Singularity.GameObjects;
 
@@ -13,13 +14,11 @@ namespace SingularityTest.Scenes
 	public class LightTestScene : LightGameScene
 	{
 
-		public LightTestScene(SingularityGame game) : base(game, "light", 4096)
+		public LightTestScene(SingularityGame game) : base(game, "light", 4096 * 6)
 		{
-			this.SetLightPosition(new Vector3(40, 40, 40));
-			this.SetLightDirection(new Vector3(-1, -1, -1));
+			this.SetLightDirection(new Vector3(-7, -4, -7));
 
-			this.SetProjectionMatrix(Matrix.CreateOrthographic(40, 40, 0.01f, 128.0f));
-
+			this.SetProjectionMatrix(Matrix.CreateOrthographic(120, 120, 0.01f, 256.0f));
 			this.SetAbsoluteCamera(new Vector3(-20, 20, 20), new Vector3(0, 0, 0));
 
 		}
@@ -39,7 +38,7 @@ namespace SingularityTest.Scenes
 				);
 				
 				i++;
-				width /= 1.2f;
+				width /= 1.1f;
 			}
 
 			AddObject(new EmptyGameObject()
@@ -55,7 +54,21 @@ namespace SingularityTest.Scenes
 
 
 
-			AddObject(new BasicCamera().Set3DEnabled(true).SetPosition(0, 10, 10));
+			AddObject(new BasicCamera().Set3DEnabled(true).SetPosition(0, 10, 10)
+				.AddScript((scene, obj, time) =>
+				{
+					// enable or disable 3d.
+					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
+
+					// some more movement options
+					if (KeyboardManager.IsKeyDown(Keys.Q))
+						obj.AddPosition(new Vector3(0, 1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.E))
+						obj.AddPosition(new Vector3(0, -1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
+
+					((LightGameScene)scene).SetLightPosition(obj.Position + new Vector3(70, 40, 70));
+
+				}));
 
 		}
 	}

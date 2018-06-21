@@ -76,7 +76,7 @@ namespace SingularityTest.Scenes
 				go.DrawLogic(this, spriteBatch, GameObjectDrawMode.Model); // We don't want any 2d Stuff
 			}
 
-			//spriteBatch.Draw(ImageManager.GetTexture2D("mandelbrot"), new Vector2(), Color.White);
+			//spriteBatch.Draw(ShadowTarget2D, new Rectangle(0, 0, 200, 200), Color.White);
 
 			spriteBatch.End();
 
@@ -102,7 +102,7 @@ namespace SingularityTest.Scenes
 			}
 
 
-			spriteBatch.Draw(this.ShadowTarget2D, new Rectangle(0, 0, 512, 512), Color.White);
+			spriteBatch.Draw(this.ShadowTarget2D, new Rectangle(0, 0, 256, 256), Color.White);
 
 			spriteBatch.End();
 
@@ -132,6 +132,9 @@ namespace SingularityTest.Scenes
 
 			effect.Parameters["ShadowMap"]?.SetValue((Texture2D)this.ShadowTarget2D);
 			effect.Parameters["Texture"]?.SetValue(gameObject.Texture);
+
+			effect.Parameters["DefaultColor"]?.SetValue(Color.White.ToVector4());
+			effect.Parameters["UseTexture"].SetValue(0);
 		}
 	}
 }
