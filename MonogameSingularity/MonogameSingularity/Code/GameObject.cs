@@ -24,6 +24,7 @@ namespace Singularity
 		public Vector3   Scale     { get; private set; } // Scale of the model
 		public Vector3   Inertia   { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
+		public Texture2D Texture { get; private set; }
 
 		public Boolean EnablePushCollision { get; set; }
 
@@ -124,6 +125,8 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetModel(String model)
 		{
+			this.SetTexture(ModelManager.GetTexture(model));
+
 			return this.SetModel(ModelManager.GetModel(model));
 		}
 
@@ -495,6 +498,16 @@ namespace Singularity
 		{
 			this.Effect = effect;
 			this.EffectParams = effectParams;
+			return this;
+		}
+
+		#endregion
+
+		#region SetEffect
+
+		public GameObject SetTexture(Texture2D texture)
+		{
+			this.Texture = texture;
 			return this;
 		}
 

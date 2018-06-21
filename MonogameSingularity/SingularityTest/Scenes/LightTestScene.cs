@@ -15,10 +15,10 @@ namespace SingularityTest.Scenes
 
 		public LightTestScene(SingularityGame game) : base(game, "light", 4096)
 		{
-			this.SetLightPosition(new Vector3(20, 20, 20));
+			this.SetLightPosition(new Vector3(40, 40, 40));
 			this.SetLightDirection(new Vector3(-1, -1, -1));
 
-			this.SetProjectionMatrix(Matrix.CreateOrthographic(40, 40, 0.01f, 100.0f));
+			this.SetProjectionMatrix(Matrix.CreateOrthographic(40, 40, 0.01f, 128.0f));
 
 			this.SetAbsoluteCamera(new Vector3(-20, 20, 20), new Vector3(0, 0, 0));
 
@@ -33,8 +33,9 @@ namespace SingularityTest.Scenes
 			while (width >= 1.0f)
 			{
 				AddObject(new ModelObject("cubes/cube1")
-					.SetPosition(0, -0.5f + i, 0)
+					.SetPosition(20 - width / 2, -0.5f + i, 20 - width / 2)
 					.SetScale(width, 1, width)
+					.SetTexture(ModelManager.GetTexture("cubes/cube1"))
 				);
 				
 				i++;

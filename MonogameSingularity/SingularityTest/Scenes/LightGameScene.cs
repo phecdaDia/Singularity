@@ -102,7 +102,7 @@ namespace SingularityTest.Scenes
 			}
 
 
-			//spriteBatch.Draw(this.ShadowTarget2D, new Rectangle(0, 0, 512, 512), Color.White);
+			//spriteBatch.Draw(, new Rectangle(0, 0, 512, 512), Color.White);
 
 			spriteBatch.End();
 
@@ -120,18 +120,18 @@ namespace SingularityTest.Scenes
 
 			effect.Parameters["LightView"]?.SetValue(Matrix.CreateLookAt(this.LightPosition, this.LightPosition + this.LightDirection, Vector3.UnitY));
 			effect.Parameters["LightProjection"]?.SetValue(this.SunProjectionMatrix);
-			effect.Parameters["MaxClippingDistance"]?.SetValue(50.0f);
 
-			effect.Parameters["LightDirection"].SetValue(this.LightDirection);
-			effect.Parameters["CameraPosition"].SetValue(this.CameraPosition);
+			effect.Parameters["LightDirection"]?.SetValue(this.LightDirection);
+			effect.Parameters["CameraPosition"]?.SetValue(this.CameraPosition);
 
-			effect.Parameters["AmbientLightColor"].SetValue(new Vector4(1.0f, 0.8f, 0.7f, 0.5f));
-			effect.Parameters["AmbientLightIntensity"].SetValue(0.4f);
+			effect.Parameters["AmbientLightColor"]?.SetValue(new Vector4(1.0f, 0.8f, 0.7f, 0.5f));
+			effect.Parameters["AmbientLightIntensity"]?.SetValue(0.4f);
 
-			effect.Parameters["DiffuseLightColor"].SetValue(Color.White.ToVector4());
-			effect.Parameters["DiffuseLightIntensity"].SetValue(0.2f);
+			effect.Parameters["DiffuseLightColor"]?.SetValue(Color.White.ToVector4());
+			effect.Parameters["DiffuseLightIntensity"]?.SetValue(0.2f);
 
 			effect.Parameters["ShadowMap"]?.SetValue((Texture2D)this.ShadowTarget2D);
+			effect.Parameters["Texture"]?.SetValue(gameObject.Texture);
 		}
 	}
 
