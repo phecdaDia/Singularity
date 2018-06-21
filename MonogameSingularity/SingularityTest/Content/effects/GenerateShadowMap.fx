@@ -40,6 +40,16 @@ sampler2D ShadowMapSampler = sampler_state
     //AddressV = clamp;
 };
 
+Texture2D Texture;
+
+sampler2D TextureSampler = sampler_state {
+	texture = <Texture>;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+	AddressU = Clamp;
+	AddressV = Clamp;
+};
+
 
 ///
 /// SHADOW MAP METHODS
@@ -87,6 +97,7 @@ struct VS_Scene_Input
 {
     float4 Position : SV_POSITION;
     float4 Normal : NORMAL;
+	float2 TexCoords: TEXCOORD0;
 };
 
 struct VS_Scene_Output
@@ -95,6 +106,7 @@ struct VS_Scene_Output
     float4 lightPosition : TEXCOORD1;
     float4 position2D : TEXCOORD0;
     float4 Normal : COLOR;
+	float2 TexCoords: TEXCOORD0;
 };
 
 // VECTOR SHADER METHOD
@@ -112,12 +124,15 @@ VS_Scene_Output VSShadowScene(in VS_Scene_Input input)
     output.lightPosition = mul(output.lightPosition, LightProjection);
 
     output.Normal = input.Normal;
+	output.TexCoords = input.TexCoords;
 
     return output;
 }
 
 float4 PSShadowScene(VS_Scene_Output input) : COLOR
 {
+	float TextureColor = tex2D(TextureSampler, input.TexCoords);
+
     float visibility = 1.0f;
 
     float depth = input.lightPosition.z / input.lightPosition.w;
@@ -144,7 +159,7 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
 
     color.w = 1.0f;
 
-    return color;
+	return (color * TextureColor);
 
 }
 
