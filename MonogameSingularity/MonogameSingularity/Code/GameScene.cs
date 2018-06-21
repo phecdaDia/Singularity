@@ -267,7 +267,7 @@ namespace Singularity
 				RayCollisionPoint rcp = CollisionManager.GetRayCollision(ray, collidable.Collision);
 
 				// check if the point is closer
-				if (rcp.DidCollide && rcp.RayDistance < nearestCollision.RayDistance)
+				if (rcp.DidCollide && rcp.RayDistance < nearestCollision.RayDistance && rcp.RayDistance >= 0.0f)
 				{
 					nearestCollision = rcp;
 				}
