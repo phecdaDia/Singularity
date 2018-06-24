@@ -141,30 +141,31 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
 
     float depth = input.lightPosition.z / input.lightPosition.w;
     float4 shadowMapColor = tex2D(ShadowMapSampler, input.lightPosition.xy * float2(0.5f, -0.5f) + 0.5f);
+	
 
-    float angle = abs(acos(dot(input.Normal, (LightDirection * float3(-1, 1, -1)) / (length(input.Normal) * length(LightDirection)))));
-    
-    //if (angle >= 1.5707f && angle <= 3 * 1.5707f)
-    //    visibility = 0.5f;
+    matrix a = matrix(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
+    float3 light = mul(LightDirection, a);
+	
+    float dotProduct = dot(normalize(input.Normal.xyz), normalize(light.xyz));
 
-    if (depth > shadowMapColor.z + 0.0025f && shadowMapColor.w > 0.0f)
+    if (depth > shadowMapColor.z + 0.0025f && shadowMapColor.w > 0.0f || dotProduct > - 0.005f)
         visibility = 0.5f;
 		
 
 	// now get the dot product. We want this to be fully illuminated if the light shines directly at it.
 	// and only partially if it is at an angle!
-    float diffuseLighting = saturate(dot(input.Normal, (LightDirection * float3(-1, 1, -1))));
+    float diffuseLighting = saturate(dot(input.Normal.xyz, -light));
 
-    //diffuseLighting *= ((length(LightDirection) * length(LightDirection)) / dot(light.Position - Input.WorldPosition, light.Position - Input.WorldPosition));
-    float3 h = normalize(normalize(CameraPosition - input.position2D) + (LightDirection * float3(-1, 1, -1)));
-    float specLighting = pow(saturate(dot(h, input.Normal)), 2.0f);
+    //diffuseLighting *= ((length(light) * length(light)) / dot(CameraPosition - input.position2D.xyz, CameraPosition - input.lightPosition.xyz));
+    float3 h = normalize(normalize(CameraPosition - input.lightPosition.xyz) + -light);
+    float specLighting = pow(saturate(dot(h, input.Normal.xyz)), 2.0f);
 
     color.rgb *= saturate(AmbientLightColor * AmbientLightIntensity + (DiffuseLightColor * diffuseLighting * DiffuseLightIntensity) + (specLighting * 0.5f)) * visibility;
 	
     //color.rgb = abs(input.Normal) * visibility;
 
     //color.w = 1.0f;
-
+	
     return color;
 
     }

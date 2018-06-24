@@ -47,6 +47,8 @@ namespace SingularityTest.Scenes
 				camPosition = new Vector3(10);
 			}
 
+			AddObject(new ModelObject("cubes/cube1").SetPosition(51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
+
 			AddObject(new BasicCamera()
 				.SetCameraTarget(camTarget)
 				.SetPosition(camPosition)
