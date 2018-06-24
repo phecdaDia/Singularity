@@ -144,8 +144,8 @@ float4 PSShadowScene(VS_Scene_Output input) : COLOR
 
     float angle = abs(acos(dot(input.Normal, (LightDirection * float3(-1, 1, -1)) / (length(input.Normal) * length(LightDirection)))));
     
-    if (angle >= 1.5707f && angle <= 3 * 1.5707f)
-        visibility = 0.5f;
+    //if (angle >= 1.5707f && angle <= 3 * 1.5707f)
+    //    visibility = 0.5f;
 
     if (depth > shadowMapColor.z + 0.0025f && shadowMapColor.w > 0.0f)
         visibility = 0.5f;

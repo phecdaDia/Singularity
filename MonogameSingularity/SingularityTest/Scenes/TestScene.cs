@@ -16,12 +16,18 @@ using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
-    public class TestScene : GameScene
+    public class TestScene : LightGameScene
 	{
-		public TestScene(SingularityGame game) : base(game, "test")
+		public TestScene(SingularityGame game) : base(game, "test", 4096)
 		{
 			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 			this.SceneResumeEvent += (s, e) => { Mouse.SetPosition(200, 200); };
+
+
+			this.SetLightPosition(new Vector3(50, 50, 0));
+			this.SetLightDirection(new Vector3(-1, -1, 0));
+
+			this.SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
 		}
 
 		protected override void AddGameObjects(int entranceId)
@@ -50,8 +56,8 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 					// some more movement options
-					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
-					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -1, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 5, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -5, 0) * (float)time.ElapsedGameTime.TotalSeconds);
 
 					// screen effects
 
@@ -154,13 +160,13 @@ namespace SingularityTest.Scenes
 
 		public override void AddLightningToEffect(Effect eff)
 		{
-			var effect = (BasicEffect) eff;
+			//var effect = (BasicEffect) eff;
 
-			effect.DirectionalLight0.DiffuseColor = new Vector3(0.15f, 0.15f, 0.15f); // some diffuse light
-			effect.DirectionalLight0.Direction = new Vector3(1, -2, 1);  // 
-			effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
-			//effect.AmbientLightColor = new Vector3(1f, 1f, 1f); // Add some overall ambient light.
-			effect.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.315f); // Add some overall ambient light.
+			//effect.DirectionalLight0.DiffuseColor = new Vector3(0.15f, 0.15f, 0.15f); // some diffuse light
+			//effect.DirectionalLight0.Direction = new Vector3(1, -2, 1);  // 
+			//effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
+			////effect.AmbientLightColor = new Vector3(1f, 1f, 1f); // Add some overall ambient light.
+			//effect.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.315f); // Add some overall ambient light.
 		}
 	}
 }
