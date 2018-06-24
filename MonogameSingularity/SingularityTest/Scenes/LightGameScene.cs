@@ -134,7 +134,7 @@ namespace SingularityTest.Scenes
 			effect.Parameters["Texture"]?.SetValue(gameObject.Texture);
 
 			effect.Parameters["DefaultColor"]?.SetValue(Color.White.ToVector4());
-			effect.Parameters["UseTexture"].SetValue(0);
+			effect.Parameters["UseTexture"].SetValue(1);
 		}
 	}
 }

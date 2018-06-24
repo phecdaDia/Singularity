@@ -14,7 +14,7 @@ namespace SingularityTest.Scenes
 	public class LightTestScene : LightGameScene
 	{
 
-		public LightTestScene(SingularityGame game) : base(game, "light", 4096 * 6)
+		public LightTestScene(SingularityGame game) : base(game, "light", 4096)
 		{
 			this.SetLightDirection(new Vector3(-7, -4, -7));
 
@@ -34,7 +34,6 @@ namespace SingularityTest.Scenes
 				AddObject(new ModelObject("cubes/cube1")
 					.SetPosition(20 - width / 2, -0.5f + i, 20 - width / 2)
 					.SetScale(width, 1, width)
-					.SetTexture(ModelManager.GetTexture("cubes/cube1"))
 				);
 				
 				i++;
