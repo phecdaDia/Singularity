@@ -16,21 +16,29 @@ namespace SingularityTest.Scenes
 {
 	public class CollisionTestScene : GameScene
 	{
-		public CollisionTestScene(SingularityGame game) : base(game, "collision", 10, -2, 0.1f)
+		public CollisionTestScene(SingularityGame game) : base(game, "collision-test", 10, -2, 0.1f)
 		{
 
 		}
 
-		public override void AddLightningToEffect(BasicEffect effect)
+		public override void AddLightningToEffect(Effect effect)
 		{
-			effect.EnableDefaultLighting();
+			var eff = (BasicEffect) effect;
+			eff.EnableDefaultLighting();
 		}
 
-		protected override void AddGameObjects()
+		protected override void AddGameObjects(int entranceId)
 		{
+
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
+				if (KeyboardManager.IsKeyPressed(Keys.O))
+				{
+                    SceneManager.ChangeScene("collision-test");
+				}
+                if(KeyboardManager.IsKeyPressed(Keys.F4))
+                    SceneManager.ClearStack();
 			}));
 
 			AddObject(new BasicCamera().Set3DEnabled(true).SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50).SetEnableCollision(false));

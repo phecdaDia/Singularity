@@ -1,34 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Remoting.Channels;
+using System.Xml.Serialization.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Code.Events;
 using Singularity.Collisions;
+using Singularity.Events;
 using Singularity.GameObjects.Interfaces;
+using Singularity.Utilities;
 
 namespace Singularity
 {
+	using Microsoft.SqlServer.Server;
+
 	/// <summary>
 	/// A GameObject can be any object in a GameScene.
 	/// </summary>
 	public abstract class GameObject
 	{
-		
-		public Model Model { get; private set; } // Model of the entity. Is Null if the object shall not be rendered.
-		public Vector3 Position { get; private set; } // Current position of the model
-		public Vector3 Rotation { get; private set; } // Current rotation of the model
-		public Vector3 Scale { get; private set; } // Scale of the model
-		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
+		public Model
+			Model { get; private set; } // Model of the entity. Is Null if the object shall not be rendered.
+
+		public Vector3   Position  { get; private set; } // Current position of the model
+		public Vector3   Rotation  { get; private set; } // Current rotation of the model
+		public Vector3   Scale     { get; private set; } // Scale of the model
+		public Vector3   Inertia   { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
+		public Texture2D Texture { get; private set; }
 
 		public Boolean EnablePushCollision { get; set; }
 
-		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+		public GameObject
+			ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
+		public Effect Effect { get; private set; } //Shader of Object
+		public bool CullingEnabled { get; private set; } = true;
+		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
+		public bool ApplySceneLight { get; private set; } = true;
 		public String DebugName { get; private set; } // Used for debugging.
 
 		public Matrix ScaleMatrix
@@ -48,9 +59,16 @@ namespace Singularity
 			}
 		}
 
+		public Matrix TransformationMatrix
+		{
+			get { return ScaleMatrix * RotationMatrix; }
+		}
+
 		public float ModelRadius { get; private set; }
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
+
+		public CustomData CustomData { get; private set; }
 
 		/// <summary>
 		/// Initializing Constructor
@@ -59,18 +77,17 @@ namespace Singularity
 		protected GameObject()
 		{
 			// Setting default values for all members
-			this.Position = new Vector3();
-			this.Rotation = new Vector3();
-			this.Scale = Vector3.One;
-			this.Inertia = new Vector3();
+			this.Position            = new Vector3();
+			this.Rotation            = new Vector3();
+			this.Scale               = Vector3.One;
+			this.Inertia             = new Vector3();
 			this.EnablePushCollision = true;
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
-			
-
+			this.CustomData = new CustomData();
 		}
 
 		#region Builder Pattern
@@ -93,7 +110,7 @@ namespace Singularity
 			foreach (var mesh in this.Model.Meshes)
 			{
 				// get distance
-				var bs = mesh.BoundingSphere;
+				var bs   = mesh.BoundingSphere;
 				var dist = (bs.Center - center).Length() + bs.Radius;
 
 				if (dist > rm) rm = dist;
@@ -114,6 +131,8 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetModel(String model)
 		{
+			this.SetTexture(ModelManager.GetTexture(model));
+
 			return this.SetModel(ModelManager.GetModel(model));
 		}
 
@@ -129,7 +148,7 @@ namespace Singularity
 		/// <param name="y"></param>
 		/// <returns></returns>
 		public GameObject SetPosition(float x, float y) => SetPosition(new Vector3(x, y, 0));
-		
+
 		/// <summary>
 		/// Sets the <see cref="Position"/> by calling <seealso cref="SetPosition(Vector3)"/> with the specified values
 		/// </summary>
@@ -147,7 +166,7 @@ namespace Singularity
 		public GameObject SetPosition(Vector3 position)
 		{
 			this.Position = position;
-			
+
 			return this;
 		}
 
@@ -205,6 +224,7 @@ namespace Singularity
 		/// <param name="z"></param>
 		/// <returns></returns>
 		public GameObject SetRotation(float x, float y, float z) => SetRotation(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Sets the <see cref="Rotation"/>
 		/// </summary>
@@ -220,7 +240,6 @@ namespace Singularity
 
 		#region AddRotation
 
-
 		/// <summary>
 		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
 		/// The Z value of the <see cref="Vector3"/> will be 0.
@@ -229,6 +248,7 @@ namespace Singularity
 		/// <param name="y"></param>
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y) => AddRotation(new Vector3(x, y, 0));
+
 		/// <summary>
 		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
 		/// </summary>
@@ -237,6 +257,7 @@ namespace Singularity
 		/// <param name="z"></param>
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y, float z) => AddRotation(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Modifies the <see cref="Rotation"/> by adding both <see cref="Vector3"/>
 		/// </summary>
@@ -268,6 +289,7 @@ namespace Singularity
 		/// <param name="z"></param>
 		/// <returns></returns>
 		public GameObject SetScale(float x, float y, float z) => SetScale(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Sets the <see cref="Scale"/>
 		/// </summary>
@@ -282,6 +304,7 @@ namespace Singularity
 		#endregion
 
 		#region MultiplyScale
+
 		/// <summary>
 		/// Multiplies <see cref="Scale"/> by calling <seealso cref="MultiplyScale(Vector3)"/>
 		/// </summary>
@@ -290,6 +313,7 @@ namespace Singularity
 		/// <param name="z"></param>
 		/// <returns></returns>
 		public GameObject MultiplyScale(float x, float y, float z) => MultiplyScale(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Multiplies <see cref="Scale"/> with <paramref name="scale"/>
 		/// </summary>
@@ -300,6 +324,7 @@ namespace Singularity
 			this.Scale *= scale;
 			return this;
 		}
+
 		#endregion
 
 		#region AddScale
@@ -311,6 +336,7 @@ namespace Singularity
 		/// <param name="scale"></param>
 		/// <returns></returns>
 		public GameObject AddScale(float scale) => AddScale(new Vector3(scale));
+
 		/// <summary>
 		/// Modifies <see cref="Scale"/> by calling <seealso cref="AddScale(Vector3)"/>
 		/// </summary>
@@ -319,6 +345,7 @@ namespace Singularity
 		/// <param name="z"></param>
 		/// <returns></returns>
 		public GameObject AddScale(float x, float y, float z) => AddScale(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Adds <paramref name="scale"/> to the <see cref="Scale"/>
 		/// </summary>
@@ -333,6 +360,7 @@ namespace Singularity
 		#endregion
 
 		#region SetParent
+
 		/// <summary>
 		/// Sets the <see cref="ParentObject"/>
 		/// </summary>
@@ -345,6 +373,7 @@ namespace Singularity
 
 			return this;
 		}
+
 		#endregion
 
 		#region AddScript
@@ -388,9 +417,11 @@ namespace Singularity
 			child.ParentObject = this;
 			return this;
 		}
+
 		#endregion
 
 		#region SetDebugName
+
 		/// <summary>
 		/// Sets the <see cref="DebugName"/> for testing.
 		/// </summary>
@@ -401,6 +432,7 @@ namespace Singularity
 			this.DebugName = name;
 			return this;
 		}
+
 		#endregion
 
 		#region SetCollision
@@ -415,6 +447,7 @@ namespace Singularity
 		#endregion
 
 		#region SetInertia
+
 		public GameObject SetInertia(float x, float y) => SetInertia(x, y, 0);
 
 		public GameObject SetInertia(float x, float y, float z) => SetInertia(new Vector3(x, y, z));
@@ -431,9 +464,11 @@ namespace Singularity
 			this.Inertia = inertia;
 			return this;
 		}
+
 		#endregion
 
 		#region AddInertia
+
 		public GameObject AddInertia(float x, float y) => AddInertia(x, y, 0);
 
 		public GameObject AddInertia(float x, float y, float z) => AddInertia(new Vector3(x, y, z));
@@ -449,6 +484,7 @@ namespace Singularity
 			this.Inertia += inertia;
 			return this;
 		}
+
 		#endregion
 
 		#region SetEnableCollision
@@ -457,6 +493,47 @@ namespace Singularity
 		{
 			this.EnablePushCollision = enable;
 
+			return this;
+		}
+
+		#endregion
+
+		#region SetEffect
+
+		public GameObject SetEffect(Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams)
+		{
+			this.Effect = effect;
+			this.EffectParams = effectParams;
+			return this;
+		}
+
+		#endregion
+
+		#region SetEffect
+
+		public GameObject SetTexture(Texture2D texture)
+		{
+			this.Texture = texture;
+			return this;
+		}
+
+		#endregion
+
+		#region SetSceneLight
+
+		public GameObject SetSceneLight(bool set)
+		{
+			this.ApplySceneLight = set;
+			return this;
+		}
+
+		#endregion
+
+		#region SetCulling
+
+		public GameObject SetCulling(bool enabled)
+		{
+			this.CullingEnabled = enabled;
 			return this;
 		}
 
@@ -481,7 +558,8 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
+			return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) +
+			       this.ParentObject.GetHierarchyPosition();
 		}
 
 
@@ -510,10 +588,11 @@ namespace Singularity
 		public BoundingBox GetBoundingBox()
 		{
 			return GetBoundingBox(
-				this.Model,
-				Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) * Matrix.CreateRotationZ(this.Rotation.Z)
-				* Matrix.CreateScale(this.GetHierarchyScale())
-			);
+			                      this.Model,
+			                      Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) *
+			                      Matrix.CreateRotationZ(this.Rotation.Z)
+			                      * Matrix.CreateScale(this.GetHierarchyScale())
+			                     );
 		}
 
 		/// <summary>
@@ -524,7 +603,6 @@ namespace Singularity
 		/// <returns></returns>
 		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
 		{
-
 			if (model == null) return new BoundingBox();
 
 			// Initialize minimum and maximum corners of the bounding box to max and min values
@@ -537,7 +615,7 @@ namespace Singularity
 				foreach (ModelMeshPart meshPart in mesh.MeshParts)
 				{
 					// Vertex buffer parameters
-					int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+					int vertexStride     = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
 					int vertexBufferSize = meshPart.NumVertices * vertexStride;
 
 					// Get vertex data as float
@@ -547,7 +625,9 @@ namespace Singularity
 					// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
 					for (int i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
 					{
-						Vector3 transformedPosition = Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]), worldTransformation);
+						Vector3 transformedPosition =
+							Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
+							                  worldTransformation);
 
 						min = Vector3.Min(min, transformedPosition);
 						max = Vector3.Max(max, transformedPosition);
@@ -590,11 +670,14 @@ namespace Singularity
 			{
 				// we have to talk to the scene about the movement. 
 				scene.MoveOctree(this, position);
-			} 
+			}
 
 			// if we are allowed to move the camera, do it
+
+			scene.CameraLocked = false;
 			if (this is ICameraController controller) controller.SetCamera(scene);
 
+			scene.CameraLocked = true;
 
 			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
 		}
@@ -612,22 +695,32 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch)
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			//Console.WriteLine($"Drawing, Position: {this.Position}");
-			Draw(scene);
-			Draw2D(spriteBatch);
-			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch);
+			DrawLogic(scene, spriteBatch, scene.GetViewMatrix(), scene.GetProjectionMatrix(), drawMode);
 		}
 
-		protected virtual void Draw2D(SpriteBatch spriteBatch) { }
+		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, Matrix view, Matrix projection,
+			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
+		{
+
+			//Console.WriteLine($"Drawing, Position: {this.Position}");
+			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene, view, projection);
+			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
+
+			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
+		}
+
+		protected virtual void Draw2D(SpriteBatch spriteBatch)
+		{
+		}
 
 		/// <summary>
 		/// Checks if there is a <see cref="Model"/> to draw and draws it.
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		private void Draw(GameScene scene)
+		protected virtual void Draw(GameScene scene, Matrix view, Matrix projection)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 
@@ -635,40 +728,136 @@ namespace Singularity
 			var transformMatrices = new Matrix[this.Model.Bones.Count];
 			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
 
+			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
+
+			if (!CullingEnabled)
+			{
+				var newRastState = new RasterizerState
+				{
+					CullMode             = CullMode.None,
+					DepthBias            = originalRastState.DepthBias,
+					DepthClipEnable      = originalRastState.DepthClipEnable,
+					FillMode             = originalRastState.FillMode,
+					MultiSampleAntiAlias = originalRastState.MultiSampleAntiAlias,
+					ScissorTestEnable    = originalRastState.ScissorTestEnable,
+					SlopeScaleDepthBias  = originalRastState.SlopeScaleDepthBias
+				};
+
+				scene.Game.GraphicsDevice.RasterizerState = newRastState;
+			}
+
 			foreach (ModelMesh mesh in this.Model.Meshes)
 			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					// calculating the full rotation of our object.
-					//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
+				if (this.Effect == null)
+					foreach (Effect effect in mesh.Effects)
+					{
+						if (!(effect is BasicEffect))
+							continue;
 
-					effect.World = transformMatrices[mesh.ParentBone.Index]
-					               * this.ScaleMatrix
-					               * this.RotationMatrix
-								   * Matrix.CreateTranslation(this.GetHierarchyPosition());
+						BasicEffect basisEffect = (BasicEffect)effect;
 
-					effect.View = scene.GetViewMatrix();
-					effect.Projection = scene.GetProjectionMatrix();
+						// calculating the full rotation of our object.
+						//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
 
-					effect.EnableDefaultLighting();
-					effect.LightingEnabled = true; // Turn on the lighting subsystem.
+						basisEffect.World = transformMatrices[mesh.ParentBone.Index]
+						               * this.ScaleMatrix
+						               * this.RotationMatrix
+						               * Matrix.CreateTranslation(this.GetHierarchyPosition());
 
-					//effect.DirectionalLight0.DiffuseColor = new Vector3(0.2f, 0.2f, 0.2f); // some diffuse light
-					//effect.DirectionalLight0.Direction = new Vector3(1, 1, 0);  // coming along the x-axis
-					//effect.DirectionalLight0.SpecularColor = new Vector3(0.05f, 0.05f, 0.05f); // a tad of specularity]
-					scene.AddLightningToEffect(effect);
+						basisEffect.View = view;
+						basisEffect.Projection = projection;
 
-					//effect.EmissiveColor = new Vector3(1, 0, 0); // Sets some strange emmissive lighting.  This just looks weird.
+						scene.AddLightningToEffect(basisEffect);
 
-				}
+					}
+				else
+					foreach (var part in mesh.MeshParts)
+					{
+						part.Effect = this.Effect;
+
+						this.EffectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
+						if(ApplySceneLight) scene.AddLightningToEffect(part.Effect);
+					}
 
 				mesh.Draw();
 			}
 
+			if (!CullingEnabled)
+				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
 		}
 
-		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice) { }
-		public virtual void UnloadContent() { }
+		/// <summary>
+		/// Checks if there is a <see cref="Model"/> to draw and draws it with specified Effect.
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="spriteBatch"></param>
+		protected virtual void DrawWithSpecificEffect(GameScene scene, Matrix view, Matrix projection, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, bool applySceneLighting,string technique = null)
+		{
+			if (this.Model == null) return; // No model means it can't be rendered.
+
+			// copy the scale of bones from the model to apply it later.
+			var transformMatrices = new Matrix[this.Model.Bones.Count];
+			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
+
+			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
+
+			if (!CullingEnabled)
+			{
+				var newRastState = new RasterizerState
+				{
+					CullMode = CullMode.None,
+					DepthBias = originalRastState.DepthBias,
+					DepthClipEnable = originalRastState.DepthClipEnable,
+					FillMode = originalRastState.FillMode,
+					MultiSampleAntiAlias = originalRastState.MultiSampleAntiAlias,
+					ScissorTestEnable = originalRastState.ScissorTestEnable,
+					SlopeScaleDepthBias = originalRastState.SlopeScaleDepthBias
+				};
+
+				scene.Game.GraphicsDevice.RasterizerState = newRastState;
+			}
+
+			if (technique == null)
+			{
+				foreach (var pass in effect.CurrentTechnique.Passes)
+				{
+					foreach (var mesh in Model.Meshes)
+					{
+						foreach (var part in mesh.MeshParts)
+						{
+							part.Effect = effect;
+							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
+							if(applySceneLighting) scene.AddLightningToEffect(part.Effect);
+						}
+						mesh.Draw();
+					}
+				}
+			}else
+				foreach (var pass in effect.Techniques[technique].Passes)
+				{
+					foreach (var mesh in Model.Meshes)
+					{
+						foreach (var part in mesh.MeshParts)
+						{
+							part.Effect = effect;
+							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
+							if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
+						}
+						mesh.Draw();
+					}
+				}
+
+			if (!CullingEnabled)
+				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
+		}
+
+		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
+		{
+		}
+
+		public virtual void UnloadContent()
+		{
+		}
 
 		#endregion
 
@@ -676,13 +865,22 @@ namespace Singularity
 
 		protected event EventHandler<CollisionEventArgs> OnCollisionEvent;
 
-		public virtual void OnCollision(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal) =>
-			OnCollision(new CollisionEventArgs(position, normal, collidable, scene));
+		public virtual void OnCollision(GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
+		                                Vector3    normal) =>
+			OnCollision(new CollisionEventArgs(position, normal, collider, collidable, scene));
 
 		public virtual void OnCollision(CollisionEventArgs e) =>
 			OnCollisionEvent?.Invoke(this, e);
 
 		#endregion
+	}
 
+	public enum GameObjectDrawMode
+	{
+		Nothing     = 0b00000000,	// Object won't be drawn
+		Model       = 0b00000001,	// Only the 3d part will be drawn
+		SpriteBatch = 0b00000010,	// Only 2d will be drawn
+		All         = 0b11111111	// Everything will be drawn
+		
 	}
 }

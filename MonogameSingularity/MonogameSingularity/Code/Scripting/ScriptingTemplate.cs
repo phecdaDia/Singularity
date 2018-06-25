@@ -30,13 +30,14 @@ namespace Singularity.Scripting
 		/// Add all GameObjects for this scene to objectList
 		/// </summary>
 		/// <param name="objectList">a complete instanciated objectList. don't delete. just add</param>
-		public abstract void AddGameObjects(List<GameObject> objectList);
+		/// <param name="entranceId"></param>
+		public abstract List<GameObject> AddGameObjects(int entranceId);
 
 		/// <summary>
 		/// Define lighting
 		/// </summary>
 		/// <param name="effect">BasicEffect</param>
-		public abstract void AddLightningToEffect(BasicEffect effect);
+		public abstract void AddLightningToEffect(Effect effect);
 	}
 
 	/// <summary>
@@ -44,7 +45,6 @@ namespace Singularity.Scripting
 	/// </summary>
 	public struct SceneSettings
 	{
-		public string SceneKey;
 		public int? SceneSize;
 		public int? MinPartition;
 		public float? Precision;

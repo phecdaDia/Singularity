@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Singularity.Collisions;
-using Singularity.Collisions.CollisionTypes;
 
-namespace Singularity.Code.Collisions.CollisionTypes
+namespace Singularity.Collisions.CollisionTypes
 {
-	public static class SphereOnBoundEdgeCollision
+	internal static class SphereOnBoundEdgeCollision
 	{
 		public static Boolean GetCollision(SphereCollision collidableA, BoundEdgeCollision collidableB, out Vector3 position,
 			out Vector3 normal, out float scale, out float distance)

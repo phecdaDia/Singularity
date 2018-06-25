@@ -11,6 +11,7 @@ namespace Singularity
 
 		private readonly ContentManager ContentManager;
 		private readonly Dictionary<String, Model> ModelDictionary;
+		private readonly Dictionary<String, Texture2D> ModelTextureDictionary;
 
 
 		public ModelManager(ContentManager contentManager)
@@ -20,13 +21,14 @@ namespace Singularity
 
 			this.ContentManager = contentManager;
 			this.ModelDictionary = new Dictionary<string, Model>();
+			this.ModelTextureDictionary = new Dictionary<string, Texture2D>();
 		}
 
 		/// <summary>
 		/// Gets the singleton instance
 		/// </summary>
 		/// <returns></returns>
-		public static ModelManager GetInstance()
+		private static ModelManager GetInstance()
 		{
 			return Instance;
 		}
@@ -43,7 +45,18 @@ namespace Singularity
 			Model model = ContentManager.Load<Model>(path);
 			this.ModelDictionary[path] = model;
 
+			this.ModelTextureDictionary[path] = ((BasicEffect) model.Meshes[0].Effects[0]).Texture;
+
+
 			return model;
+		}
+
+		private Texture2D _GetTexture(String path)
+		{
+			if (this.ModelTextureDictionary.ContainsKey(path)) return this.ModelTextureDictionary[path];
+
+			_GetModel(path);
+			return this.ModelTextureDictionary[path];
 		}
 
 		/// <summary>
@@ -54,6 +67,11 @@ namespace Singularity
 		public static Model GetModel(String path)
 		{
 			return GetInstance()._GetModel(path);
+		}
+
+		public static Texture2D GetTexture(String path)
+		{
+			return GetInstance()._GetTexture(path);
 		}
 	}
 }

@@ -21,8 +21,10 @@ namespace Singularity
 
 		private Boolean UseAbsoluteCameraTarget = false;
 
-		private float MinimumCullingDistance = 0.05f;
-		private float MaximumCullingDistance = 100.0f;
+		protected float MinimumCullingDistance = 0.05f;
+		protected float MaximumCullingDistance = 100.0f;
+
+		public Boolean CameraLocked { get; set; }
 
 
 		/// <summary>
@@ -49,14 +51,14 @@ namespace Singularity
 		/// <summary>
 		/// Clears all <seealso cref="GameObject"/> and calls <see cref="AddGameObjects"/>
 		/// </summary>
-		public void SetupScene()
+		public void SetupScene(int entranceId)
 		{
 			UnloadContent();
 			// clear all current objects.
 			this.ColliderObjects.Clear();
-
+			
 			// Now setup the new objects
-			AddGameObjects();
+			AddGameObjects(entranceId);
 		}
 
 		/// <summary>
@@ -93,7 +95,7 @@ namespace Singularity
 		/// <summary>
 		/// Adds all <seealso cref="GameObject"/>
 		/// </summary>
-		protected abstract void AddGameObjects();
+		protected abstract void AddGameObjects(int entranceId);
 
 		/// <summary>
 		/// Adds a <seealso cref="GameObject"/>
@@ -153,8 +155,20 @@ namespace Singularity
 		/// <param name="cameraPosition"></param>
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.CameraPosition = cameraPosition;
 		}
+
+
+		/// <summary>
+		/// Sets <see cref="CameraPosition"/>
+		/// </summary>
+		public void SetCameraPosition(float x, float y, float z) => this.SetCameraPosition(new Vector3(x, y, z));
 
 		/// <summary>
 		/// Sets relative <see cref="CameraTarget"/>
@@ -162,6 +176,12 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetCameraTarget(Vector3 cameraTarget)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.UseAbsoluteCameraTarget = false;
 			this.CameraTarget = cameraTarget;
 		}
@@ -172,6 +192,12 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCameraTarget(Vector3 cameraTarget)
 		{
+			if (CameraLocked)
+			{
+				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
+				return; // camera is locked!
+			}
+
 			this.UseAbsoluteCameraTarget = true;
 			this.CameraTarget = cameraTarget;
 		}
@@ -191,8 +217,6 @@ namespace Singularity
 		{
 			if (!(gameObject is ICollider)) return;
 
-			List<GameObject> colliders = new List<GameObject>();
-
 			int collisionFixes = 0;
 
 			Boolean DidCollide = false;
@@ -210,9 +234,9 @@ namespace Singularity
 				}
 				// get list of collidables.
 
-				colliders = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+				var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
-				foreach (var go in colliders)
+				foreach (var go in collidables)
 				{
 
 					CollisionManager.DoesCollide(gameObject.Collision, go.Collision,
@@ -223,15 +247,40 @@ namespace Singularity
 						if (gameObject.EnablePushCollision)
 							gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 						
-						gameObject.OnCollision(go, this, pos, nor);
+						gameObject.OnCollision(gameObject, go, this, pos, nor);
+						go.OnCollision(gameObject, go, this, pos, nor);
 
 						DidCollide = true;
 					});
 
 				}
 
-			} while (DidCollide);
+			} while (DidCollide && gameObject.EnablePushCollision);
 
+		}
+
+		public RayCollisionPoint CollideRay(Ray ray)
+		{
+			// get all objects
+			var collidables = ColliderObjects.GetAllObjects((GameObject go) => go is ICollidable);
+
+			var nearestCollision = new RayCollisionPoint();
+
+			foreach (var collidable in collidables)
+			{
+				//Console.WriteLine($"Testing RCP with {collidable}");
+
+				RayCollisionPoint rcp = CollisionManager.GetRayCollision(ray, collidable.Collision);
+
+				// check if the point is closer
+				if (rcp.DidCollide && rcp.RayDistance < nearestCollision.RayDistance && rcp.RayDistance >= 0.0f)
+				{
+					nearestCollision = rcp;
+				}
+			}
+
+
+			return nearestCollision;
 		}
 
 		/// <summary>
@@ -240,18 +289,7 @@ namespace Singularity
 		/// <returns></returns>
 		public virtual Matrix GetViewMatrix()
 		{
-			Vector3 targetVector =
-				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget;
-
-			// transform camera position because of some black magic
-			var viewPosition = new Vector3(this.CameraPosition.X, this.CameraPosition.Y, this.CameraPosition.Z);
-
-
-			var viewTarget = new Vector3(targetVector.X, targetVector.Y, targetVector.Z);
-
-			//Console.WriteLine($"VM: {viewPosition} {viewTarget}");
-
-			return Matrix.CreateLookAt(viewPosition, viewTarget, Vector3.Up);
+			return Matrix.CreateLookAt(this.CameraPosition, this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget, Vector3.Up);
 
 		}
 
@@ -268,7 +306,7 @@ namespace Singularity
 		/// Adds lightning to the <seealso cref="GameObject"/>
 		/// </summary>
 		/// <param name="effect"></param>
-		public abstract void AddLightningToEffect(BasicEffect effect);
+		public abstract void AddLightningToEffect(Effect effect);
 
 		public virtual void LoadContent()
 		{
@@ -287,6 +325,11 @@ namespace Singularity
 			}
 		}
 
+		public List<GameObject> GetAllObjects(Func<GameObject, Boolean> predicate = null)
+		{
+			return this.ColliderObjects.GetAllObjects(predicate);
+		}
+
 
 		/// <summary>
 		/// Updates all <seealso cref="GameObject"/> and adds <see cref="BufferedObjects"/>
@@ -296,6 +339,8 @@ namespace Singularity
 		{
 			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
 			//Console.WriteLine($"{objs.Length} objects in the octree.");
+
+			//Console.WriteLine($"{objs.Length}");
 
 			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
 
@@ -314,10 +359,32 @@ namespace Singularity
 		/// Draws all <seealso cref="GameObject"/>
 		/// </summary>
 		/// <param name="spriteBatch"></param>
-		public void Draw(SpriteBatch spriteBatch)
+		public virtual void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
 		{
+			// render it on our temporary rendertarget first
+			// will be used later for shadows.
+			Game.GraphicsDevice.SetRenderTarget(finalTarget);
+
+			spriteBatch.Begin(SpriteSortMode.FrontToBack);  // allows for better 2d drawing.
+
+			Game.GraphicsDevice.Clear(Color.Transparent);   // sets everything to transparent, clears the entire RenderTarget
+
 			foreach (GameObject obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
+
+
+			spriteBatch.End();
 		}
 
+
+		protected event EventHandler<EventArgs> ScenePauseEvent;
+
+		public virtual void OnScenePause() => ScenePauseEvent?.Invoke(this, EventArgs.Empty);
+
+		protected event EventHandler<EventArgs> SceneResumeEvent;
+
+		public virtual void OnSceneResume() => SceneResumeEvent?.Invoke(this, EventArgs.Empty);
+
 	}
+
+	public interface ITransparent { }
 }

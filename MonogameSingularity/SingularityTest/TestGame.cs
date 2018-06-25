@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using SingularityTest.GameObjects;
 using SingularityTest.Scenes;
 
 namespace SingularityTest
@@ -22,6 +23,7 @@ namespace SingularityTest
         {
 	        this.IsMouseVisible = true;
 			SettingsManager.SetUp<Settings>();
+            ScriptManager.SetUp<LoadingScreen>(Assembly.GetCallingAssembly(), this);
 		}
 
         /// <summary>
@@ -41,8 +43,19 @@ namespace SingularityTest
 
 			this.Exiting += this.GameExiting;
 
-			//this.SceneManager.AddSceneToStack(new ScriptLoadingScene(this, @"Scripts\TestScene.csx", Assembly.GetExecutingAssembly(), typeof(LoadingScreen)));
-	        SceneManager.AddSceneToStack(new TestScene(this));
+			// register scenes
+			//SceneManager.RegisterScene(new CollisionTestScene(this));
+			//SceneManager.AddSceneToStack("collision-test", 0);
+
+	        SceneManager.RegisterScene(new TestScene(this));
+	        SceneManager.RegisterScene(new TransparencyTestScene(this));
+	        SceneManager.RegisterScene(new ShaderTestScene(this));
+	        SceneManager.RegisterScene(new LightTestScene(this));
+
+			SceneManager.AddSceneToStack("test");
+
+			//ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
+			//ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
 		}
 
 		private void GameExiting(Object sender, EventArgs e)

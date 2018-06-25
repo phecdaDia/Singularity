@@ -14,7 +14,7 @@ namespace Singularity.Collisions
 
 		public override object Clone()
 		{
-			return new BoundPlaneCollision(this.Origin, this.SpanVector1, this.SpanVector2, this.Restriction);
+			return new BoundPlaneCollision(this._origin, this._spanVector1, this._spanVector2, this.Restriction);
 		}
 	}
 }

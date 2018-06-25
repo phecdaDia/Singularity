@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Singularity.Code.Collisions;
-using Singularity.Code.Collisions.Multi;
 using Singularity.Collisions;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
