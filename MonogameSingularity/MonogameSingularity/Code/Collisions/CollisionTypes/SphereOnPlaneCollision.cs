@@ -10,7 +10,7 @@ namespace Singularity.Collisions.CollisionTypes
 			out Vector3 normal, out float scale1, out float scale2)
 		{
 
-			Vector3 eq = VectorMathHelper.SolveLinearEquation(collidableB.Normal, collidableB.SpanVector1,
+			Vector3 eq = VectorMathHelper.SolveLinearEquation(collidableB.Normal / collidableB.Normal.Length(), collidableB.SpanVector1,
 				collidableB.SpanVector2, collidableA.Position - collidableB.Origin);
 
 			// get the point of collision

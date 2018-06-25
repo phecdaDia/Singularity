@@ -30,7 +30,7 @@ namespace Singularity.Collisions.CollisionTypes
 
 		public static Vector3 HandleCollision(SphereCollision collider, BoundPlaneCollision collidable, Vector3 position, Vector3 normal)
 		{
-			return position + normal * collider.Radius;
+			return SphereOnPlaneCollision.HandleCollision(collider, collidable, position, normal);
 		}
 	}
 }

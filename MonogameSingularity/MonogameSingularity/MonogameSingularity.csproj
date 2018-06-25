@@ -121,6 +121,7 @@
     <Compile Include="Code\Scripting\StartingScene.cs" />
     <Compile Include="Code\SettingsManager.cs" />
     <Compile Include="Code\SingularityGame.cs" />
+    <Compile Include="Code\Utilities\CustomData.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />

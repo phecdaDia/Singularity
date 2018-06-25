@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Singularity.Collisions;
 using Singularity.Events;
 using Singularity.GameObjects.Interfaces;
+using Singularity.Utilities;
 
 namespace Singularity
 {
@@ -65,6 +66,8 @@ namespace Singularity
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
 
+		public CustomData CustomData { get; private set; }
+
 		/// <summary>
 		/// Initializing Constructor
 		/// Sets default values for all properties
@@ -82,6 +85,7 @@ namespace Singularity
 			this.ChildObjects = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
+			this.CustomData = new CustomData();
 		}
 
 		#region Builder Pattern

@@ -40,6 +40,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
@@ -54,6 +55,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
@@ -70,6 +72,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
@@ -87,6 +90,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
@@ -105,6 +109,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}
@@ -123,6 +128,7 @@ namespace Singularity.Collisions
 					out position, out normal)) return false;
 
 				if (invertNormal) normal = -normal;
+				normal.Normalize();
 				callback?.Invoke(collidableA, collidableB, position, normal);
 				return true;
 			}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -157,6 +158,26 @@ namespace SingularityTest.Scenes
 			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
 				((scene, o, arg3) => o.AddRotation(0, (float)arg3.ElapsedGameTime.TotalSeconds, 0))
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0)));
+
+
+			AddObject(new EmptyGameObject().AddScript((GameScene scene, GameObject obj, GameTime time) =>
+			{
+				if (!obj.CustomData.ContainsKey("timeAlive"))
+				{
+					obj.CustomData.SetValue("timeAlive", 0.0f);
+				}
+
+				obj.CustomData.SetValue("timeAlive", obj.CustomData.GetValue<float>("timeAlive") + (float) time.ElapsedGameTime.TotalSeconds);
+
+
+			}));
+
+			AddObject(new CollidableModelObject("cubes/cube1")
+				.SetCollision(new BoxCollision(new Vector3(-0.5f), new Vector3(0.5f)))
+				.SetScale(8.0f)
+				.SetPosition(50, 0, 0)
+			
+			);
 
 		}
 
