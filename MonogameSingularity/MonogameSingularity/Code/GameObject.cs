@@ -12,6 +12,8 @@ using Singularity.Utilities;
 
 namespace Singularity
 {
+	using Microsoft.SqlServer.Server;
+
 	/// <summary>
 	/// A GameObject can be any object in a GameScene.
 	/// </summary>
@@ -779,6 +781,71 @@ namespace Singularity
 
 				mesh.Draw();
 			}
+
+			if (!CullingEnabled)
+				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
+		}
+
+		/// <summary>
+		/// Checks if there is a <see cref="Model"/> to draw and draws it with specified Effect.
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="spriteBatch"></param>
+		protected virtual void DrawWithSpecificEffect(GameScene scene, Matrix view, Matrix projection, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, bool applySceneLighting,string technique = null)
+		{
+			if (this.Model == null) return; // No model means it can't be rendered.
+
+			// copy the scale of bones from the model to apply it later.
+			var transformMatrices = new Matrix[this.Model.Bones.Count];
+			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
+
+			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
+
+			if (!CullingEnabled)
+			{
+				var newRastState = new RasterizerState
+				{
+					CullMode = CullMode.None,
+					DepthBias = originalRastState.DepthBias,
+					DepthClipEnable = originalRastState.DepthClipEnable,
+					FillMode = originalRastState.FillMode,
+					MultiSampleAntiAlias = originalRastState.MultiSampleAntiAlias,
+					ScissorTestEnable = originalRastState.ScissorTestEnable,
+					SlopeScaleDepthBias = originalRastState.SlopeScaleDepthBias
+				};
+
+				scene.Game.GraphicsDevice.RasterizerState = newRastState;
+			}
+
+			if (technique == null)
+			{
+				foreach (var pass in effect.CurrentTechnique.Passes)
+				{
+					foreach (var mesh in Model.Meshes)
+					{
+						foreach (var part in mesh.MeshParts)
+						{
+							part.Effect = effect;
+							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
+							if(applySceneLighting) scene.AddLightningToEffect(part.Effect);
+						}
+						mesh.Draw();
+					}
+				}
+			}else
+				foreach (var pass in effect.Techniques[technique].Passes)
+				{
+					foreach (var mesh in Model.Meshes)
+					{
+						foreach (var part in mesh.MeshParts)
+						{
+							part.Effect = effect;
+							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
+							if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
+						}
+						mesh.Draw();
+					}
+				}
 
 			if (!CullingEnabled)
 				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
