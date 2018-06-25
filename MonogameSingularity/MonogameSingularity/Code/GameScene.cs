@@ -164,6 +164,12 @@ namespace Singularity
 			this.CameraPosition = cameraPosition;
 		}
 
+
+		/// <summary>
+		/// Sets <see cref="CameraPosition"/>
+		/// </summary>
+		public void SetCameraPosition(float x, float y, float z) => this.SetCameraPosition(new Vector3(x, y, z));
+
 		/// <summary>
 		/// Sets relative <see cref="CameraTarget"/>
 		/// </summary>
