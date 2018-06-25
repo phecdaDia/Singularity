@@ -24,8 +24,8 @@ namespace SingularityTest.Scenes
 			this.SceneResumeEvent += (s, e) => { Mouse.SetPosition(200, 200); };
 
 
-			this.SetLightPosition(new Vector3(50, 50, 0));
-			this.SetLightDirection(new Vector3(-1, -1, 0));
+			this.SetLightPosition(new Vector3(-50, 50, 0));
+			this.SetLightDirection(new Vector3(1, -1, 0));
 
 			this.SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
 		}
@@ -47,7 +47,7 @@ namespace SingularityTest.Scenes
 				camPosition = new Vector3(10);
 			}
 
-			AddObject(new ModelObject("cubes/cube1").SetPosition(51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
+			AddObject(new ModelObject("cubes/cube1").SetPosition(-51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
 
 			AddObject(new BasicCamera()
 				.SetCameraTarget(camTarget)
