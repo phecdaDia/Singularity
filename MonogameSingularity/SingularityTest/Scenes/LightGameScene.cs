@@ -69,11 +69,10 @@ namespace SingularityTest.Scenes
 			foreach (var go in gameObjects)
 			{
 				// set shadow map generation shader TODO put this somewhere else!!!!
-				go.SetEffect(ShadowMapGenerateEffect, ShadowMapEffectParameters);
 
-				go.Effect.CurrentTechnique = go.Effect.Techniques["GenerateShadowMap"];
+				//go.Effect.CurrentTechnique = go.Effect.Techniques["GenerateShadowMap"];
 
-				go.DrawLogic(this, spriteBatch, GameObjectDrawMode.Model); // We don't want any 2d Stuff
+				go.DrawLogicWithEffect(this, spriteBatch, ShadowMapGenerateEffect, ShadowMapEffectParameters, "GenerateShadowMap", GameObjectDrawMode.Model); // We don't want any 2d Stuff
 			}
 
 			//spriteBatch.Draw(ShadowTarget2D, new Rectangle(0, 0, 200, 200), Color.White);
@@ -96,9 +95,7 @@ namespace SingularityTest.Scenes
 			// Draw the entire scene with our shadowmap
 			foreach (var go in gameObjects)
 			{
-				go.Effect.CurrentTechnique = go.Effect.Techniques["ShadowScene"];
-
-				go.DrawLogic(this, spriteBatch, GameObjectDrawMode.All);
+				go.DrawLogicWithEffect(this, spriteBatch, ShadowMapGenerateEffect, ShadowMapEffectParameters, "ShadowScene", GameObjectDrawMode.Model); // We don't want any 2d Stuff
 			}
 
 

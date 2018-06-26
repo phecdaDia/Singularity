@@ -711,9 +711,23 @@ namespace Singularity
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
 		}
 
-		protected virtual void Draw2D(SpriteBatch spriteBatch)
+		public void DrawLogicWithEffect(
+			GameScene scene,
+			SpriteBatch spriteBatch,
+			Effect effect,
+			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams,
+			String technique = null,
+			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
+			
+			if ((drawMode & GameObjectDrawMode.Model) > 0) DrawWithSpecificEffect(scene, effect, effectParams, technique);
+			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
+
+			foreach (GameObject obj in this.ChildObjects) obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
+
+		protected virtual void Draw2D(SpriteBatch spriteBatch)
+		{}
 
 		/// <summary>
 		/// Checks if there is a <see cref="Model"/> to draw and draws it.
@@ -791,7 +805,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		protected virtual void DrawWithSpecificEffect(GameScene scene, Matrix view, Matrix projection, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, bool applySceneLighting,string technique = null)
+		protected virtual void DrawWithSpecificEffect(GameScene scene, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 
@@ -826,26 +840,32 @@ namespace Singularity
 						foreach (var part in mesh.MeshParts)
 						{
 							part.Effect = effect;
-							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
-							if(applySceneLighting) scene.AddLightningToEffect(part.Effect);
+							effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
+							//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
 						}
 						mesh.Draw();
 					}
 				}
-			}else
-				foreach (var pass in effect.Techniques[technique].Passes)
+			}
+			else
+			{
+				effect.CurrentTechnique = effect.Techniques[technique];
+
+				foreach (var pass in effect.CurrentTechnique.Passes)
 				{
 					foreach (var mesh in Model.Meshes)
 					{
 						foreach (var part in mesh.MeshParts)
 						{
 							part.Effect = effect;
-							effectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
-							if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
+							effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
+							//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
 						}
 						mesh.Draw();
 					}
 				}
+			}
+				
 
 			if (!CullingEnabled)
 				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
