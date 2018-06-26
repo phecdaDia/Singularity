@@ -17,7 +17,7 @@ using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
-    public class TestScene : GameScene
+    public class TestScene : LightGameScene
 	{
 		public TestScene(SingularityGame game) : base(game, "test", 4096)
 		{
@@ -25,10 +25,10 @@ namespace SingularityTest.Scenes
 			this.SceneResumeEvent += (s, e) => { Mouse.SetPosition(200, 200); };
 
 
-			//this.SetLightPosition(new Vector3(-50, 50, 0));
-			//this.SetLightDirection(new Vector3(1, -1, 0));
+			this.SetLightPosition(new Vector3(-50, 50, 0));
+			this.SetLightDirection(new Vector3(1, -1, 0));
 
-			//this.SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
+			this.SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
 		}
 
 		protected override void AddGameObjects(int entranceId)

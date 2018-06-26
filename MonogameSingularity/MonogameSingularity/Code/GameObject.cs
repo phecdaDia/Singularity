@@ -748,25 +748,34 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, BasicEffect, Matrix[], ModelMesh, GameScene> effectParams = null)
+		public virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams = null)
 		{
 			if (this.Model == null) return;
 
-			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> BasicEffectParams =
-				(GameObject obj, Effect effect, Matrix[] transformationMatrices, ModelMesh mesh, GameScene s) =>
-				{
-					BasicEffect be = (BasicEffect) effect;
-					be.View = view;
-					be.World = transformationMatrices[mesh.ParentBone.Index]
-					           * obj.ScaleMatrix
-					           * obj.RotationMatrix
-					           * Matrix.CreateTranslation(obj.GetHierarchyPosition());
-					be.Projection = projection;
 
-					effectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
-				};
+			if (this.Effect == null)
+			{
 
-			DrawWithSpecificEffect(scene, this.Model.Meshes[0].Effects[0], BasicEffectParams, null);
+				Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> BasicEffectParams =
+					(GameObject obj, Effect effect, Matrix[] transformationMatrices, ModelMesh mesh, GameScene s) =>
+					{
+						BasicEffect be = (BasicEffect)effect;
+						be.View = view;
+						be.World = transformationMatrices[mesh.ParentBone.Index]
+						           * obj.ScaleMatrix
+						           * obj.RotationMatrix
+						           * Matrix.CreateTranslation(obj.GetHierarchyPosition());
+						be.Projection = projection;
+
+						effectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
+					};
+
+				DrawWithSpecificEffect(scene, this.Model.Meshes[0].Effects[0], BasicEffectParams, null);
+			}
+			else
+			{
+				DrawWithSpecificEffect(scene, this.Effect, effectParams, null);
+			}
 		}
 
 		/// <summary>
