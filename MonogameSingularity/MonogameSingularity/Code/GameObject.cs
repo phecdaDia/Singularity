@@ -740,7 +740,7 @@ namespace Singularity
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
 
-		protected virtual void Draw2D(SpriteBatch spriteBatch)
+		public virtual void Draw2D(SpriteBatch spriteBatch)
 		{}
 
 		/// <summary>
@@ -748,7 +748,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		protected virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, BasicEffect, Matrix[], ModelMesh, GameScene> effectParams = null)
+		public virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, BasicEffect, Matrix[], ModelMesh, GameScene> effectParams = null)
 		{
 			if (this.Model == null) return;
 
@@ -774,7 +774,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		protected virtual void DrawWithSpecificEffect(GameScene scene, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
+		public virtual void DrawWithSpecificEffect(GameScene scene, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
 		{
 			if (this.Model == null) return; // No model means it can't be rendered.
 

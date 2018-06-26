@@ -35,7 +35,7 @@ namespace SingularityTest.GameObjects
 			);
 		}
 
-		protected override void Draw2D(SpriteBatch spriteBatch)
+		public override void Draw2D(SpriteBatch spriteBatch)
 		{
 			spriteBatch.Draw(this.WhitePixel,
 				new Rectangle((int) (this._position.X - 0.5f * this.WhitePixel.Width), (int) (this._position.Y - 0.5f * this.WhitePixel.Height),

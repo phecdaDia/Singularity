@@ -24,7 +24,7 @@ namespace SingularityTest.GameObjects
 
 		}
 
-		protected override void Draw2D(SpriteBatch spriteBatch)
+		public override void Draw2D(SpriteBatch spriteBatch)
 		{
 			if (this.TestFont == null) return;
 

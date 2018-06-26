@@ -42,7 +42,7 @@ namespace Singularity.GameObjects
 			return this;
 		}
 
-		protected override void Draw2D(SpriteBatch spriteBatch)
+		public override void Draw2D(SpriteBatch spriteBatch)
 		{
 			spriteBatch.Draw(
 				this.Texture, 
