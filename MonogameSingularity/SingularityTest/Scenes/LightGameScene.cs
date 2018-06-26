@@ -42,8 +42,8 @@ namespace SingularityTest.Scenes
 			this.SunProjectionMatrix = projectionMatrix;
 		}
 
-		public override void AddLightningToEffect(Effect effect)
-		{ }
+		//public override void AddLightningToEffect(Effect effect)
+		//{ }
 
 		public override void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
 		{

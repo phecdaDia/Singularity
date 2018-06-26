@@ -41,9 +41,9 @@ namespace Singularity.Scripting
 #endif
 		}
 
-        public override void AddLightningToEffect(Effect effect)
-        {
-            Script.AddLightningToEffect(effect);
-        }
+        //public override void AddLightningToEffect(Effect effect)
+        //{
+        //    Script.AddLightningToEffect(effect);
+        //}
     }
 }

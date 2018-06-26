@@ -27,14 +27,14 @@ namespace SingularityTest.Scenes
 				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
 			})));
 
-			AddObject(new ModelObject("cubes/cube2").AddScript(((scene, o, arg3) =>
+			AddObject(new ModelObject("cubes/cube1").AddScript(((scene, o, arg3) =>
 				{
 					o.AddRotation(MathHelper.TwoPi * (float) arg3.ElapsedGameTime.TotalSeconds, 0, 0);
 				})));
 		}
 
-		public override void AddLightningToEffect(Effect effect)
-		{
-		}
+		//public override void AddLightningToEffect(Effect effect)
+		//{
+		//}
 	}
 }

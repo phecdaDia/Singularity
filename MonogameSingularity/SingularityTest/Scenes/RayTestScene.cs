@@ -90,9 +90,9 @@ namespace SingularityTest.Scenes
 			}));
 		}
 
-		public override void AddLightningToEffect(Effect effect)
-		{
+		//public override void AddLightningToEffect(Effect effect)
+		//{
 			
-		}
+		//}
 	}
 }

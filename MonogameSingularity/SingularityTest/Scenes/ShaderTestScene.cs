@@ -57,13 +57,13 @@ namespace SingularityTest.Scenes
 			//effect.Parameters["WorldViewProjection"].SetValue(world * scene.GetViewMatrix() * scene.GetProjectionMatrix());
 		}
 
-		public override void AddLightningToEffect(Effect effect)
-		{
-			effect.Parameters["clipMax"]?.SetValue(this.MaximumCullingDistance);
-			//effect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(1,0,0));
-			//effect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector4());
-			//effect.Parameters["AmbientColor"].SetValue(Color.Green.ToVector4());
-			//effect.Parameters["AmbientIntensity"].SetValue(0.3f);
-		}
+		//public override void AddLightningToEffect(Effect effect)
+		//{
+		//	effect.Parameters["clipMax"]?.SetValue(this.MaximumCullingDistance);
+		//	//effect.Parameters["DiffuseLightDirection"].SetValue(new Vector3(1,0,0));
+		//	//effect.Parameters["DiffuseColor"].SetValue(Color.White.ToVector4());
+		//	//effect.Parameters["AmbientColor"].SetValue(Color.Green.ToVector4());
+		//	//effect.Parameters["AmbientIntensity"].SetValue(0.3f);
+		//}
 	}
 }

@@ -302,11 +302,13 @@ namespace Singularity
 			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance, this.MaximumCullingDistance);
 		}
 
-		/// <summary>
-		/// Adds lightning to the <seealso cref="GameObject"/>
-		/// </summary>
-		/// <param name="effect"></param>
-		public abstract void AddLightningToEffect(Effect effect);
+		// deprecated
+
+		///// <summary>
+		///// Adds lightning to the <seealso cref="GameObject"/>
+		///// </summary>
+		///// <param name="effect"></param>
+		//public abstract void AddLightningToEffect(Effect effect);
 
 		public virtual void LoadContent()
 		{

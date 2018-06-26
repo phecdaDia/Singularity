@@ -29,7 +29,8 @@ namespace Singularity
 		public Collision Collision { get; private set; }
 		public Texture2D Texture { get; private set; }
 
-		public Boolean EnablePushCollision { get; set; }
+		public Boolean EnablePushCollision { get; private set; }
+		public Boolean IsVisible { get; private set; } = true;
 
 		public GameObject
 			ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
@@ -539,6 +540,16 @@ namespace Singularity
 
 		#endregion
 
+		#region SetVisible
+
+		public GameObject SetVisible(bool enabled)
+		{
+			this.IsVisible = enabled;
+			return this;
+		}
+
+		#endregion
+
 		#endregion
 
 		/// <summary>
@@ -704,6 +715,8 @@ namespace Singularity
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
 
+			if (!this.IsVisible) return; // this object shall not be drawn.
+
 			//Console.WriteLine($"Drawing, Position: {this.Position}");
 			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene, view, projection);
 			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
@@ -719,7 +732,8 @@ namespace Singularity
 			String technique = null,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			
+			if (!this.IsVisible) return; // this object shall not be drawn.
+
 			if ((drawMode & GameObjectDrawMode.Model) > 0) DrawWithSpecificEffect(scene, effect, effectParams, technique);
 			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
 
@@ -734,70 +748,25 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		protected virtual void Draw(GameScene scene, Matrix view, Matrix projection)
+		protected virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, BasicEffect, Matrix[], ModelMesh, GameScene> effectParams = null)
 		{
-			if (this.Model == null) return; // No model means it can't be rendered.
+			if (this.Model == null) return;
 
-			// copy the scale of bones from the model to apply it later.
-			var transformMatrices = new Matrix[this.Model.Bones.Count];
-			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
-
-			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
-
-			if (!CullingEnabled)
-			{
-				var newRastState = new RasterizerState
+			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> BasicEffectParams =
+				(GameObject obj, Effect effect, Matrix[] transformationMatrices, ModelMesh mesh, GameScene s) =>
 				{
-					CullMode             = CullMode.None,
-					DepthBias            = originalRastState.DepthBias,
-					DepthClipEnable      = originalRastState.DepthClipEnable,
-					FillMode             = originalRastState.FillMode,
-					MultiSampleAntiAlias = originalRastState.MultiSampleAntiAlias,
-					ScissorTestEnable    = originalRastState.ScissorTestEnable,
-					SlopeScaleDepthBias  = originalRastState.SlopeScaleDepthBias
+					BasicEffect be = (BasicEffect) effect;
+					be.View = view;
+					be.World = transformationMatrices[mesh.ParentBone.Index]
+					           * obj.ScaleMatrix
+					           * obj.RotationMatrix
+					           * Matrix.CreateTranslation(obj.GetHierarchyPosition());
+					be.Projection = projection;
+
+					effectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
 				};
 
-				scene.Game.GraphicsDevice.RasterizerState = newRastState;
-			}
-
-			foreach (ModelMesh mesh in this.Model.Meshes)
-			{
-				if (this.Effect == null)
-					foreach (Effect effect in mesh.Effects)
-					{
-						if (!(effect is BasicEffect))
-							continue;
-
-						BasicEffect basisEffect = (BasicEffect)effect;
-
-						// calculating the full rotation of our object.
-						//Console.WriteLine($"POS: {this.GetHierarchyPosition().X} {this.GetHierarchyPosition().Y} {this.GetHierarchyPosition().Z}");
-
-						basisEffect.World = transformMatrices[mesh.ParentBone.Index]
-						               * this.ScaleMatrix
-						               * this.RotationMatrix
-						               * Matrix.CreateTranslation(this.GetHierarchyPosition());
-
-						basisEffect.View = view;
-						basisEffect.Projection = projection;
-
-						scene.AddLightningToEffect(basisEffect);
-
-					}
-				else
-					foreach (var part in mesh.MeshParts)
-					{
-						part.Effect = this.Effect;
-
-						this.EffectParams.Invoke(this, part.Effect, transformMatrices, mesh, scene);
-						if(ApplySceneLight) scene.AddLightningToEffect(part.Effect);
-					}
-
-				mesh.Draw();
-			}
-
-			if (!CullingEnabled)
-				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
+			DrawWithSpecificEffect(scene, this.Model.Meshes[0].Effects[0], BasicEffectParams, null);
 		}
 
 		/// <summary>

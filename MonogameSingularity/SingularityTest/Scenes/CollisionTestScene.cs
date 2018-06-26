@@ -21,11 +21,11 @@ namespace SingularityTest.Scenes
 
 		}
 
-		public override void AddLightningToEffect(Effect effect)
-		{
-			var eff = (BasicEffect) effect;
-			eff.EnableDefaultLighting();
-		}
+		//public override void AddLightningToEffect(Effect effect)
+		//{
+		//	var eff = (BasicEffect) effect;
+		//	eff.EnableDefaultLighting();
+		//}
 
 		protected override void AddGameObjects(int entranceId)
 		{
