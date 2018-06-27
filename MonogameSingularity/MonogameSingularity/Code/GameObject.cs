@@ -377,6 +377,23 @@ namespace Singularity
 
 		#endregion
 
+		#region RemoveParent
+
+		/// <summary>
+		/// Removes the <see cref="ParentObject"/>
+		/// </summary>
+		/// <returns></returns>
+		public GameObject RemoveParent()
+		{
+			if (this.ParentObject == null) return this;
+
+			this.ParentObject.RemoveChild(this);
+
+			return this;
+		}
+
+		#endregion
+
 		#region AddScript
 
 		/// <summary>
@@ -418,6 +435,26 @@ namespace Singularity
 			child.ParentObject = this;
 			return this;
 		}
+
+		#endregion
+
+		#region RemoveChild
+
+		/// <summary>
+		/// Removes a Childobject
+		/// </summary>
+		/// <param name="child"></param>
+		/// <returns></returns>
+		public GameObject RemoveChild(GameObject child)
+		{
+			if (this.ChildObjects.Contains(child))
+			{
+				this.ChildObjects.Remove(child);
+				child.ParentObject = null;
+			}
+			return this;
+		}
+
 
 		#endregion
 
