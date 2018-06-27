@@ -395,11 +395,11 @@ namespace Singularity
 
 		#region AddCollisionEvent
 
-		public GameObject AddCollisionEvent(Action<GameObject, GameScene, Vector3, Vector3> collEvent)
+		public GameObject AddCollisionEvent(Action<CollisionEventArgs> collEvent)
 		{
 			Debug.Assert(collEvent != null, nameof(collEvent) + " != null");
 
-			this.OnCollisionEvent += (s, e) => collEvent(e.Collidable, e.Scene, e.Position, e.Normal);
+			this.OnCollisionEvent += (s, e) => collEvent(e);
 			return this;
 		}
 

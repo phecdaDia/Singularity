@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Singularity;
 using Singularity.Collisions;
+using Singularity.Events;
 using Singularity.GameObjects.Interfaces;
 
 namespace SingularityTest.GameObjects
@@ -30,11 +31,11 @@ namespace SingularityTest.GameObjects
 			//Console.WriteLine($"Inertia Energy: {(this.Inertia + new Vector3(this.Position.Y + 8)).Length()}");
 		}
 
-		public void HandleCollisionEvent(GameObject collidable, GameScene scene, Vector3 position, Vector3 normal)
+		public void HandleCollisionEvent(CollisionEventArgs e)
 		{
 
-			var dot = Vector3.Dot(normal, this.Inertia);
-			var nNor = 2 * dot * normal;
+			var dot = Vector3.Dot(e.Normal, this.Inertia);
+			var nNor = 2 * dot * e.Normal;
 
 			var nIner = nNor - this.Inertia;
 
