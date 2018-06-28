@@ -111,6 +111,11 @@ namespace SingularityTest.Scenes
 			var world = transformMatrices[mesh.ParentBone.Index] * gameObject.ScaleMatrix * gameObject.RotationMatrix *
 			            Matrix.CreateTranslation(gameObject.GetHierarchyPosition());
 
+			if (gameObject.Model == ModelManager.GetModel("sphere"))
+			{
+				Console.WriteLine($"{gameObject.Position}, {gameObject.GetHierarchyPosition()}");
+			}
+
 			effect.Parameters["World"]?.SetValue(world);
 			effect.Parameters["View"]?.SetValue(scene.GetViewMatrix());
 			effect.Parameters["Projection"]?.SetValue(scene.GetProjectionMatrix());

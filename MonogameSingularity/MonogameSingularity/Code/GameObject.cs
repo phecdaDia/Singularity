@@ -43,6 +43,8 @@ namespace Singularity
 		public bool ApplySceneLight { get; private set; } = true;
 		public String DebugName { get; private set; } // Used for debugging.
 
+		public ChildProperties ChildProperties { get; private set; } = ChildProperties.All;
+
 		public Matrix ScaleMatrix
 		{
 			get { return Matrix.CreateScale(this.GetHierarchyScale()); }
@@ -54,9 +56,9 @@ namespace Singularity
 			{
 				var rotation = this.GetHierarchyRotation();
 
-				return Matrix.CreateRotationX(rotation.X)
+				return Matrix.CreateRotationX(rotation.Z)
 				       * Matrix.CreateRotationY(rotation.Y)
-				       * Matrix.CreateRotationZ(rotation.Z);
+				       * Matrix.CreateRotationZ(rotation.X);
 			}
 		}
 
@@ -367,10 +369,9 @@ namespace Singularity
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		public GameObject SetParent(GameObject parent)
+		public GameObject SetParent(GameObject parent, ChildProperties properties = ChildProperties.All)
 		{
-			this.ParentObject = parent;
-			parent.ChildObjects.Add(this);
+			parent.AddChild(this, properties);
 
 			return this;
 		}
@@ -429,10 +430,11 @@ namespace Singularity
 		/// </summary>
 		/// <param name="child"></param>
 		/// <returns></returns>
-		public GameObject AddChild(GameObject child)
+		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
 			this.ChildObjects.Add(child);
 			child.ParentObject = this;
+			child.SetChildProperties(properties);
 			return this;
 		}
 
@@ -451,10 +453,23 @@ namespace Singularity
 			{
 				this.ChildObjects.Remove(child);
 				child.ParentObject = null;
+
+				child.SetChildProperties(ChildProperties.All);
 			}
 			return this;
 		}
 
+
+		#endregion
+
+		#region SetChildProperties
+
+		public GameObject SetChildProperties(ChildProperties properties)
+		{
+			this.ChildProperties = properties;
+
+			return this;
+		}
 
 		#endregion
 
@@ -595,7 +610,7 @@ namespace Singularity
 		/// <returns></returns>
 		public Vector3 GetHierarchyScale()
 		{
-			if (this.ParentObject == null) return this.Scale;
+			if (this.ParentObject == null || (this.ChildProperties & ChildProperties.Scale) == 0) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
 
@@ -606,14 +621,16 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) +
-			       this.ParentObject.GetHierarchyPosition();
+			else if ((this.ChildProperties & ChildProperties.TranslationRotation) > 0) return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
+			else if ((this.ChildProperties & ChildProperties.Translation) > 0) return this.Position + this.ParentObject.GetHierarchyPosition();
+
+			return this.Position;
 		}
 
 
 		public Vector3 GetHierarchyRotation()
 		{
-			if (this.ParentObject == null) return this.Rotation;
+			if (this.ParentObject == null || (this.ChildProperties & ChildProperties.Rotation) == 0) return this.Rotation;
 			return this.Rotation + this.ParentObject.GetHierarchyRotation();
 		}
 
@@ -637,9 +654,7 @@ namespace Singularity
 		{
 			return GetBoundingBox(
 			                      this.Model,
-			                      Matrix.CreateRotationX(this.Rotation.X) * Matrix.CreateRotationY(this.Rotation.Y) *
-			                      Matrix.CreateRotationZ(this.Rotation.Z)
-			                      * Matrix.CreateScale(this.GetHierarchyScale())
+			                      this.RotationMatrix * this.ScaleMatrix
 			                     );
 		}
 
@@ -917,5 +932,15 @@ namespace Singularity
 		SpriteBatch = 0b00000010,	// Only 2d will be drawn
 		All         = 0b11111111	// Everything will be drawn
 		
+	}
+
+	public enum ChildProperties
+	{
+		Nothing             = 0b00000000,
+		Translation         = 0b00000001,
+		Rotation            = 0b00000010,
+		Scale               = 0b00000100,
+		TranslationRotation = 0b00001000,
+		All                 = 0b00001110
 	}
 }
