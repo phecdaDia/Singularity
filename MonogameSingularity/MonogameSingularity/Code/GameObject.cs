@@ -934,10 +934,18 @@ namespace Singularity
 
 		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
 		{
+			foreach (GameObject child in this.ChildObjects)
+			{
+				child.LoadContent(contentManager, graphicsDevice);
+			}
 		}
 
 		public virtual void UnloadContent()
 		{
+			foreach (GameObject child in this.ChildObjects)
+			{
+				child.UnloadContent();
+			}
 		}
 
 		#endregion

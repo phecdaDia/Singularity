@@ -65,10 +65,10 @@ namespace Singularity
 		/// Spawns a new <seealso cref="GameObject"/> on the next frame.
 		/// </summary>
 		/// <param name="gameObject"></param>
-		public void SpawnObject(GameObject gameObject, GameObject parent = null)
+		public void SpawnObject(GameObject gameObject, GameObject parent = null, ChildProperties properties = ChildProperties.All)
 		{
 			if (parent != null)
-				gameObject.SetParent(parent);
+				gameObject.SetParent(parent, properties);
 			this.BufferedObjects.Add(gameObject);
 		}
 
