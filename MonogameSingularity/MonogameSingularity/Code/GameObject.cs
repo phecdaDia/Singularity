@@ -938,6 +938,11 @@ namespace Singularity
 			{
 				child.LoadContent(contentManager, graphicsDevice);
 			}
+
+			foreach (GameObject child in this.ChildrenBuffer)
+			{
+				child.LoadContent(contentManager, graphicsDevice);
+			}
 		}
 
 		public virtual void UnloadContent()

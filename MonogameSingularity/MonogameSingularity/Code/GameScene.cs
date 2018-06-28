@@ -339,12 +339,16 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
-			var objs = this.ColliderObjects.GetAllObjects(o => o.ParentObject == null) .ToArray();
+			var objs = this.ColliderObjects.GetAllObjects().ToArray();
 			//Console.WriteLine($"{objs.Length} objects in the octree.");
 
 			//Console.WriteLine($"{objs.Length}");
 
-			foreach (GameObject obj in objs) obj.UpdateLogic(this, gameTime);
+			foreach (GameObject obj in objs)
+			{
+				if (obj.ParentObject == null)
+					obj.UpdateLogic(this, gameTime);
+			}
 
 			// add our buffered objects
 			foreach (GameObject obj in BufferedObjects)
