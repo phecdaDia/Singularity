@@ -32,10 +32,11 @@ namespace Singularity
 		public Boolean EnablePushCollision { get; private set; }
 		public Boolean IsVisible { get; private set; } = true;
 
-		public GameObject
-			ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
+
+		private List<GameObject> ChildrenBuffer;
 
 		public Effect Effect { get; private set; } //Shader of Object
 		public bool CullingEnabled { get; private set; } = true;
@@ -44,6 +45,18 @@ namespace Singularity
 		public String DebugName { get; private set; } // Used for debugging.
 
 		public ChildProperties ChildProperties { get; private set; } = ChildProperties.All;
+
+		private Boolean GotUpdated;
+
+		public Matrix WorldMatrix
+		{
+			get {
+				return this.ScaleMatrix * 
+				       this.RotationMatrix *
+			           Matrix.CreateTranslation(this.GetHierarchyPosition());
+			}
+
+		}
 
 		public Matrix ScaleMatrix
 		{
@@ -88,6 +101,7 @@ namespace Singularity
 
 			this.ParentObject = null;
 			this.ChildObjects = new List<GameObject>();
+			this.ChildrenBuffer = new List<GameObject>();
 
 			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
 			this.CustomData = new CustomData();
@@ -432,7 +446,11 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
-			this.ChildObjects.Add(child);
+			this.ChildrenBuffer.Add(child);
+
+			if (properties.HasFlag(ChildProperties.KeepPositon))
+				child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(this.WorldMatrix)));
+
 			child.ParentObject = this;
 			child.SetChildProperties(properties);
 			return this;
@@ -453,6 +471,9 @@ namespace Singularity
 			{
 				this.ChildObjects.Remove(child);
 				child.ParentObject = null;
+
+				if (child.ChildProperties.HasFlag(ChildProperties.KeepPositon))
+					child.SetPosition(Vector3.Transform(child.Position, this.WorldMatrix));
 
 				child.SetChildProperties(ChildProperties.All);
 			}
@@ -715,7 +736,13 @@ namespace Singularity
 			// get a copy of the position
 			var position = this.GetHierarchyPosition();
 
+			GameObject[] cbArray = this.ChildrenBuffer.ToArray();
+			this.ChildrenBuffer.Clear();
+
 			Update(scene, gameTime);
+
+			this.ChildObjects.AddRange(this.ChildrenBuffer);
+			this.ChildrenBuffer.Clear();
 
 			// add inertia.
 			if (this is IInertia)
@@ -742,7 +769,11 @@ namespace Singularity
 
 			scene.CameraLocked = true;
 
-			foreach (GameObject obj in this.ChildObjects) obj.UpdateLogic(scene, gameTime);
+			foreach (GameObject obj in this.ChildObjects.ToArray())
+				obj.UpdateLogic(scene, gameTime);
+
+			this.ChildObjects.AddRange(cbArray);
+
 		}
 
 		/// <summary>
@@ -943,6 +974,7 @@ namespace Singularity
 		Rotation            = 0b00000010,
 		Scale               = 0b00000100,
 		TranslationRotation = Translation | Rotation,
+		KeepPositon			= 0b10000000,
 		All                 = 0b00000111
 	}
 }

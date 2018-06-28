@@ -108,15 +108,7 @@ namespace SingularityTest.Scenes
 
 		private void ShadowMapEffectParameters(GameObject gameObject, Effect effect, Matrix[] transformMatrices, ModelMesh mesh, GameScene scene)
 		{
-			var world = transformMatrices[mesh.ParentBone.Index] * gameObject.ScaleMatrix * gameObject.RotationMatrix *
-			            Matrix.CreateTranslation(gameObject.GetHierarchyPosition());
-
-			if (gameObject.Model == ModelManager.GetModel("sphere"))
-			{
-				Console.WriteLine($"{gameObject.Position}, {gameObject.GetHierarchyPosition()}");
-			}
-
-			effect.Parameters["World"]?.SetValue(world);
+			effect.Parameters["World"]?.SetValue(transformMatrices[mesh.ParentBone.Index] * gameObject.WorldMatrix);
 			effect.Parameters["View"]?.SetValue(scene.GetViewMatrix());
 			effect.Parameters["Projection"]?.SetValue(scene.GetProjectionMatrix());
 

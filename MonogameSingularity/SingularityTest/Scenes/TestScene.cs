@@ -160,6 +160,34 @@ namespace SingularityTest.Scenes
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0), ChildProperties.TranslationRotation));
 
 
+			AddObject(new CollidableModelObject("cubes/cube2")
+				.SetPosition(20, 0, 0)
+				.AddScript((GameScene scene, GameObject obj, GameTime time) =>
+				{
+					if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
+						Console.WriteLine($"True");
+
+					if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
+					{
+						if (obj.ParentObject == null)
+						{
+							// Add it
+							// get player
+							BasicCamera player = (BasicCamera) scene.GetAllObjects((GameObject o) => o is BasicCamera).First();
+							player.AddChild(obj, ChildProperties.All | ChildProperties.KeepPositon);
+
+						}
+						else
+						{
+							// Remove it
+							obj.RemoveParent();
+
+						}
+					}
+
+				})
+			);
+
 			AddObject(new EmptyGameObject().AddScript((GameScene scene, GameObject obj, GameTime time) =>
 			{
 				if (!obj.CustomData.ContainsKey("timeAlive"))
