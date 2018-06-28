@@ -610,7 +610,7 @@ namespace Singularity
 		/// <returns></returns>
 		public Vector3 GetHierarchyScale()
 		{
-			if (this.ParentObject == null || (this.ChildProperties & ChildProperties.Scale) == 0) return this.Scale;
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Scale)) return this.Scale;
 			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
 
@@ -621,8 +621,8 @@ namespace Singularity
 		public Vector3 GetHierarchyPosition()
 		{
 			if (this.ParentObject == null) return this.Position;
-			else if ((this.ChildProperties & ChildProperties.TranslationRotation) > 0) return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
-			else if ((this.ChildProperties & ChildProperties.Translation) > 0) return this.Position + this.ParentObject.GetHierarchyPosition();
+			else if (this.ChildProperties.HasFlag(ChildProperties.TranslationRotation)) return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
+			else if (this.ChildProperties.HasFlag(ChildProperties.Translation)) return this.Position + this.ParentObject.GetHierarchyPosition();
 
 			return this.Position;
 		}
@@ -630,7 +630,7 @@ namespace Singularity
 
 		public Vector3 GetHierarchyRotation()
 		{
-			if (this.ParentObject == null || (this.ChildProperties & ChildProperties.Rotation) == 0) return this.Rotation;
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Rotation)) return this.Rotation;
 			return this.Rotation + this.ParentObject.GetHierarchyRotation();
 		}
 
@@ -925,6 +925,7 @@ namespace Singularity
 		#endregion
 	}
 
+	[Flags]
 	public enum GameObjectDrawMode
 	{
 		Nothing     = 0b00000000,	// Object won't be drawn
@@ -934,13 +935,14 @@ namespace Singularity
 		
 	}
 
+	[Flags]
 	public enum ChildProperties
 	{
 		Nothing             = 0b00000000,
 		Translation         = 0b00000001,
 		Rotation            = 0b00000010,
 		Scale               = 0b00000100,
-		TranslationRotation = 0b00001000,
-		All                 = 0b00001110
+		TranslationRotation = Translation | Rotation,
+		All                 = 0b00000111
 	}
 }
