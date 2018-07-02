@@ -182,7 +182,17 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetPosition(Vector3 position)
 		{
-			this.Position = position;
+
+			if (this.ParentObject != null && this.ChildProperties.HasFlag(ChildProperties.KeepPositon))
+			{
+				var mat = Matrix.Invert(this.ParentObject.WorldMatrix);
+
+				this.Position = Vector3.Transform(position, mat);
+			}
+			else
+			{
+				this.Position = position;
+			}
 
 			return this;
 		}
@@ -446,6 +456,12 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
+			if (this.ChildrenBuffer.Contains(child) || this.ChildObjects.Contains(child))
+			{
+				child.SetChildProperties(properties);
+				return this;
+			}
+
 			this.ChildrenBuffer.Add(child);
 
 			if (properties.HasFlag(ChildProperties.KeepPositon))
@@ -753,7 +769,7 @@ namespace Singularity
 
 
 			// check if we are even able to stay here.
-			scene.HandleCollision(this, position);
+			scene.HandleCollision(this, this.GetHierarchyPosition());
 
 			// did we move?
 			if (this.GetHierarchyPosition() != position)

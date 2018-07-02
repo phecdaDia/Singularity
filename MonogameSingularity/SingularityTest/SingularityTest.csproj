@@ -47,6 +47,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GameObjects\ChildTest\ChildBall.cs" />
+    <Compile Include="GameObjects\ChildTest\ParentBlock.cs" />
     <Compile Include="GameObjects\CofTestObject.cs" />
     <Compile Include="GameObjects\CollidableTestObject.cs" />
     <Compile Include="Scenes\LightGameScene.cs" />

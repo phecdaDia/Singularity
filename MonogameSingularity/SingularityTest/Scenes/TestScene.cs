@@ -13,11 +13,12 @@ using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using Singularity.Utilities;
 using SingularityTest.GameObjects;
+using SingularityTest.GameObjects.ChildTest;
 using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
-    public class TestScene : LightGameScene
+	public class TestScene : LightGameScene
 	{
 		public TestScene(SingularityGame game) : base(game, "test", 4096)
 		{
@@ -43,7 +44,8 @@ namespace SingularityTest.Scenes
 			if (entranceId == 0)
 			{
 				camPosition = sg.IsValidSavegame ? sg.Position : new Vector3(0, 0, 10);
-			} else if (entranceId == 1)
+			}
+			else if (entranceId == 1)
 			{
 				camPosition = new Vector3(10);
 			}
@@ -51,6 +53,7 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("cubes/cube1").SetPosition(-51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
 
 			AddObject(new BasicCamera()
+				.Set3DEnabled(true)
 				.SetCameraTarget(camTarget)
 				.SetPosition(camPosition)
 				.AddScript((scene, obj, time) =>
@@ -83,7 +86,7 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyDown(Keys.M))
 					{
 						// run a ray and get the closest collision
-						Ray r = new Ray(obj.Position, ((BasicCamera) obj).GetCameraTarget());
+						Ray r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
 						var rcp = scene.CollideRay(r);
 						if (rcp.DidCollide)
 						{
@@ -114,43 +117,43 @@ namespace SingularityTest.Scenes
 
 			//AddObject(new SpriteObject());
 			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
-		    {
+			{
 				/* Close Game with Settings.ExitKey
 				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
 				 */
-                if(KeyboardManager.IsKeyPressed(Settings.ExitKey))
-                    SceneManager.CloseScene();
-				if(KeyboardManager.IsKeyPressed(Keys.I))
+				if (KeyboardManager.IsKeyPressed(Settings.ExitKey))
+					SceneManager.CloseScene();
+				if (KeyboardManager.IsKeyPressed(Keys.I))
 					SettingsManager.SetSetting("exitKey", Keys.P);
 
-			    if (KeyboardManager.IsKeyPressed(Keys.NumPad1))
-			    {
-				    // create a plane that spans over the x axis
+				if (KeyboardManager.IsKeyPressed(Keys.NumPad1))
+				{
+					// create a plane that spans over the x axis
 
-				    // p: x = ZERO3 + (0, 1, 0) + (0, 0, 1)
+					// p: x = ZERO3 + (0, 1, 0) + (0, 0, 1)
 
-				    // create the plane
-				    Vector3 planeOrigin = new Vector3(0, 0, 0);
-				    Vector3 planeParameter1 = new Vector3(1, 0, 1);
-				    Vector3 planeParameter2 = new Vector3(0, 1, 1);
-				    Vector3 planeNormal = new Vector3(0, 1, 0); // pp1 x pp2
+					// create the plane
+					Vector3 planeOrigin = new Vector3(0, 0, 0);
+					Vector3 planeParameter1 = new Vector3(1, 0, 1);
+					Vector3 planeParameter2 = new Vector3(0, 1, 1);
+					Vector3 planeNormal = new Vector3(0, 1, 0); // pp1 x pp2
 
-				    // create our point of interest
-				    Vector3 sphere = new Vector3(2, 3, 5);
+					// create our point of interest
+					Vector3 sphere = new Vector3(2, 3, 5);
 
-				    // We want to solve Ax = b
-				    // create our Vector "b", which is our solution
-				    Vector3 b = sphere - planeOrigin;
+					// We want to solve Ax = b
+					// create our Vector "b", which is our solution
+					Vector3 b = sphere - planeOrigin;
 
-				    // now we can create a room with our plane and the normal which contains all points in R3
-				    Vector3 solution = VectorMathHelper.SolveLinearEquation(planeParameter1, planeParameter2, planeNormal, b);
+					// now we can create a room with our plane and the normal which contains all points in R3
+					Vector3 solution = VectorMathHelper.SolveLinearEquation(planeParameter1, planeParameter2, planeNormal, b);
 
-				    // now we should have a solution. (-1, 0, 0)
-				    
+					// now we should have a solution. (-1, 0, 0)
+
 					Console.WriteLine($"Solved {b} = {solution.X} * {planeParameter1} + {solution.Y} * {planeParameter2} + {solution.Z} * {planeNormal}");
 					Console.WriteLine($"Calculated: {solution.X * planeParameter1 + solution.Y * planeParameter2 + solution.Z * planeNormal}");
-				    //Console.WriteLine($"Solution: {solution}");
-				    //Console.WriteLine(planeOrigin + solution.X * planeParameter1 + solution.Y * planeParameter2 + solution.Z * planeNormal);
+					//Console.WriteLine($"Solution: {solution}");
+					//Console.WriteLine(planeOrigin + solution.X * planeParameter1 + solution.Y * planeParameter2 + solution.Z * planeNormal);
 				}
 
 			}));
@@ -160,33 +163,34 @@ namespace SingularityTest.Scenes
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0), ChildProperties.TranslationRotation));
 
 
-			AddObject(new CollidableModelObject("cubes/cube2")
-				.SetPosition(20, 0, 0)
-				.AddScript((GameScene scene, GameObject obj, GameTime time) =>
-				{
-					if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
-						Console.WriteLine($"True");
+			// relative movement child test
+			//AddObject(new CollidableModelObject("cubes/cube2")
+			//	.SetPosition(20, 0, 0)
+			//	.AddScript((GameScene scene, GameObject obj, GameTime time) =>
+			//	{
+			//		if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
+			//			Console.WriteLine($"True");
 
-					if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
-					{
-						if (obj.ParentObject == null)
-						{
-							// Add it
-							// get player
-							BasicCamera player = (BasicCamera) scene.GetAllObjects((GameObject o) => o is BasicCamera).First();
-							player.AddChild(obj, ChildProperties.All | ChildProperties.KeepPositon);
+			//		if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
+			//		{
+			//			if (obj.ParentObject == null)
+			//			{
+			//				// Add it
+			//				// get player
+			//				BasicCamera player = (BasicCamera)scene.GetAllObjects((GameObject o) => o is BasicCamera).First();
+			//				player.AddChild(obj, ChildProperties.All | ChildProperties.KeepPositon);
 
-						}
-						else
-						{
-							// Remove it
-							obj.RemoveParent();
+			//			}
+			//			else
+			//			{
+			//				// Remove it
+			//				obj.RemoveParent();
 
-						}
-					}
+			//			}
+			//		}
 
-				})
-			);
+			//	})
+			//);
 
 			AddObject(new EmptyGameObject().AddScript((GameScene scene, GameObject obj, GameTime time) =>
 			{
@@ -195,7 +199,7 @@ namespace SingularityTest.Scenes
 					obj.CustomData.SetValue("timeAlive", 0.0f);
 				}
 
-				obj.CustomData.SetValue("timeAlive", obj.CustomData.GetValue<float>("timeAlive") + (float) time.ElapsedGameTime.TotalSeconds);
+				obj.CustomData.SetValue("timeAlive", obj.CustomData.GetValue<float>("timeAlive") + (float)time.ElapsedGameTime.TotalSeconds);
 
 
 			}));
@@ -204,8 +208,13 @@ namespace SingularityTest.Scenes
 				.SetCollision(new BoxCollision(new Vector3(-0.5f), new Vector3(0.5f)))
 				.SetScale(8.0f)
 				.SetPosition(50, 0, 0)
-			
+
 			);
+
+			// Add Child Test
+			AddObject(new ParentBlock().SetPosition(20, -10, 0));
+			AddObject(new ChildBall().SetPosition(20, 20, 0));
+
 
 		}
 

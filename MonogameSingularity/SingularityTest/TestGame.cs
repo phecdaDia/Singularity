@@ -21,7 +21,7 @@ namespace SingularityTest
 
         public TestGame() : base()
         {
-	        this.IsMouseVisible = true;
+	        this.IsMouseVisible = false;
 			SettingsManager.SetUp<Settings>();
             ScriptManager.SetUp<LoadingScreen>(Assembly.GetCallingAssembly(), this);
 		}
