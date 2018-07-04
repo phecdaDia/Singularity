@@ -12,7 +12,7 @@ namespace Singularity.Utilities
 	public abstract class SettingsTemplate
 	{
 		public Dictionary<string, object> SettingsList = new Dictionary<string, object>();
-		public List<Type> KnownTypes = new List<Type>() {typeof(Dictionary<string, object>)};
+		public List<Type> KnownTypes = new List<Type> {typeof(Dictionary<string, object>)};
 
 		/// <summary>
 		/// Set all default Settings und put Types into KnownType-List
@@ -31,12 +31,29 @@ namespace Singularity.Utilities
 		public abstract void SetQuickAccessProperties();
 
 		/// <summary>
-		/// Load Usersettings
+		/// Get UserSettings/SettingsList and return them as Dictionary
+		/// <returns></returns>
 		/// </summary>
-		public abstract void LoadUserSettings();
+		protected abstract Dictionary<string, object> GetUserSettings();
 
 		/// <summary>
-		/// Save Usersettings
+		/// Load Usersettings and try to apply them
+		/// </summary>
+		public virtual void ApplyUserSettings()
+		{
+			//Try get Stuff from User
+			var user = GetUserSettings();
+
+			//Apply it to SettingsList. if it was delete -> ignore
+			foreach (var key in user.Keys)
+			{
+				if(!SettingsList.ContainsKey(key)) continue;
+				SettingsList[key] = user[key];
+			}
+		}
+
+		/// <summary>
+		/// Save SettingsList
 		/// </summary>
 		/// <returns>true if eveything went ok</returns>
 		public abstract bool SaveUserSettings();
@@ -153,19 +170,13 @@ namespace Singularity.Utilities
 		/// Implicit Conversion of this SettingsObject to contained value for ease of use on QuickAccess
 		/// </summary>
 		/// <param name="obj"></param>
-		public static implicit operator T(SettingsObject<T> obj)
-		{
-			return obj.GetValue();
-		}
+		public static implicit operator T(SettingsObject<T> obj) 
+			=> obj.GetValue();
 
-		public void SetValue(T value)
-		{
-			Setting = value;
-		}
+		public void SetValue(T value) 
+			=> Setting = value;
 
-		public T GetValue()
-		{
-			return Setting;
-		}
+		public T GetValue() 
+			=> Setting;
 	}
 }

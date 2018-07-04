@@ -23,7 +23,16 @@ namespace Singularity
 			_settings.SetDefaultSettings();
 
 			if (_settings.CheckForUserSettings())
-				_settings.LoadUserSettings();
+				try
+				{
+					_settings.ApplyUserSettings();
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					Console.WriteLine("Applying default Settings and overwriting corrupted");
+					_settings.SetDefaultSettings();
+				}
 
 			_settings.SaveUserSettings();
 
@@ -83,7 +92,9 @@ namespace Singularity
 		{
 			CheckSetUp();
 
-			_settings.LoadUserSettings();
+			_settings.SettingsList.Clear();
+			_settings.SetDefaultSettings();
+			_settings.ApplyUserSettings();
 			_settings.SetQuickAccessProperties();
 		}
 	}
