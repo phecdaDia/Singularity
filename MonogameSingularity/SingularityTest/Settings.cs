@@ -6,6 +6,7 @@ using Singularity.Utilities;
 namespace SingularityTest
 {
 	using System.Collections.Generic;
+	using System.IO;
 
 	/*
 	 * This is an example for a Settings Class
@@ -46,23 +47,19 @@ namespace SingularityTest
 
 		public override bool CheckForUserSettings()
 		{
-			return Properties.Settings.Default.ExistUserSettings;
+			return File.Exists("settings.xml");
 		}
 
-		public override void LoadUserSettings()
+		protected override Dictionary<string, object> GetUserSettings()
 		{
-			//Load String from Application Settings & Deserialize it
-			var data = Properties.Settings.Default.UserSettings;
-			SettingsList = Deserialize<Dictionary<string, object>>(data, KnownTypes);
+			var data = File.ReadAllText("settings.xml");
+			return Deserialize<Dictionary<string, object>>(data, KnownTypes);
 		}
 
 		public override bool SaveUserSettings()
 		{
-			//Serialize SettingsList & save it to Application User settings
 			var saveData = Serialize(SettingsList, KnownTypes);
-			Properties.Settings.Default.UserSettings = saveData;
-			Properties.Settings.Default.ExistUserSettings = true;
-			Properties.Settings.Default.Save();
+			File.WriteAllText("settings.xml", saveData);
 			return true;
 		}
 
