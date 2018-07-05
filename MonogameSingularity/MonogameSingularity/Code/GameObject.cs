@@ -708,6 +708,36 @@ namespace Singularity
 			return this;
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddInertia(float x, float y, GameTime gameTime) =>
+			AddInertia(new Vector3(x, y, 0), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddInertia(float x, float y, float z, GameTime gameTime) =>
+			AddInertia(new Vector3(x, y, z), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="inertia"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddInertia(Vector3 inertia, GameTime gameTime) =>
+			AddInertia(inertia * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
 		#endregion
 
 		#region SetEnableCollision
