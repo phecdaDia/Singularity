@@ -32,7 +32,8 @@ namespace Singularity
 				{
 					Console.WriteLine(e);
 					Console.WriteLine("Applying default Settings and overwriting corrupted");
-					RestoreDefault();
+					_settings.SettingsList.Clear();
+					_settings.SetDefaultSettings();
 				}
 
 			_settings.SaveUserSettings();
