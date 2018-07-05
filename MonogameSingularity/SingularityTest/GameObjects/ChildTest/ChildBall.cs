@@ -47,7 +47,7 @@ namespace SingularityTest.GameObjects.ChildTest
 			{
 				this.RemoveParent();
 			}
-			Console.WriteLine($"My parent is: {this.ParentObject}");
+			//Console.WriteLine($"My parent is: {this.ParentObject}");
 		}
 	}
 }
