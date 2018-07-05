@@ -421,9 +421,23 @@ namespace Singularity
 			return this;
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
 		public GameObject MultiplyScale(float x, float y, float z, GameTime gameTime) =>
 			MultiplyScale(new Vector3(x, y, z), gameTime);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime) =>
 			MultiplyScale(scale * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
