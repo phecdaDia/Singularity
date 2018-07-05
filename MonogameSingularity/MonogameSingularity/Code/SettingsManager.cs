@@ -4,6 +4,7 @@ using Singularity.Utilities;
 
 namespace Singularity
 {
+	using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 	public static class SettingsManager
 	{
@@ -92,10 +93,17 @@ namespace Singularity
 		{
 			CheckSetUp();
 
-			_settings.SettingsList.Clear();
-			_settings.SetDefaultSettings();
+			RestoreDefault();
 			_settings.ApplyUserSettings();
 			_settings.SetQuickAccessProperties();
+		}
+
+		public static void RestoreDefault()
+		{
+			CheckSetUp();
+
+			_settings.SettingsList.Clear();
+			_settings.SetDefaultSettings();
 		}
 	}
 }
