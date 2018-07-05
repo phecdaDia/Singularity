@@ -15,7 +15,7 @@ namespace SingularityTest.GameObjects.ChildTest
 {
 	public class ChildBall : GameObject, IInertia, ICollider
 	{
-		private readonly Vector3 Gravity = new Vector3(0, -30, 0);
+		private readonly Vector3 Gravity = new Vector3(0, -10, 0);
 
 		public ChildBall()
 		{
@@ -42,7 +42,12 @@ namespace SingularityTest.GameObjects.ChildTest
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
 			this.AddInertia(Gravity * (float) gameTime.ElapsedGameTime.TotalSeconds);
-			//Console.WriteLine($"My parent is: {this.ParentObject}");
+
+			if (this.Inertia.Y < 0)
+			{
+				this.RemoveParent();
+			}
+			Console.WriteLine($"My parent is: {this.ParentObject}");
 		}
 	}
 }

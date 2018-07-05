@@ -213,7 +213,7 @@ namespace SingularityTest.Scenes
 
 			// Add Child Test
 			AddObject(new ParentBlock().SetPosition(20, -10, 0).SetDebugName("Parent"));
-			AddObject(new ChildBall().SetPosition(20, 20, 0).SetDebugName("Child"));
+			AddObject(new ChildBall().SetPosition(20, 00, 0).SetDebugName("Child"));
 
 
 		}

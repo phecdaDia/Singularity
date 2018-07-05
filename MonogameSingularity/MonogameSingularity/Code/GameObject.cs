@@ -465,28 +465,26 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
+			child.SetChildProperties(properties);
 			if (this.ChildrenBuffer.Contains(child) || this.ChildObjects.Contains(child))
-			{
-				child.SetChildProperties(properties);
 				return this;
-			}
 
 			this.ChildrenBuffer.Add(child);
-			
-			if (properties.HasFlag(ChildProperties.KeepPositon))
-			{
-				Matrix mat = Matrix.Identity;
-
-				if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
-				if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
-
-				child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(mat)));
-			}
 
 			child.ParentObject = this;
 
+			if (properties.HasFlag(ChildProperties.KeepPositon))
+			{
+				//Matrix mat = Matrix.Identity;
 
-			child.SetChildProperties(properties);
+				//if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
+				//if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
+
+				//child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(mat)));
+
+				child.SetPosition(child.Position);
+			}
+			
 			return this;
 		}
 
@@ -1025,6 +1023,7 @@ namespace Singularity
 	public enum ChildProperties
 	{
 		Nothing             = 0b00000000,
+		None                = 0b00000000,
 		Translation         = 0b00000001,
 		Rotation            = 0b00000010,
 		Scale               = 0b00000100,
