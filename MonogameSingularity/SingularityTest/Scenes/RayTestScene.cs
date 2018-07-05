@@ -50,27 +50,16 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("cubes/cube2").SetPosition(-1, 0, 0).SetScale(0.025f).AddScript((GameScene scene, GameObject obj, GameTime time) =>
 			{
 				if (KeyboardManager.IsKeyDown(Keys.W))
-				{
-					obj.AddPosition(0, (float) time.ElapsedGameTime.TotalSeconds, 0);
-				}
+					obj.AddPosition(0, 1, 0, time);
 
 				if (KeyboardManager.IsKeyDown(Keys.S))
-				{
-					obj.AddPosition(0, (float)-time.ElapsedGameTime.TotalSeconds, 0);
-
-				}
+					obj.AddPosition(0, -1, 0, time);
 
 				if (KeyboardManager.IsKeyDown(Keys.A))
-				{
-
-					obj.AddPosition(0, 0, (float)time.ElapsedGameTime.TotalSeconds);
-				}
+					obj.AddPosition(0, 0, 1, time);
 
 				if (KeyboardManager.IsKeyDown(Keys.D))
-				{
-
-					obj.AddPosition(0, 0, (float)-time.ElapsedGameTime.TotalSeconds);
-				}
+					obj.AddPosition(0, 0, -1, time);
 
 				if (KeyboardManager.IsKeyDown(Keys.M))
 				{

@@ -29,7 +29,7 @@ namespace SingularityTest.Scenes
 
 			AddObject(new ModelObject("cubes/cube1").AddScript(((scene, o, arg3) =>
 				{
-					o.AddRotation(MathHelper.TwoPi * (float) arg3.ElapsedGameTime.TotalSeconds, 0, 0);
+					o.AddRotation(MathHelper.TwoPi, 0, 0, arg3);
 				})));
 		}
 

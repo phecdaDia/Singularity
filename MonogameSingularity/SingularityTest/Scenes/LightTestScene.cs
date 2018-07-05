@@ -46,7 +46,7 @@ namespace SingularityTest.Scenes
 					new ModelObject("sphere")
 						.SetScale(0.5f)
 					.SetPosition(5.0f, 0.0f)
-				).AddScript(((scene, o, arg3) => o.AddRotation(0.0f, (float)arg3.ElapsedGameTime.TotalSeconds, 0.0f)))
+				).AddScript((scene, o, arg3) => o.AddRotation(0.0f, 1.0f, 0.0f, arg3))
 			);
 
 			//AddObject(new ModelObject("sphere").SetPosition(0, 10, 0));
@@ -61,9 +61,9 @@ namespace SingularityTest.Scenes
 
 					// some more movement options
 					if (KeyboardManager.IsKeyDown(Keys.Q))
-						obj.AddPosition(new Vector3(0, 1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
+						obj.AddPosition(0, 1, 0, time);
 					if (KeyboardManager.IsKeyDown(Keys.E))
-						obj.AddPosition(new Vector3(0, -1, 0) * (float) time.ElapsedGameTime.TotalSeconds);
+						obj.AddPosition(0, -1, 0, time);
 
 					((LightGameScene)scene).SetLightPosition(obj.Position + new Vector3(70, 40, 70));
 

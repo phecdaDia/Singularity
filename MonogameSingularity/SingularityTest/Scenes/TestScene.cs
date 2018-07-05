@@ -62,8 +62,8 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera)obj).Set3DEnabled(!((BasicCamera)obj).Is3DEnabled);
 
 					// some more movement options
-					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 5, 0) * (float)time.ElapsedGameTime.TotalSeconds);
-					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -5, 0) * (float)time.ElapsedGameTime.TotalSeconds);
+					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 5, 0), time);
+					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -5, 0), time);
 
 					// screen effects
 
@@ -159,7 +159,7 @@ namespace SingularityTest.Scenes
 			}));
 
 			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
-				((scene, o, arg3) => o.AddRotation(0, (float)arg3.ElapsedGameTime.TotalSeconds, 0))
+				((scene, o, arg3) => o.AddRotation(0, 1, 0, arg3))
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0), ChildProperties.TranslationRotation));
 
 

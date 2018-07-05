@@ -22,7 +22,7 @@ namespace SingularityTest.GameObjects
 
 
 			//this.SetRotation(MathHelper.PiOver2, 0, 0);
-			this.AddScript((scene, go, time) => AddRotation(new Vector3(0.4f, 0.6f, 1f) * (float) time.ElapsedGameTime.TotalSeconds));
+			this.AddScript((scene, go, time) => AddRotation(0.4f, 0.6f, 1f, time));
 		}
 	}
 }

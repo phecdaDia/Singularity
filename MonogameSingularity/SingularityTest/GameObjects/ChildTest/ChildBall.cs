@@ -41,7 +41,7 @@ namespace SingularityTest.GameObjects.ChildTest
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			this.AddInertia(Gravity * (float) gameTime.ElapsedGameTime.TotalSeconds);
+			this.AddInertia(Gravity, gameTime);
 
 			if (this.Inertia.Y < 0)
 			{

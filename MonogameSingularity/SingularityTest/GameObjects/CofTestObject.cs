@@ -22,7 +22,7 @@ namespace SingularityTest.GameObjects
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			this.AddRotation(0, (float) gameTime.ElapsedGameTime.TotalSeconds, 0);
+			this.AddRotation(0, 1, 0, gameTime);
 
 			if (DidSpawn) return;
 
