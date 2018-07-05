@@ -238,6 +238,36 @@ namespace Singularity
 			this.Position += position;
 			return this;
 		}
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddPosition(float x, float y, GameTime gameTime) =>
+			AddPosition(new Vector3(x, y, 0), gameTime);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddPosition(float x, float y, float z, GameTime gameTime) =>
+			AddPosition(new Vector3(x, y, z), gameTime);
+
+		/// <summary>
+		/// Modifies the <see cref="Position"/> by adding the Vectors multiplied by the deltaTime
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddPosition(Vector3 position, GameTime gameTime) =>
+			AddPosition(position * (float) gameTime.ElapsedGameTime.TotalSeconds);
 
 		#endregion
 
