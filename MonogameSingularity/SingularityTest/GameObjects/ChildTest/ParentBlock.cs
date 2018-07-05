@@ -15,7 +15,7 @@ namespace SingularityTest.GameObjects.ChildTest
 		public ParentBlock()
 		{
 			this.SetModel("cubes/cube1");
-			this.SetScale(5, 1, 5);
+			this.SetScale(5, 2f, 5);
 			this.SetCollision(new BoxCollision(new Vector3(-0.5f), new Vector3(0.5f)));
 
 

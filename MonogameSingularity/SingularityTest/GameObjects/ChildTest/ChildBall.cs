@@ -42,7 +42,7 @@ namespace SingularityTest.GameObjects.ChildTest
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
 			this.AddInertia(Gravity * (float) gameTime.ElapsedGameTime.TotalSeconds);
-			Console.WriteLine($"My parent is: {this.ParentObject}");
+			//Console.WriteLine($"My parent is: {this.ParentObject}");
 		}
 	}
 }

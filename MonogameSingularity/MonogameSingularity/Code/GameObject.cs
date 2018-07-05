@@ -50,12 +50,18 @@ namespace Singularity
 
 		public Matrix WorldMatrix
 		{
-			get {
-				return this.ScaleMatrix * 
+			get
+			{
+				return this.ScaleMatrix *
 				       this.RotationMatrix *
-			           Matrix.CreateTranslation(this.GetHierarchyPosition());
+				       this.TranslationMatrix;
 			}
 
+		}
+
+		public Matrix TranslationMatrix
+		{
+			get { return Matrix.CreateTranslation(this.GetHierarchyPosition()); }
 		}
 
 		public Matrix ScaleMatrix
@@ -185,9 +191,12 @@ namespace Singularity
 
 			if (this.ParentObject != null && this.ChildProperties.HasFlag(ChildProperties.KeepPositon))
 			{
-				var mat = Matrix.Invert(this.ParentObject.WorldMatrix);
+				Matrix mat = Matrix.Identity;
 
-				this.Position = Vector3.Transform(position, mat);
+				if (this.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.ParentObject.RotationMatrix;
+				if (this.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.ParentObject.TranslationMatrix;
+				
+				this.Position = Vector3.Transform(position, Matrix.Invert(mat));
 			}
 			else
 			{
@@ -463,11 +472,20 @@ namespace Singularity
 			}
 
 			this.ChildrenBuffer.Add(child);
-
+			
 			if (properties.HasFlag(ChildProperties.KeepPositon))
-				child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(this.WorldMatrix)));
+			{
+				Matrix mat = Matrix.Identity;
+
+				if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
+				if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
+
+				child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(mat)));
+			}
 
 			child.ParentObject = this;
+
+
 			child.SetChildProperties(properties);
 			return this;
 		}
@@ -489,7 +507,15 @@ namespace Singularity
 				child.ParentObject = null;
 
 				if (child.ChildProperties.HasFlag(ChildProperties.KeepPositon))
-					child.SetPosition(Vector3.Transform(child.Position, this.WorldMatrix));
+				{
+					Matrix mat = Matrix.Identity;
+
+					if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
+					if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
+
+
+					child.SetPosition(Vector3.Transform(child.Position, mat));
+				}
 
 				child.SetChildProperties(ChildProperties.All);
 			}
