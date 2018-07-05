@@ -238,9 +238,9 @@ namespace Singularity
 			this.Position += position;
 			return this;
 		}
-		
+
 		/// <summary>
-		/// 
+		/// TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -250,7 +250,7 @@ namespace Singularity
 			AddPosition(new Vector3(x, y, 0), gameTime);
 
 		/// <summary>
-		/// 
+		/// TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -334,6 +334,36 @@ namespace Singularity
 			this.Rotation += rotation;
 			return this;
 		}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddRotation(float x, float y, GameTime gameTime) =>
+			AddRotation(new Vector3(x, y, 0), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddRotation(float x, float y, float z, GameTime gameTime) =>
+			AddRotation(new Vector3(x, y, z), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="rotation"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddRotation(Vector3 rotation, GameTime gameTime) =>
+			AddRotation(rotation * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
 		#endregion
 
