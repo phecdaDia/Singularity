@@ -421,6 +421,12 @@ namespace Singularity
 			return this;
 		}
 
+		public GameObject MultiplyScale(float x, float y, float z, GameTime gameTime) =>
+			MultiplyScale(new Vector3(x, y, z), gameTime);
+
+		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime) =>
+			MultiplyScale(scale * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
 		#endregion
 
 		#region AddScale
