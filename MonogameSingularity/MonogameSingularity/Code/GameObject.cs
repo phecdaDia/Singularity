@@ -473,6 +473,35 @@ namespace Singularity
 			return this;
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddScale(float scale, GameTime gameTime) =>
+			AddScale(new Vector3(scale), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddScale(float x, float y, float z, GameTime gameTime) =>
+			AddScale(new Vector3(x, y, z), gameTime);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="scale"></param>
+		/// <param name="gameTime"></param>
+		/// <returns></returns>
+		public GameObject AddScale(Vector3 scale, GameTime gameTime) =>
+			AddScale(scale * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
 		#endregion
 
 		#region SetParent
