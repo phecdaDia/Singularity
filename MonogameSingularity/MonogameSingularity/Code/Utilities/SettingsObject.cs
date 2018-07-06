@@ -6,7 +6,7 @@
 	/// <typeparam name="T">type to be stored</typeparam>
 	public class SettingsObject<T>
 	{
-		public T Setting;
+		private T Setting;
 		
 		public SettingsObject(T value)
 		{
