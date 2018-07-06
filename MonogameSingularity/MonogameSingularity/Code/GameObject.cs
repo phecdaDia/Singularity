@@ -30,13 +30,12 @@ namespace Singularity
 		public Texture2D Texture { get; private set; }
 
 		public Boolean EnablePushCollision { get; private set; }
-		public Boolean IsVisible { get; private set; } = true;
 
 		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 
 		public List<GameObject> ChildObjects { get; private set; } // Child Objects
 
-		private List<GameObject> ChildrenBuffer;
+		private readonly List<GameObject> ChildrenBuffer;
 
 		public Effect Effect { get; private set; } //Shader of Object
 		public bool CullingEnabled { get; private set; } = true;
@@ -46,7 +45,7 @@ namespace Singularity
 
 		public ChildProperties ChildProperties { get; private set; } = ChildProperties.All;
 
-		private Boolean GotUpdated;
+		public GameObjectDrawMode DrawMode { get; private set; } = GameObjectDrawMode.All;
 
 		public Matrix WorldMatrix
 		{
@@ -792,11 +791,11 @@ namespace Singularity
 
 		#endregion
 
-		#region SetVisible
+		#region SetDrawMode
 
-		public GameObject SetVisible(bool enabled)
+		public GameObject SetDrawMode(GameObjectDrawMode drawMode)
 		{
-			this.IsVisible = enabled;
+			this.DrawMode = drawMode;
 			return this;
 		}
 
@@ -832,6 +831,11 @@ namespace Singularity
 		{
 			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Rotation)) return this.Rotation;
 			return this.Rotation + this.ParentObject.GetHierarchyRotation();
+		}
+		public GameObjectDrawMode GetHierarchyDrawMode()
+		{
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.DrawMode)) return this.DrawMode;
+			return this.ParentObject.GetHierarchyDrawMode();
 		}
 
 
@@ -976,12 +980,11 @@ namespace Singularity
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, Matrix view, Matrix projection,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+				Draw(scene, view, projection);
 
-			if (!this.IsVisible) return; // this object shall not be drawn.
-
-			//Console.WriteLine($"Drawing, Position: {this.Position}");
-			if ((drawMode & GameObjectDrawMode.Model) > 0) Draw(scene, view, projection);
-			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+				Draw2D(spriteBatch);
 
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
 		}
@@ -994,10 +997,11 @@ namespace Singularity
 			String technique = null,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			if (!this.IsVisible) return; // this object shall not be drawn.
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+				DrawWithSpecificEffect(scene, effect, effectParams, technique);
 
-			if ((drawMode & GameObjectDrawMode.Model) > 0) DrawWithSpecificEffect(scene, effect, effectParams, technique);
-			if ((drawMode & GameObjectDrawMode.SpriteBatch) > 0) Draw2D(spriteBatch);
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+				Draw2D(spriteBatch);
 
 			foreach (GameObject obj in this.ChildObjects) obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
