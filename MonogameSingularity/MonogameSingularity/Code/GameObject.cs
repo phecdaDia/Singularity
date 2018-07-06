@@ -557,9 +557,9 @@ namespace Singularity
 
 		public GameObject AddCollisionEvent(Action<CollisionEventArgs> collEvent)
 		{
-			Debug.Assert(collEvent != null, nameof(collEvent) + " != null");
+			Debug.Assert(collEvent != null);
 
-			this.OnCollisionEvent += (s, e) => collEvent(e);
+			this.CollisionEvent += (s, e) => collEvent(e);
 			return this;
 		}
 
@@ -1136,14 +1136,14 @@ namespace Singularity
 
 		#region Events
 
-		protected event EventHandler<CollisionEventArgs> OnCollisionEvent;
+		protected event EventHandler<CollisionEventArgs> CollisionEvent;
 
 		public virtual void OnCollision(GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
 		                                Vector3    normal) =>
 			OnCollision(new CollisionEventArgs(position, normal, collider, collidable, scene));
 
 		public virtual void OnCollision(CollisionEventArgs e) =>
-			OnCollisionEvent?.Invoke(this, e);
+			CollisionEvent?.Invoke(this, e);
 
 		#endregion
 	}
@@ -1167,7 +1167,9 @@ namespace Singularity
 		Rotation            = 0b00000010,
 		Scale               = 0b00000100,
 		TranslationRotation = Translation | Rotation,
+		DrawMode			= 0b01000000,
 		KeepPositon			= 0b10000000,
-		All                 = 0b00000111
+		AllTransform        = Translation | Rotation | Scale,
+		All                 = AllTransform | DrawMode,
 	}
 }

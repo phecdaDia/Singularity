@@ -22,11 +22,11 @@ namespace SingularityTest.GameObjects.ChildTest
 			this.SetModel("sphere");
 			this.SetCollision(new SphereCollision());
 
-			this.OnCollisionEvent += this.ChildBall_OnCollisionEvent;
+			this.CollisionEvent += this.ChildBallCollisionEvent;
 
 		}
 
-		private void ChildBall_OnCollisionEvent(Object sender, CollisionEventArgs e)
+		private void ChildBallCollisionEvent(Object sender, CollisionEventArgs e)
 		{
 			var dot = Vector3.Dot(e.Normal, this.Inertia);
 			var nNor = 2 * dot * e.Normal;

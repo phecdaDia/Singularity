@@ -190,5 +190,12 @@ namespace Singularity
 				_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
 				stream.Dispose();
 		}
+
+		#region Events
+
+
+		protected event EventHandler<GameTime> UpdateEvent;
+
+		#endregion
 	}
 }

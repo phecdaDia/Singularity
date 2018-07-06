@@ -19,11 +19,11 @@ namespace SingularityTest.GameObjects.ChildTest
 			this.SetCollision(new BoxCollision(new Vector3(-0.5f), new Vector3(0.5f)));
 
 
-			this.OnCollisionEvent += this.ParentBlock_OnCollisionEvent;
+			this.CollisionEvent += this.ParentBlockCollisionEvent;
 
 		}
 
-		private void ParentBlock_OnCollisionEvent(Object sender, Singularity.Events.CollisionEventArgs e)
+		private void ParentBlockCollisionEvent(Object sender, Singularity.Events.CollisionEventArgs e)
 		{
 			if (!(e.Collider is ChildBall))
 			{
