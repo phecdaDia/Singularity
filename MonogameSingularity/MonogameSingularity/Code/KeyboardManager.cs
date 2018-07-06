@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Singularity
 {
 	/// <summary>
-	/// Improves kayboard controls with new functions.
+	///     Improves kayboard controls with new functions.
 	/// </summary>
 	public static class KeyboardManager
 	{
@@ -13,7 +13,7 @@ namespace Singularity
 		private static List<Keys> LastPressedKeys = new List<Keys>();
 
 		/// <summary>
-		/// Updates
+		///     Updates
 		/// </summary>
 		public static void Update()
 		{
@@ -25,10 +25,10 @@ namespace Singularity
 		}
 
 		#region IsKeyPressed
-		
+
 		/// <summary>
-		/// Returns true, if the <seealso cref="Keys"/> have been pressed this frame, but not last one.
-		/// Only returns true, if the <seealso cref="Keys"/> have been pressed this frame.
+		///     Returns true, if the <seealso cref="Keys" /> have been pressed this frame, but not last one.
+		///     Only returns true, if the <seealso cref="Keys" /> have been pressed this frame.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
@@ -36,16 +36,19 @@ namespace Singularity
 		{
 			return CurrentPressedKeys.Contains(key) && !LastPressedKeys.Contains(key);
 		}
-		
-		public static bool IsKeyPressed(this KeyboardState _, Keys key) => IsKeyPressed(key);
+
+		public static bool IsKeyPressed(this KeyboardState _, Keys key)
+		{
+			return IsKeyPressed(key);
+		}
 
 		#endregion
 
 		#region IsKeyReleased
 
 		/// <summary>
-		/// Returns true, if the <seealso cref="Keys"/> have been released this frame, but not last one.
-		/// Only returns true, if the <seealso cref="Keys"/> have been released this frame.
+		///     Returns true, if the <seealso cref="Keys" /> have been released this frame, but not last one.
+		///     Only returns true, if the <seealso cref="Keys" /> have been released this frame.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
@@ -54,14 +57,17 @@ namespace Singularity
 			return !CurrentPressedKeys.Contains(key) && LastPressedKeys.Contains(key);
 		}
 
-		public static bool IsKeyReleased(this KeyboardState _, Keys key) => IsKeyReleased(key);
+		public static bool IsKeyReleased(this KeyboardState _, Keys key)
+		{
+			return IsKeyReleased(key);
+		}
 
 		#endregion
 
 		#region IsKeyDown
-		
+
 		/// <summary>
-		/// Returns true, if the <seealso cref="Keys"/> have been pressed this frame.
+		///     Returns true, if the <seealso cref="Keys" /> have been pressed this frame.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
@@ -69,24 +75,31 @@ namespace Singularity
 		{
 			return CurrentPressedKeys.Contains(key);
 		}
-		public static bool IsKeyDown(this KeyboardState _, Keys key) => IsKeyDown(key);
+
+		public static bool IsKeyDown(this KeyboardState _, Keys key)
+		{
+			return IsKeyDown(key);
+		}
 
 		#endregion
 
 		#region IsKeyUp
 
-        /// <summary>
-		/// Returns true, if the <seealso cref="Keys"/> have not been pressed this frame.
+		/// <summary>
+		///     Returns true, if the <seealso cref="Keys" /> have not been pressed this frame.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-	    public static bool IsKeyUp(Keys key)
-	    {
-	        return !CurrentPressedKeys.Contains(key);
-	    }
-	    public static bool IsKeyUp(this KeyboardState _, Keys key) => IsKeyUp(key);
+		public static bool IsKeyUp(Keys key)
+		{
+			return !CurrentPressedKeys.Contains(key);
+		}
 
-	    #endregion
+		public static bool IsKeyUp(this KeyboardState _, Keys key)
+		{
+			return IsKeyUp(key);
+		}
 
+		#endregion
 	}
 }

@@ -7,37 +7,37 @@ using System.Xml;
 namespace Singularity.Utilities
 {
 	/// <summary>
-	/// Template for Settings
+	///     Template for Settings
 	/// </summary>
 	public abstract class SettingsTemplate
 	{
-		public Dictionary<string, object> SettingsList = new Dictionary<string, object>();
 		public List<Type> KnownTypes = new List<Type> {typeof(Dictionary<string, object>)};
+		public Dictionary<string, object> SettingsList = new Dictionary<string, object>();
 
 		/// <summary>
-		/// Set all default Settings und put Types into KnownType-List
+		///     Set all default Settings und put Types into KnownType-List
 		/// </summary>
 		public abstract void SetDefaultSettings();
 
 		/// <summary>
-		/// See if there are usersettings
+		///     See if there are usersettings
 		/// </summary>
 		/// <returns>true if they exist</returns>
 		public abstract bool CheckForUserSettings();
 
 		/// <summary>
-		/// Set all created static Properties to the values from Settings
+		///     Set all created static Properties to the values from Settings
 		/// </summary>
 		public abstract void SetQuickAccessProperties();
 
 		/// <summary>
-		/// Get UserSettings/SettingsList and return them as Dictionary
-		/// <returns></returns>
+		///     Get UserSettings/SettingsList and return them as Dictionary
+		///     <returns></returns>
 		/// </summary>
 		protected abstract Dictionary<string, object> GetUserSettings();
 
 		/// <summary>
-		/// Load Usersettings and try to apply them
+		///     Load Usersettings and try to apply them
 		/// </summary>
 		public virtual void ApplyUserSettings()
 		{
@@ -47,19 +47,19 @@ namespace Singularity.Utilities
 			//Apply it to SettingsList. if it was delete -> ignore
 			foreach (var key in user.Keys)
 			{
-				if(!SettingsList.ContainsKey(key)) continue;
+				if (!SettingsList.ContainsKey(key)) continue;
 				SettingsList[key] = user[key];
 			}
 		}
 
 		/// <summary>
-		/// Save SettingsList
+		///     Save SettingsList
 		/// </summary>
 		/// <returns>true if eveything went ok</returns>
 		public abstract bool SaveUserSettings();
 
 		/// <summary>
-		/// Serialize instance of T
+		///     Serialize instance of T
 		/// </summary>
 		/// <typeparam name="T">Type of Object</typeparam>
 		/// <param name="obj">Object to serialize</param>
@@ -83,7 +83,7 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Deserialize string
+		///     Deserialize string
 		/// </summary>
 		/// <typeparam name="T">assumed type after deserialization</typeparam>
 		/// <param name="serialized">serialized string</param>
@@ -95,12 +95,12 @@ namespace Singularity.Utilities
 			using (var stringReader = new StringReader(serialized))
 			using (var stm = new XmlTextReader(stringReader))
 			{
-				return (T)serializer.ReadObject(stm);
+				return (T) serializer.ReadObject(stm);
 			}
 		}
 
 		/// <summary>
-		/// Create Setting of type T with specified name/identifier and given Value
+		///     Create Setting of type T with specified name/identifier and given Value
 		/// </summary>
 		/// <typeparam name="T">type of setting</typeparam>
 		/// <param name="name">identifier/name of setting</param>
@@ -113,7 +113,7 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Get named setting & Check for correct type
+		///     Get named setting & Check for correct type
 		/// </summary>
 		/// <typeparam name="T">assumed type</typeparam>
 		/// <param name="name">name/identifier</param>
@@ -121,18 +121,15 @@ namespace Singularity.Utilities
 		public SettingsObject<T> GetSetting<T>(string name)
 		{
 			if (SettingsList.ContainsKey(name))
-			{
 				if (SettingsList[name] is SettingsObject<T> data)
-				{
 					return data;
-				}
-				else throw new Exception("Setting not of specified type");
-			}
-			else throw new Exception("Named Setting not found");
+				else
+					throw new Exception("Setting not of specified type");
+			throw new Exception("Named Setting not found");
 		}
 
 		/// <summary>
-		/// Change Value of an existing setting
+		///     Change Value of an existing setting
 		/// </summary>
 		/// <typeparam name="T">assumed type</typeparam>
 		/// <param name="name">name/identifier</param>
@@ -140,13 +137,10 @@ namespace Singularity.Utilities
 		public void SetSetting<T>(string name, T setting)
 		{
 			if (SettingsList.ContainsKey(name))
-			{
 				if (SettingsList[name] is SettingsObject<T> data)
-				{
 					data.SetValue(setting);
-				}
-				else throw new Exception("Setting not of specified type");
-			}
+				else
+					throw new Exception("Setting not of specified type");
 			else throw new Exception("Named Setting not found");
 		}
 	}

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Singularity;
 using Singularity.GameObjects.Interfaces;
 
@@ -11,27 +6,27 @@ namespace SingularityTest.GameObjects
 {
 	public class CofTestObject : GameObject, ICollidable
 	{
-		public double ElapsedTime = 0.0d;
-		public Boolean DidSpawn = false;
+		public bool DidSpawn;
+		public double ElapsedTime;
 
-		public CofTestObject() : base()
+		public CofTestObject()
 		{
 			//this.SetPosition(3, 0, 0);
-			this.SetModel("sphere");
+			SetModel("sphere");
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			this.AddRotation(0, 1, 0, gameTime);
+			AddRotation(0, 1, 0, gameTime);
 
 			if (DidSpawn) return;
 
-			this.ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+			ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
 			if (ElapsedTime >= 2.0d)
 			{
 				// Spawn a new child.
-				this.DidSpawn = true;
+				DidSpawn = true;
 
 				var cof = new CofTestObject().SetPosition(5, 1, 0);
 				SceneManager.GetCurrentScene().SpawnObject(cof, this);

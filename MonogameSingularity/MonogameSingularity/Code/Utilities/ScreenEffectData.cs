@@ -11,10 +11,11 @@ namespace Singularity.Utilities
 		public float? Rotation;
 		public SpriteEffects? Effect;
 		public Color? Color;
-	    public bool IsDone;
-	    public object Caller;
+		public bool IsDone;
+		public object Caller;
 
-		public ScreenEffectData(Rectangle destinationRectangle, Rectangle sourceRectangle, Vector2 origin, float rotation, SpriteEffects effect, Color color, bool isDone, object caller)
+		public ScreenEffectData(Rectangle destinationRectangle, Rectangle sourceRectangle, Vector2 origin, float rotation,
+			SpriteEffects effect, Color color, bool isDone, object caller)
 		{
 			Destination = destinationRectangle;
 			Source = sourceRectangle;
@@ -22,8 +23,8 @@ namespace Singularity.Utilities
 			Rotation = rotation;
 			Effect = effect;
 			Color = color;
-		    IsDone = isDone;
-		    Caller = caller;
+			IsDone = isDone;
+			Caller = caller;
 		}
 	}
 }

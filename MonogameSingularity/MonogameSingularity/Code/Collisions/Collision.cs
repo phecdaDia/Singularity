@@ -5,6 +5,15 @@ namespace Singularity.Collisions
 {
 	public abstract class Collision : ICloneable
 	{
+		public Collision(GameObject parent) : this()
+		{
+			Parent = parent;
+		}
+
+		public Collision()
+		{
+		}
+
 		public Vector3 Position
 		{
 			get { return Parent.GetHierarchyPosition(); }
@@ -12,23 +21,17 @@ namespace Singularity.Collisions
 
 		public GameObject Parent { get; private set; }
 
-		public Collision(GameObject parent) : this()
-		{
-			this.Parent = parent;
-		}
-		public Collision()
-		{}
+		public abstract object Clone();
 
 		public virtual void SetParent(GameObject parent)
 		{
-			this.Parent = parent;
+			Parent = parent;
 		}
 
-		public virtual Boolean DoesCollide(Collision collidable, Action<Collision, Collision, Vector3, Vector3> callback = null, Boolean invertNormal = false)
+		public virtual bool DoesCollide(Collision collidable, Action<Collision, Collision, Vector3, Vector3> callback = null,
+			bool invertNormal = false)
 		{
 			return CollisionManager.DoesCollide(this, collidable, callback, invertNormal);
 		}
-
-		public abstract object Clone();
 	}
 }

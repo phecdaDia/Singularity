@@ -5,69 +5,67 @@ using Microsoft.Xna.Framework;
 
 namespace Singularity.Utilities
 {
-
 	public class Octree<T>
 	{
-		// lower border of the octree region
-		public Vector3 Min { get; private set; }
+		private Octree<T>[] Children;
 
-		// upper boarder of the octree region
-		public Vector3 Max { get; private set; }
+		private readonly int CurrentSize;
 
-		public Vector3 Center { get; private set; }
+		private readonly List<T> Leafs = new List<T>();
+
+		private readonly int MinimumSize;
 
 		private Octree<T> Parent;
 
-		private Octree<T>[] Children;
-
-		private List<T> Leafs = new List<T>();
-
-		private int CurrentSize;
-
-		private int MinimumSize;
-
-		private float Precision;
+		private readonly float Precision;
 
 		/// <summary>
-		/// Creates a new Octree
+		///     Creates a new Octree
 		/// </summary>
 		/// <param name="currentSize">Size of the Octree</param>
 		/// <param name="minimumSize">Smallest partition of the Octree</param>
 		/// <param name="precision"></param>
 		public Octree(int currentSize, int minimumSize, float precision = 0.0f)
 		{
-			this.CurrentSize = currentSize;
-			this.MinimumSize = minimumSize;
-			this.Precision = precision;
+			CurrentSize = currentSize;
+			MinimumSize = minimumSize;
+			Precision = precision;
 
-			this.Max = new Vector3((float)Math.Pow(2, currentSize));
-			this.Min = -this.Max;
+			Max = new Vector3((float) Math.Pow(2, currentSize));
+			Min = -Max;
 
-			this.Center = 0.5f * (this.Min + this.Max);
+			Center = 0.5f * (Min + Max);
 
 			//Console.WriteLine($"Creating Octree of size {this.CurrentSize}");
-
-
 		}
 
 		/// <summary>
-		/// Creates a child Octree
+		///     Creates a child Octree
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <param name="corner1"></param>
 		/// <param name="corner2"></param>
-		private Octree(Octree<T> parent, Vector3 corner1, Vector3 corner2) : this(parent.CurrentSize - 1, parent.MinimumSize, parent.Precision)
+		private Octree(Octree<T> parent, Vector3 corner1, Vector3 corner2) : this(parent.CurrentSize - 1, parent.MinimumSize,
+			parent.Precision)
 		{
-			this.Parent = parent;
+			Parent = parent;
 
-			this.Min = Vector3.Min(corner1, corner2);
-			this.Max = Vector3.Max(corner1, corner2);
+			Min = Vector3.Min(corner1, corner2);
+			Max = Vector3.Max(corner1, corner2);
 
-			this.Center = 0.5f * (this.Min + this.Max);
+			Center = 0.5f * (Min + Max);
 		}
-		
+
+		// lower border of the octree region
+		public Vector3 Min { get; }
+
+		// upper boarder of the octree region
+		public Vector3 Max { get; }
+
+		public Vector3 Center { get; }
+
 		/// <summary>
-		/// Adds an <paramref name="obj"/> at <paramref name="position"/>
+		///     Adds an <paramref name="obj" /> at <paramref name="position" />
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="radius"></param>
@@ -75,33 +73,29 @@ namespace Singularity.Utilities
 		public void AddObject(T obj, float radius, Vector3 position)
 		{
 			// we just have a point, therefor we have to create as many octrees as possible
-			if (radius + this.Precision <= 0.0f)
+			if (radius + Precision <= 0.0f)
 			{
 				// we don't need any axis testing 
-				if (this.CurrentSize > this.MinimumSize)
+				if (CurrentSize > MinimumSize)
 				{
 					// we are not at the final octree yet
 					// create children if they don't exist already.
-					var quadrant = this.GetQuadrantNumber(position);
+					var quadrant = GetQuadrantNumber(position);
 
-					if (this.Children == null)
-						this.Children = new Octree<T>[8];
+					if (Children == null)
+						Children = new Octree<T>[8];
 
-					if (this.Children[quadrant] == null)
-						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+					if (Children[quadrant] == null)
+						Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
 
 
-					this.Children[quadrant].AddObject(obj, radius, position);
-					
-					return;
+					Children[quadrant].AddObject(obj, radius, position);
 				}
 				else
 				{
 					// this is the smallest Octree we may create, add as leaf
 					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
-					this.Leafs.Add(obj);
-
-					return;
+					Leafs.Add(obj);
 				}
 			}
 			else
@@ -109,79 +103,75 @@ namespace Singularity.Utilities
 				// we have to check if we should subpartition it
 				if (ShouldSubpartition(position, radius))
 				{
-					var quadrant = this.GetQuadrantNumber(position);
+					var quadrant = GetQuadrantNumber(position);
 
-					if (this.Children == null)
-						this.Children = new Octree<T>[8];
+					if (Children == null)
+						Children = new Octree<T>[8];
 
-					if (this.Children[quadrant] == null)
-						this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
+					if (Children[quadrant] == null)
+						Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
 
-					this.Children[GetQuadrantNumber(position)].AddObject(obj, radius, position);
+					Children[GetQuadrantNumber(position)].AddObject(obj, radius, position);
 				}
 				else
 				{
 					// this quad is small enough for this object
 					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
-					this.Leafs.Add(obj);
+					Leafs.Add(obj);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Adds an <paramref name="obj"/> at <paramref name="position"/>
+		///     Adds an <paramref name="obj" /> at <paramref name="position" />
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="position"></param>
 		/// <param name="maxScale"></param>
 		public void AddObject(T obj, Vector3 position, float maxScale)
 		{
-			if (obj is IGlobal || !ShouldSubpartition(position, maxScale) || this.CurrentSize <= this.MinimumSize)
+			if (obj is IGlobal || !ShouldSubpartition(position, maxScale) || CurrentSize <= MinimumSize)
 			{
 				//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
-				this.Leafs.Add(obj);
+				Leafs.Add(obj);
 				return;
 			}
 
 			var quadrant = GetQuadrantNumber(position);
 			// create children and try again
 			//PopulateChildrenNodes();
-			if (this.Children == null)
-				this.Children = new Octree<T>[8];
+			if (Children == null)
+				Children = new Octree<T>[8];
 
-			if (this.Children[quadrant] == null)
-				this.Children[quadrant] = new Octree<T>(this.CurrentSize - 1, this.MinimumSize, this.Precision);
-			this.Children[quadrant].AddObject(obj, position, maxScale);
+			if (Children[quadrant] == null)
+				Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
+			Children[quadrant].AddObject(obj, position, maxScale);
 		}
 
 		/// <summary>
-		/// Removed an <paramref name="obj"/> at <paramref name="position"/>
+		///     Removed an <paramref name="obj" /> at <paramref name="position" />
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="position"></param>
 		/// <returns></returns>
-		public Boolean RemoveObject(T obj, Vector3 position)
+		public bool RemoveObject(T obj, Vector3 position)
 		{
-			if (this.Leafs.Remove(obj))
-			{
-				// removed object, we can return.
-				return true;
-			}
+			if (Leafs.Remove(obj)) return true;
 
 			// it's not in this part, get the children.
 
 			// if there are none however, we have a problem
-			if (this.Children == null) return false;
+			if (Children == null) return false;
 
-			var id = this.GetQuadrantNumber(position);
+			var id = GetQuadrantNumber(position);
 
-			if (this.Children[id] == null) return false;
-			return this.Children[id].RemoveObject(obj, position);
+			if (Children[id] == null) return false;
+			return Children[id].RemoveObject(obj, position);
 		}
 
 
 		/// <summary>
-		/// Moves an <paramref name="obj"/> from <paramref name="position1"/> to <paramref name="position2"/>
+		///     Moves an <paramref name="obj" /> from <paramref name="position1" /> to <paramref name="position2" />
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="scale"></param>
@@ -194,7 +184,7 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Gets Quadrant number
+		///     Gets Quadrant number
 		/// </summary>
 		/// <param name="position"></param>
 		/// <returns></returns>
@@ -206,10 +196,10 @@ namespace Singularity.Utilities
 			 * Format: XYZ, where 1 is if T >= Center_T, T = {x, y, z};
 			 */
 
-			int quadrant = 0;
-			if (position.X >= this.Center.X) quadrant |= 0b100;
-			if (position.Y >= this.Center.Y) quadrant |= 0b010;
-			if (position.Z >= this.Center.Z) quadrant |= 0b001;
+			var quadrant = 0;
+			if (position.X >= Center.X) quadrant |= 0b100;
+			if (position.Y >= Center.Y) quadrant |= 0b010;
+			if (position.Z >= Center.Z) quadrant |= 0b001;
 
 			return quadrant;
 		}
@@ -217,12 +207,12 @@ namespace Singularity.Utilities
 		// time and memory
 
 		/// <summary>
-		/// Gets all 8 Corners of the current Octree.
+		///     Gets all 8 Corners of the current Octree.
 		/// </summary>
 		/// <returns></returns>
-		private Vector3[] GetPartitionCorners() 
+		private Vector3[] GetPartitionCorners()
 		{
-			return new Vector3[]
+			return new[]
 			{
 				Min, // 000
 				new Vector3(Min.X, Min.Y, Max.Z), // 001 
@@ -236,20 +226,19 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Decides if we should subpartition this Octree
+		///     Decides if we should subpartition this Octree
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="radius"></param>
 		/// <returns></returns>
-		private Boolean ShouldSubpartition(Vector3 position, float radius)
+		private bool ShouldSubpartition(Vector3 position, float radius)
 		{
-
-			if (this.CurrentSize <= this.MinimumSize) return false;
+			if (CurrentSize <= MinimumSize) return false;
 
 			// We use a maximum of 3 control points to see if we should subpartition this tree for a new object
 			// first we need to get the intended quadrant.
 
-			int quadrant = GetQuadrantNumber(position);
+			var quadrant = GetQuadrantNumber(position);
 
 			// now, depending on the number, we do different tests to see if we should subpartition.
 
@@ -257,70 +246,65 @@ namespace Singularity.Utilities
 			float y = (quadrant & 0b010) > 0 ? 1 : -1;
 			float z = (quadrant & 0b001) > 0 ? 1 : -1;
 
-			return quadrant == GetQuadrantNumber(position - (radius + this.Precision) * new Vector3(x, y, z));
+			return quadrant == GetQuadrantNumber(position - (radius + Precision) * new Vector3(x, y, z));
 		}
 
 		/// <summary>
-		/// Adds children Octrees
+		///     Adds children Octrees
 		/// </summary>
 		private void PopulateChildrenNodes()
 		{
-			if (this.Children != null) return; // we already have children.
+			if (Children != null) return; // we already have children.
 
 			//Console.WriteLine($"Creating Children for {{{Min} - {Max}}}");
 
-			this.Children = new Octree<T>[8]; // 8 children, because it's an OCTree
-			Vector3[] Corners = GetPartitionCorners();
+			Children = new Octree<T>[8]; // 8 children, because it's an OCTree
+			var Corners = GetPartitionCorners();
 
-			for (var i = 0; i < 8; i++)
-			{
-				this.Children[i] = new Octree<T>(this, this.Center, Corners[i]);
-			}
-
+			for (var i = 0; i < 8; i++) Children[i] = new Octree<T>(this, Center, Corners[i]);
 		}
 
 		/// <summary>
-		/// Removes all leafs and children recursively
+		///     Removes all leafs and children recursively
 		/// </summary>
 		public void Clear()
 		{
 			// cleanup
 			if (Children != null)
 			{
-				for (int i = 0; i < 8; i++)
-				{	
-					if(Children[i] == null)
+				for (var i = 0; i < 8; i++)
+				{
+					if (Children[i] == null)
 						continue;
 					Children[i].Clear();
 					Children[i] = null; // helping the gc a bit
 				}
 
-				this.Children = null;
+				Children = null;
 			}
 
-			this.Leafs.Clear();
-
+			Leafs.Clear();
 		}
 
 		// please don't use this method. It has a horrible complexity.
 		// this function only exists for compatibility. 
 		/// <summary>
-		/// GetAllObjectsAsTypeDictionary
+		///     GetAllObjectsAsTypeDictionary
 		/// </summary>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
 		public Dictionary<Type, IList<T>> GetAllObjectsAsTypeDictionary(Func<T, bool> predicate = null)
 		{
-			List<T> list = GetAllObjects(predicate);
+			var list = GetAllObjects(predicate);
 
-			Dictionary <Type, IList<T>> output = new Dictionary<Type, IList<T>>();
+			var output = new Dictionary<Type, IList<T>>();
 
-			foreach (T obj in list)
+			foreach (var obj in list)
 			{
 				if (!output.ContainsKey(obj.GetType()))
 				{
 					var listType = typeof(List<>).MakeGenericType(obj.GetType());
-					var cList = (IList<T>)Activator.CreateInstance(listType);
+					var cList = (IList<T>) Activator.CreateInstance(listType);
 					output.Add(obj.GetType(), cList);
 				}
 
@@ -331,7 +315,7 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Gets all objects that match <paramref name="predicate"/>
+		///     Gets all objects that match <paramref name="predicate" />
 		/// </summary>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
@@ -339,13 +323,13 @@ namespace Singularity.Utilities
 		{
 			if (predicate != null) return GetAllObjects().Where(predicate).ToList();
 
-			if (Children == null) return this.Leafs;
+			if (Children == null) return Leafs;
 
-			List<T> output = new List<T>();
+			var output = new List<T>();
 
-			output.AddRange(this.Leafs.ToArray());
+			output.AddRange(Leafs.ToArray());
 
-			foreach (Octree<T> tree in Children)
+			foreach (var tree in Children)
 			{
 				if (tree == null) continue;
 
@@ -356,21 +340,21 @@ namespace Singularity.Utilities
 		}
 
 		/// <summary>
-		/// Gets all objects that match <paramref name="predicate"/> at <paramref name="position"/>
+		///     Gets all objects that match <paramref name="predicate" /> at <paramref name="position" />
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
 		public List<T> GetObjects(Vector3 position, Func<T, bool> predicate = null)
 		{
-			if (predicate != null) return GetAllObjects().Where<T>(predicate).ToList();
+			if (predicate != null) return GetAllObjects().Where(predicate).ToList();
 
-			if (Children == null) return this.Leafs;
+			if (Children == null) return Leafs;
 
-			List<T> output = new List<T>();
+			var output = new List<T>();
 
-			output.AddRange(this.Leafs.ToArray());
-			
+			output.AddRange(Leafs.ToArray());
+
 			output.AddRange(Children[GetQuadrantNumber(position)].GetObjects(position));
 
 			return output;

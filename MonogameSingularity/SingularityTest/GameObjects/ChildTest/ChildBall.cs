@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Singularity;
 using Singularity.Collisions;
 using Singularity.Events;
@@ -19,34 +12,30 @@ namespace SingularityTest.GameObjects.ChildTest
 
 		public ChildBall()
 		{
-			this.SetModel("sphere");
-			this.SetCollision(new SphereCollision());
+			SetModel("sphere");
+			SetCollision(new SphereCollision());
 
-			this.CollisionEvent += this.ChildBallCollisionEvent;
-
+			CollisionEvent += ChildBallCollisionEvent;
 		}
 
-		private void ChildBallCollisionEvent(Object sender, CollisionEventArgs e)
+		private void ChildBallCollisionEvent(object sender, CollisionEventArgs e)
 		{
-			var dot = Vector3.Dot(e.Normal, this.Inertia);
+			var dot = Vector3.Dot(e.Normal, Inertia);
 			var nNor = 2 * dot * e.Normal;
 
-			var nIner = nNor - this.Inertia;
+			var nIner = nNor - Inertia;
 
-			nIner *= this.Inertia.Length() / nIner.Length();
+			nIner *= Inertia.Length() / nIner.Length();
 
 
-			this.SetInertia(-nIner);
+			SetInertia(-nIner);
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)
 		{
-			this.AddInertia(Gravity, gameTime);
+			AddInertia(Gravity, gameTime);
 
-			if (this.Inertia.Y < 0)
-			{
-				this.RemoveParent();
-			}
+			if (Inertia.Y < 0) RemoveParent();
 			//Console.WriteLine($"My parent is: {this.ParentObject}");
 		}
 	}

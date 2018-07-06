@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Singularity.Collisions.CollisionTypes
 {
 	internal static class SphereOnRingCollision
 	{
-		public static Boolean GetCollision(SphereCollision collidableA, RingCollision collidableB, out Vector3 position,
+		public static bool GetCollision(SphereCollision collidableA, RingCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
 			// first let's get the collision parameters from the Plane Collision.
@@ -38,10 +37,10 @@ namespace Singularity.Collisions.CollisionTypes
 			normal.Normalize();
 
 			return collide;
-
 		}
 
-		public static Vector3 HandleCollision(SphereCollision collider, RingCollision collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(SphereCollision collider, RingCollision collidable, Vector3 position,
+			Vector3 normal)
 		{
 			return position + normal * (collider.Radius + collidable.InnerRadius);
 		}

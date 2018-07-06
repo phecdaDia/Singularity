@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,8 +9,8 @@ namespace Singularity
 		private static ModelManager Instance;
 
 		private readonly ContentManager ContentManager;
-		private readonly Dictionary<String, Model> ModelDictionary;
-		private readonly Dictionary<String, Texture2D> ModelTextureDictionary;
+		private readonly Dictionary<string, Model> ModelDictionary;
+		private readonly Dictionary<string, Texture2D> ModelTextureDictionary;
 
 
 		public ModelManager(ContentManager contentManager)
@@ -19,13 +18,13 @@ namespace Singularity
 			if (Instance != null) return;
 			Instance = this;
 
-			this.ContentManager = contentManager;
-			this.ModelDictionary = new Dictionary<string, Model>();
-			this.ModelTextureDictionary = new Dictionary<string, Texture2D>();
+			ContentManager = contentManager;
+			ModelDictionary = new Dictionary<string, Model>();
+			ModelTextureDictionary = new Dictionary<string, Texture2D>();
 		}
 
 		/// <summary>
-		/// Gets the singleton instance
+		///     Gets the singleton instance
 		/// </summary>
 		/// <returns></returns>
 		private static ModelManager GetInstance()
@@ -34,42 +33,42 @@ namespace Singularity
 		}
 
 		/// <summary>
-		/// Gets <seealso cref="Model"/> cached.
+		///     Gets <seealso cref="Model" /> cached.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		private Model _GetModel(String path)
+		private Model _GetModel(string path)
 		{
-			if (this.ModelDictionary.ContainsKey(path)) return this.ModelDictionary[path];
+			if (ModelDictionary.ContainsKey(path)) return ModelDictionary[path];
 
-			Model model = ContentManager.Load<Model>(path);
-			this.ModelDictionary[path] = model;
+			var model = ContentManager.Load<Model>(path);
+			ModelDictionary[path] = model;
 
-			this.ModelTextureDictionary[path] = ((BasicEffect) model.Meshes[0].Effects[0]).Texture;
+			ModelTextureDictionary[path] = ((BasicEffect) model.Meshes[0].Effects[0]).Texture;
 
 
 			return model;
 		}
 
-		private Texture2D _GetTexture(String path)
+		private Texture2D _GetTexture(string path)
 		{
-			if (this.ModelTextureDictionary.ContainsKey(path)) return this.ModelTextureDictionary[path];
+			if (ModelTextureDictionary.ContainsKey(path)) return ModelTextureDictionary[path];
 
 			_GetModel(path);
-			return this.ModelTextureDictionary[path];
+			return ModelTextureDictionary[path];
 		}
 
 		/// <summary>
-		/// Gets <seealso cref="Model"/> cached.
+		///     Gets <seealso cref="Model" /> cached.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public static Model GetModel(String path)
+		public static Model GetModel(string path)
 		{
 			return GetInstance()._GetModel(path);
 		}
 
-		public static Texture2D GetTexture(String path)
+		public static Texture2D GetTexture(string path)
 		{
 			return GetInstance()._GetTexture(path);
 		}

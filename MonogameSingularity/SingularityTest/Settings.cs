@@ -1,13 +1,10 @@
-﻿using Microsoft.Xna.Framework.Input;
-
-using Singularity;
+﻿using System.Collections.Generic;
+using System.IO;
+using Microsoft.Xna.Framework.Input;
 using Singularity.Utilities;
 
 namespace SingularityTest
 {
-	using System.Collections.Generic;
-	using System.IO;
-
 	/*
 	 * This is an example for a Settings Class
 	 */
@@ -62,6 +59,5 @@ namespace SingularityTest
 			File.WriteAllText("settings.xml", saveData);
 			return true;
 		}
-
 	}
 }

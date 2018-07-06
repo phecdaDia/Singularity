@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
 using Singularity.Collisions;
-using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 
 namespace SingularityTest.Scenes
@@ -20,12 +13,12 @@ namespace SingularityTest.Scenes
 
 		public RayTestScene(SingularityGame game, string sceneKey) : base(game, sceneKey, 8, 2, 0.0f)
 		{
-			this.ScenePauseEvent += (sender, args) =>
+			ScenePauseEvent += (sender, args) =>
 			{
-				this.LastMouseX = Mouse.GetState().X;
-				this.LastMouseY = Mouse.GetState().Y;
+				LastMouseX = Mouse.GetState().X;
+				LastMouseY = Mouse.GetState().Y;
 			};
-			this.SceneResumeEvent += (sender, args) => Mouse.SetPosition(LastMouseX, LastMouseY);
+			SceneResumeEvent += (sender, args) => Mouse.SetPosition(LastMouseX, LastMouseY);
 		}
 
 		protected override void AddGameObjects(int entranceId)
@@ -47,7 +40,7 @@ namespace SingularityTest.Scenes
 
 			SetAbsoluteCamera(new Vector3(), new Vector3(-10, 0, 0));
 
-			AddObject(new ModelObject("cubes/cube2").SetPosition(-1, 0, 0).SetScale(0.025f).AddScript((GameScene scene, GameObject obj, GameTime time) =>
+			AddObject(new ModelObject("cubes/cube2").SetPosition(-1, 0, 0).SetScale(0.025f).AddScript((scene, obj, time) =>
 			{
 				if (KeyboardManager.IsKeyDown(Keys.W))
 					obj.AddPosition(0, 1, 0, time);
@@ -64,24 +57,22 @@ namespace SingularityTest.Scenes
 				if (KeyboardManager.IsKeyDown(Keys.M))
 				{
 					// cast a ray
-					
-					var rcp = this.CollideRay(new Ray(obj.GetHierarchyPosition(), new Vector3(-0.5f, 0.5f, 0)));
+
+					var rcp = CollideRay(new Ray(obj.GetHierarchyPosition(), new Vector3(-0.5f, 0.5f, 0)));
 
 					if (rcp.DidCollide)
 					{
 						Console.WriteLine($"We do collide!");
 						SpawnObject(new ModelObject("cubes/cube3").SetScale(0.05f).SetPosition(rcp.Position));
 						Console.WriteLine($"Final position: {rcp.Position} ({(rcp.Position - obj.Position).Length()})");
-
 					}
 				}
-
 			}));
 		}
 
 		//public override void AddLightningToEffect(Effect effect)
 		//{
-			
+
 		//}
 	}
 }

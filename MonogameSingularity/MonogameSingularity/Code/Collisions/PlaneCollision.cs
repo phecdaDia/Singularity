@@ -5,33 +5,17 @@ namespace Singularity.Collisions
 	public class PlaneCollision : Collision
 	{
 		protected readonly Vector3 _origin;
-		public Vector3 Origin
-		{
-			get { return Vector3.Transform(_origin, this.Parent.TransformationMatrix) + this.Parent.GetHierarchyPosition(); }
-		}
 
 
 		protected readonly Vector3 _spanVector1;
-		public Vector3 SpanVector1
-		{
-			get { return Vector3.Transform(_spanVector1, this.Parent.TransformationMatrix); }
-		}
 
 
 		protected readonly Vector3 _spanVector2;
-		public Vector3 SpanVector2
-		{
-			get { return Vector3.Transform(_spanVector2, this.Parent.TransformationMatrix); }
-		}
 
 
 		protected Vector3 _normal;
-		public Vector3 Normal
-		{
-			get { return Vector3.Transform(_normal, this.Parent.TransformationMatrix); }
-		}
 
-		public PlaneCollision(Vector3 origin, Vector3 spanVector1, Vector3 spanVector2) : base()
+		public PlaneCollision(Vector3 origin, Vector3 spanVector1, Vector3 spanVector2)
 		{
 			_origin = origin;
 			_spanVector1 = spanVector1;
@@ -41,9 +25,29 @@ namespace Singularity.Collisions
 			_normal.Normalize();
 		}
 
+		public Vector3 Origin
+		{
+			get { return Vector3.Transform(_origin, Parent.TransformationMatrix) + Parent.GetHierarchyPosition(); }
+		}
+
+		public Vector3 SpanVector1
+		{
+			get { return Vector3.Transform(_spanVector1, Parent.TransformationMatrix); }
+		}
+
+		public Vector3 SpanVector2
+		{
+			get { return Vector3.Transform(_spanVector2, Parent.TransformationMatrix); }
+		}
+
+		public Vector3 Normal
+		{
+			get { return Vector3.Transform(_normal, Parent.TransformationMatrix); }
+		}
+
 		public override object Clone()
 		{
-			return new PlaneCollision(this._origin, this._spanVector1, this._spanVector2);
+			return new PlaneCollision(_origin, _spanVector1, _spanVector2);
 		}
 	}
 }

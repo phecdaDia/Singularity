@@ -5,147 +5,151 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity
 {
-
-    public class SceneManager
+	public class SceneManager
 	{
-		private SingularityGame Game;
+		public enum RegisterBehavior
+		{
+			Ignore,
+			Overwrite,
+			ThrowException
+		}
 
 		private static SceneManager Instance;
 
-		private readonly Dictionary<String, GameScene> GameScenes;
+		private readonly Dictionary<string, GameScene> GameScenes;
 
 		private readonly Stack<GameScene> SceneStack;
+		private readonly SingularityGame Game;
 
-		private bool IsSceneClosing = false;
+		private bool IsSceneClosing;
 
-	    private bool IsStackClearing = false;
+		private bool IsStackClearing;
 
-		private Queue<GameScene> SceneQueue;
+		private readonly Queue<GameScene> SceneQueue;
 
 		private RenderTarget2D SceneRender;
 
 		public SceneManager(SingularityGame game)
 		{
-			this.Game = game;
+			Game = game;
 			Instance = this;
 
-			this.GameScenes = new Dictionary<string, GameScene>();
-			this.SceneStack = new Stack<GameScene>();
-			this.SceneQueue = new Queue<GameScene>();
+			GameScenes = new Dictionary<string, GameScene>();
+			SceneStack = new Stack<GameScene>();
+			SceneQueue = new Queue<GameScene>();
 		}
 
-	    /// <summary>
-	    /// Returns the current <seealso cref="GameScene"/> from the <see cref="SceneStack"/>
-	    /// </summary>
-	    /// <returns></returns>
-		public static GameScene GetCurrentScene() => Instance._GetCurrentScene();
+		/// <summary>
+		///     Returns the current <seealso cref="GameScene" /> from the <see cref="SceneStack" />
+		/// </summary>
+		/// <returns></returns>
+		public static GameScene GetCurrentScene()
+		{
+			return Instance._GetCurrentScene();
+		}
 
 		public GameScene _GetCurrentScene()
 		{
-			if (this.SceneStack.Count == 0) return null;
+			if (SceneStack.Count == 0) return null;
 
 			return SceneStack.Peek();
 		}
 
-	    /// <summary>
-	    /// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/>
-	    /// </summary>
-	    /// <param name="scene"></param>
-	    /// <param name="entranceId"></param>
-		public static void AddSceneToStack(GameScene scene, int entranceId = 0) => Instance._AddSceneToStack(scene, entranceId);
+		/// <summary>
+		///     Adds a <seealso cref="GameScene" /> to the <see cref="SceneStack" />
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="entranceId"></param>
+		public static void AddSceneToStack(GameScene scene, int entranceId = 0)
+		{
+			Instance._AddSceneToStack(scene, entranceId);
+		}
 
 		public void _AddSceneToStack(GameScene scene, int entranceId)
 		{
 			// add scene to queue first..
 			// pause the current scene
-			this._GetCurrentScene()?.OnScenePause();
+			_GetCurrentScene()?.OnScenePause();
 
 			scene.SetupScene(entranceId);
 			scene.LoadContent();
-			this.SceneQueue.Enqueue(scene);
+			SceneQueue.Enqueue(scene);
 		}
 
-	    /// <summary>
-	    /// Adds a <seealso cref="GameScene"/> to the <see cref="SceneStack"/><para />
-	    /// Requires that the <seealso cref="GameScene"/> has been registered. <seealso cref="RegisterScene"/>
-	    /// </summary>
-	    /// <param name="sceneKey"></param>
-	    /// <param name="entranceId"></param>
-		public static void AddSceneToStack(string sceneKey, int entranceId = 0) => Instance._AddSceneToStack(sceneKey, entranceId);
+		/// <summary>
+		///     Adds a <seealso cref="GameScene" /> to the <see cref="SceneStack" />
+		///     <para />
+		///     Requires that the <seealso cref="GameScene" /> has been registered. <seealso cref="RegisterScene" />
+		/// </summary>
+		/// <param name="sceneKey"></param>
+		/// <param name="entranceId"></param>
+		public static void AddSceneToStack(string sceneKey, int entranceId = 0)
+		{
+			Instance._AddSceneToStack(sceneKey, entranceId);
+		}
 
 		public void _AddSceneToStack(string sceneKey, int entranceId)
 		{
-			if (!GameScenes.ContainsKey(sceneKey))
-			{
-				// SceneKey is not registered.
-				// Will be ignored for now.
-                throw new Exception("SceneKey \"" + sceneKey + "\" was not registered");
-				//return;
-			}
+			if (!GameScenes.ContainsKey(sceneKey)) throw new Exception("SceneKey \"" + sceneKey + "\" was not registered");
 
 			AddSceneToStack(GameScenes[sceneKey], entranceId);
 		}
 
-	    /// <summary>
-	    /// Removed a <seealso cref="GameScene"/> from the <see cref="SceneStack"/>
-	    /// </summary>
-		public static void CloseScene() => Instance._CloseScene();
+		/// <summary>
+		///     Removed a <seealso cref="GameScene" /> from the <see cref="SceneStack" />
+		/// </summary>
+		public static void CloseScene()
+		{
+			Instance._CloseScene();
+		}
 
 		public void _CloseScene()
 		{
-			this.IsSceneClosing = true;
+			IsSceneClosing = true;
 		}
 
-	    /// <summary>
-	    /// Registers a <seealso cref="GameScene"/> so it can be added to the <see cref="SceneStack"/><para/>
-	    /// Required before using <seealso cref="AddSceneToStack(String)"/>
-	    /// Returns Key of GameScene
-	    /// </summary>
-	    /// <param name="scene"></param>
-	    /// <param name="behavior"></param>
-	    /// <returns></returns>
-	    public static string RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore) => Instance._RegisterScene(scene, behavior);
-
-	    public enum RegisterBehavior
-	    {
-            Ignore,
-            Overwrite,
-            ThrowException
-	    }
+		/// <summary>
+		///     Registers a <seealso cref="GameScene" /> so it can be added to the <see cref="SceneStack" />
+		///     <para />
+		///     Required before using <seealso cref="AddSceneToStack(string)" />
+		///     Returns Key of GameScene
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="behavior"></param>
+		/// <returns></returns>
+		public static string RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore)
+		{
+			return Instance._RegisterScene(scene, behavior);
+		}
 
 		public string _RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore)
 		{
-		    if (GameScenes.ContainsKey(scene.SceneKey))
-		    {
-		        switch (behavior)
-		        {
+			if (GameScenes.ContainsKey(scene.SceneKey))
+				switch (behavior)
+				{
 					case RegisterBehavior.Ignore:
-					    return null;
+						return null;
 					case RegisterBehavior.Overwrite:
-                        break;
+						break;
 					case RegisterBehavior.ThrowException:
-                        throw new Exception($"Scene \"{scene.SceneKey}\" already registered");
-		            default:
-		                throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null);
-		        }
-		    }
+						throw new Exception($"Scene \"{scene.SceneKey}\" already registered");
+					default:
+						throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null);
+				}
 			GameScenes[scene.SceneKey] = scene;
 			return scene.SceneKey;
 		}
 
-	    /// <summary>
-	    /// Updates the upper <seealso cref="GameScene"/>
-	    /// </summary>
-	    /// <param name="gameTime"></param>
+		/// <summary>
+		///     Updates the upper <seealso cref="GameScene" />
+		/// </summary>
+		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
 			// add scenes to the stack
-			while (this.SceneQueue.Count > 0)
-			{
-				this.SceneStack.Push(this.SceneQueue.Dequeue());
-			}
+			while (SceneQueue.Count > 0) SceneStack.Push(SceneQueue.Dequeue());
 
-			var scene = this._GetCurrentScene();
+			var scene = _GetCurrentScene();
 
 			if (scene == null)
 			{
@@ -154,135 +158,140 @@ namespace Singularity
 
 				return;
 			}
-			
+
 			scene.Update(gameTime);
 
 			// close scene is it's schedules to close
 
-			if (this.IsSceneClosing)
+			if (IsSceneClosing)
 			{
-				this.IsSceneClosing = false;
-				this.SceneStack.Pop();
+				IsSceneClosing = false;
+				SceneStack.Pop();
 				scene.UnloadContent();
 				// unload content from the scene.
 
 				// get current scene and call OnResume if possible
 				// check if we don't add any new scenes
-				if (this.SceneQueue.Count == 0)
-					this._GetCurrentScene()?.OnSceneResume();
+				if (SceneQueue.Count == 0)
+					_GetCurrentScene()?.OnSceneResume();
 			}
 
-		    if (this.IsStackClearing)
-		    {
-		        this.IsStackClearing = false;
-		        foreach (var gameScene in SceneStack)
-		        {
-		            gameScene.UnloadContent();
-		        }
-                SceneStack.Clear();
-		    }
-
-			while (this.SceneQueue.Count > 0)
+			if (IsStackClearing)
 			{
-				this.SceneStack.Push(this.SceneQueue.Dequeue());
+				IsStackClearing = false;
+				foreach (var gameScene in SceneStack) gameScene.UnloadContent();
+				SceneStack.Clear();
 			}
+
+			while (SceneQueue.Count > 0) SceneStack.Push(SceneQueue.Dequeue());
 		}
 
 		/// <summary>
-		/// Draws the upper <seealso cref="GameScene"/>
+		///     Draws the upper <seealso cref="GameScene" />
 		/// </summary>
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			if (this.SceneStack.Count == 0)
+			if (SceneStack.Count == 0)
 			{
 				Game.Exit();
 				return;
 			}
 
-			Stack<GameScene> drawScenes = new Stack<GameScene>();
-			while (this.SceneStack.Count > 0 && this.SceneStack.Peek() is ITransparent)
-			{	// add scenes we want to draw.
-				drawScenes.Push(this.SceneStack.Pop());
-			}
+			var drawScenes = new Stack<GameScene>();
+			while (SceneStack.Count > 0 && SceneStack.Peek() is ITransparent)
+				// add scenes we want to draw.
+				drawScenes.Push(SceneStack.Pop());
 
 			// add one more scene, if there is any
-			if (this.SceneStack.Count > 0)
-				drawScenes.Push(this.SceneStack.Pop()); // this is the lowest scene
+			if (SceneStack.Count > 0)
+				drawScenes.Push(SceneStack.Pop()); // this is the lowest scene
 
 			// now work these scenes from down to top
 			while (drawScenes.Count > 0)
 			{
-				this.SceneStack.Push(drawScenes.Pop());			// puts scene back on the sceneStack so it doesn't go missing
-				this.SceneStack.Peek().Draw(spriteBatch, this.SceneRender);		// draws the entire scene to our RenderTarget
-				
+				SceneStack.Push(drawScenes.Pop()); // puts scene back on the sceneStack so it doesn't go missing
+				SceneStack.Peek().Draw(spriteBatch, SceneRender); // draws the entire scene to our RenderTarget
+
 				Game.GraphicsDevice.SetRenderTarget(Game.RenderTarget);
 
-				spriteBatch.Begin();							// draws the scene on top of everything else that was already drawn
-				spriteBatch.Draw(								// causes a layered effect. We can see the scenes below
-					texture: this.SceneRender,
-					destinationRectangle: new Rectangle(0, 0, Game.RenderTarget.Width, Game.RenderTarget.Height),
-					sourceRectangle: new Rectangle(0, 0, this.SceneRender.Width, this.SceneRender.Height),
-					color: Color.White
+				spriteBatch.Begin(); // draws the scene on top of everything else that was already drawn
+				spriteBatch.Draw( // causes a layered effect. We can see the scenes below
+					SceneRender,
+					new Rectangle(0, 0, Game.RenderTarget.Width, Game.RenderTarget.Height),
+					new Rectangle(0, 0, SceneRender.Width, SceneRender.Height),
+					Color.White
 				);
 				spriteBatch.End();
 			}
-
 		}
 
 		/// <summary>
-		/// Returns the <seealso cref="GameScene"/> for known key
+		///     Returns the <seealso cref="GameScene" /> for known key
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public static GameScene GetScene(string key) => Instance._GetScene(key);
+		public static GameScene GetScene(string key)
+		{
+			return Instance._GetScene(key);
+		}
 
-	    private GameScene _GetScene(string key) => GameScenes.ContainsKey(key) ? GameScenes[key] : null;
+		private GameScene _GetScene(string key)
+		{
+			return GameScenes.ContainsKey(key) ? GameScenes[key] : null;
+		}
 
-        /// <summary>
-		/// Clear entire Stack
+		/// <summary>
+		///     Clear entire Stack
 		/// </summary>
-	    public static void ClearStack() => Instance._ClearStack();
+		public static void ClearStack()
+		{
+			Instance._ClearStack();
+		}
 
-	    private void _ClearStack()
-	    {
-	        this.IsStackClearing = true;
-	    }
+		private void _ClearStack()
+		{
+			IsStackClearing = true;
+		}
 
-        /// <summary>
-		/// Remove CurrentScene and add new Scene to Stack
+		/// <summary>
+		///     Remove CurrentScene and add new Scene to Stack
 		/// </summary>
 		/// <param name="newScene"></param>
 		/// <param name="entranceId"></param>
 		/// <param name="clearStack"></param>
-	    public static void ChangeScene(GameScene newScene, int entranceId = 0, bool clearStack = false) =>
-	        Instance._ChangeScene(newScene, entranceId, clearStack);
+		public static void ChangeScene(GameScene newScene, int entranceId = 0, bool clearStack = false)
+		{
+			Instance._ChangeScene(newScene, entranceId, clearStack);
+		}
 
-	    private void _ChangeScene(GameScene newScene, int entranceId = 0, bool clearStack = false)
-	    {
-            if(clearStack)
-                _ClearStack();
-            _CloseScene();
-            _AddSceneToStack(newScene, entranceId);
-	    }
+		private void _ChangeScene(GameScene newScene, int entranceId = 0, bool clearStack = false)
+		{
+			if (clearStack)
+				_ClearStack();
+			_CloseScene();
+			_AddSceneToStack(newScene, entranceId);
+		}
 
 		/// <summary>
-		/// Remove CurrentScene and add new Scene to Stack
-		/// Scene should already be registred
+		///     Remove CurrentScene and add new Scene to Stack
+		///     Scene should already be registred
 		/// </summary>
 		/// <param name="newSceneKey"></param>
 		/// <param name="entranceId"></param>
 		/// <param name="clearStack"></param>
-		public static void ChangeScene(string newSceneKey, int entranceId = 0, bool clearStack = false) =>
-	        Instance._ChangeScene(newSceneKey, entranceId, clearStack);
+		public static void ChangeScene(string newSceneKey, int entranceId = 0, bool clearStack = false)
+		{
+			Instance._ChangeScene(newSceneKey, entranceId, clearStack);
+		}
 
-	    private void _ChangeScene(string newSceneKey, int entranceId = 0, bool clearStack = false)
-	    {
-            if(clearStack)
-                _ClearStack();
-            _CloseScene();
-            _AddSceneToStack(newSceneKey, entranceId);
-	    }
+		private void _ChangeScene(string newSceneKey, int entranceId = 0, bool clearStack = false)
+		{
+			if (clearStack)
+				_ClearStack();
+			_CloseScene();
+			_AddSceneToStack(newSceneKey, entranceId);
+		}
 
 		public static void SetSceneRender(RenderTarget2D render)
 		{

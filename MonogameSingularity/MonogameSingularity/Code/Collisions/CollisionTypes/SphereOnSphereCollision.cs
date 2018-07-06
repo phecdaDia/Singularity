@@ -1,14 +1,12 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Singularity.Collisions.CollisionTypes
 {
 	internal static class SphereOnSphereCollision
 	{
-		public static Boolean GetCollision(SphereCollision collidableA, SphereCollision collidableB, out Vector3 position,
+		public static bool GetCollision(SphereCollision collidableA, SphereCollision collidableB, out Vector3 position,
 			out Vector3 normal)
 		{
-
 			var radiusDist = collidableA.Radius * collidableA.Parent.Scale.X + collidableB.Radius * collidableB.Parent.Scale.X;
 			var dist = collidableA.Position - collidableB.Position;
 			var rd2 = radiusDist * radiusDist;
@@ -32,7 +30,8 @@ namespace Singularity.Collisions.CollisionTypes
 			return true;
 		}
 
-		public static Vector3 HandleCollision(SphereCollision collider, SphereCollision collidable, Vector3 position, Vector3 normal)
+		public static Vector3 HandleCollision(SphereCollision collider, SphereCollision collidable, Vector3 position,
+			Vector3 normal)
 		{
 			return position + normal * collider.Radius;
 		}

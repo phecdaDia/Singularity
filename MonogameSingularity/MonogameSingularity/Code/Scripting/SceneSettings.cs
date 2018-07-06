@@ -1,7 +1,7 @@
 ﻿namespace Singularity.Scripting
 {
 	/// <summary>
-	/// Settings. Set null for default
+	///     Settings. Set null for default
 	/// </summary>
 	public struct SceneSettings
 	{

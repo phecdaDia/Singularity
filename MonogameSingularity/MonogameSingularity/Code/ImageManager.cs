@@ -91,7 +91,6 @@ namespace Singularity
 		/// <returns></returns>
 		public static Texture2D GetTexture2D(string key)
 		{
-
 			// We have to create "output" here. CSharp 2015 doesn't like it in the out.
 
 			GetInstance().TextureDictionary.TryGetValue(key, out var output);

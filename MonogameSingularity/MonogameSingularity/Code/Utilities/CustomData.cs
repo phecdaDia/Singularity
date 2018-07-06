@@ -1,38 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Singularity.Utilities
 {
 	public class CustomData
 	{
-		private readonly Dictionary<String, Tuple<Type, Object>> DataDictionary;
+		private readonly Dictionary<string, Tuple<Type, object>> DataDictionary;
 
 		public CustomData()
 		{
-			this.DataDictionary = new Dictionary<string, Tuple<Type, object>>();
+			DataDictionary = new Dictionary<string, Tuple<Type, object>>();
 		}
 
-		public T GetValue<T>(String key)
+		public T GetValue<T>(string key)
 		{
 			if (!DataDictionary.ContainsKey(key)) throw new ArgumentException($"No value of key {key} found!");
 
-			if (DataDictionary[key].Item1 != typeof(T)) throw new ArgumentException($"Value of key {key} is not of type {DataDictionary[key].Item1}");
+			if (DataDictionary[key].Item1 != typeof(T))
+				throw new ArgumentException($"Value of key {key} is not of type {DataDictionary[key].Item1}");
 
 			return (T) DataDictionary[key].Item2;
 		}
 
-		public void SetValue<T>(String key, T value)
+		public void SetValue<T>(string key, T value)
 		{
 			DataDictionary[key] = new Tuple<Type, object>(typeof(T), value);
 		}
 
-		public Boolean ContainsKey(String key)
+		public bool ContainsKey(string key)
 		{
-			return this.DataDictionary.ContainsKey(key);
+			return DataDictionary.ContainsKey(key);
 		}
-
 	}
 }

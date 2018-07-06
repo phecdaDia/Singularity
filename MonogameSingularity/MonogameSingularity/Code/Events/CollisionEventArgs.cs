@@ -5,15 +5,8 @@ namespace Singularity.Events
 {
 	public class CollisionEventArgs : EventArgs
 	{
-		public Vector3 Position { get; private set; }
-		public Vector3 Normal { get; private set; }
-
-		public GameObject Collider { get; private set; }
-		public GameObject Collidable { get; private set; }
-
-		public GameScene Scene { get; private set; }
-
-		public CollisionEventArgs(Vector3 position, Vector3 normal, GameObject collider, GameObject collidable, GameScene scene)
+		public CollisionEventArgs(Vector3 position, Vector3 normal, GameObject collider, GameObject collidable,
+			GameScene scene)
 		{
 			Position = position;
 			Normal = normal;
@@ -21,5 +14,13 @@ namespace Singularity.Events
 			Collidable = collidable;
 			Scene = scene;
 		}
+
+		public Vector3 Position { get; }
+		public Vector3 Normal { get; }
+
+		public GameObject Collider { get; }
+		public GameObject Collidable { get; }
+
+		public GameScene Scene { get; }
 	}
 }

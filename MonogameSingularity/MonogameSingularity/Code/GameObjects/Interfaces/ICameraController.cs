@@ -3,6 +3,5 @@
 	public interface ICameraController
 	{
 		void SetCamera(GameScene scene);
-
 	}
 }

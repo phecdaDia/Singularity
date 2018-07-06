@@ -7,8 +7,8 @@ namespace Singularity.Collisions
 {
 	public static class CollisionManager
 	{
-		public static Boolean DoesCollide<T, U>(T collidableA, U collidableB, 
-			Action<Collision, Collision, Vector3, Vector3> callback = null, Boolean invertNormal = false)
+		public static bool DoesCollide<T, U>(T collidableA, U collidableB,
+			Action<Collision, Collision, Vector3, Vector3> callback = null, bool invertNormal = false)
 			where T : Collision
 			where U : Collision
 		{
@@ -20,12 +20,12 @@ namespace Singularity.Collisions
 
 			#region Sphere On Collision
 
-
 			#region Sphere on Sphere Collision
 
 			if (collidableA is SphereCollision && collidableB is SphereCollision)
 			{
-				if (SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision, out position, out normal))
+				if (SphereOnSphereCollision.GetCollision(collidableA as SphereCollision, collidableB as SphereCollision,
+					out position, out normal))
 					didCollide = true;
 			}
 
@@ -34,25 +34,30 @@ namespace Singularity.Collisions
 			#region Sphere on Bound Plane Collision
 
 			else if (collidableA is SphereCollision && collidableB is BoundPlaneCollision)
-			{ 
-				if (SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision, out position, out normal))
+			{
+				if (SphereOnBoundPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundPlaneCollision,
+					out position, out normal))
 					didCollide = true;
 			}
 			else if (collidableA is BoundPlaneCollision && collidableB is SphereCollision)
+			{
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+			}
 
 			#endregion
 
 			#region Sphere on Ring Collision
 
-
 			else if (collidableA is SphereCollision && collidableB is RingCollision)
 			{
-				if (SphereOnRingCollision.GetCollision(collidableA as SphereCollision, collidableB as RingCollision, out position, out normal))
+				if (SphereOnRingCollision.GetCollision(collidableA as SphereCollision, collidableB as RingCollision, out position,
+					out normal))
 					didCollide = true;
 			}
 			else if (collidableA is RingCollision && collidableB is SphereCollision)
+			{
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+			}
 
 			#endregion
 
@@ -60,39 +65,44 @@ namespace Singularity.Collisions
 
 			else if (collidableA is SphereCollision && collidableB is PlaneCollision)
 			{
-				if (SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision, out position, out normal))
+				if (SphereOnPlaneCollision.GetCollision(collidableA as SphereCollision, collidableB as PlaneCollision, out position,
+					out normal))
 					didCollide = true;
 			}
 			else if (collidableA is PlaneCollision && collidableB is SphereCollision)
+			{
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+			}
 
 			#endregion
 
 			#region Sphere on Bound Edge Collision
 
-
 			else if (collidableA is SphereCollision && collidableB is BoundEdgeCollision)
 			{
-				if (SphereOnBoundEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundEdgeCollision, out position, out normal))
+				if (SphereOnBoundEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as BoundEdgeCollision,
+					out position, out normal))
 					didCollide = true;
 			}
 			else if (collidableA is BoundEdgeCollision && collidableB is SphereCollision)
+			{
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
-
+			}
 
 			#endregion
 
 			#region Sphere on Edge Collision
-			
+
 			else if (collidableA is SphereCollision && collidableB is EdgeCollision)
 			{
-				if (SphereOnEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as EdgeCollision,out position, out normal))
+				if (SphereOnEdgeCollision.GetCollision(collidableA as SphereCollision, collidableB as EdgeCollision, out position,
+					out normal))
 					didCollide = true;
-
 			}
 			else if (collidableA is EdgeCollision && collidableB is SphereCollision)
+			{
 				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
-
+			}
 
 			#endregion
 
@@ -103,18 +113,19 @@ namespace Singularity.Collisions
 			else if (collidableB is MultiCollision)
 			{
 				foreach (var coll in (collidableB as MultiCollision).GetCollidables())
-				{
-					if (DoesCollide(collidableA, coll, callback, invertNormal)) didCollide = true;
-				}
+					if (DoesCollide(collidableA, coll, callback, invertNormal))
+						didCollide = true;
 
 				return didCollide;
 			}
-				
-			else if (collidableA is MultiCollision)
-				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
 
-		#endregion
-			
+			else if (collidableA is MultiCollision)
+			{
+				return DoesCollide(collidableB, collidableA, callback, !invertNormal);
+			}
+
+			#endregion
+
 			if (!didCollide) return false;
 
 			if (invertNormal) normal = -normal;
@@ -122,7 +133,6 @@ namespace Singularity.Collisions
 			callback?.Invoke(collidableA, collidableB, position, normal);
 
 			return true;
-
 		}
 
 		public static Vector3 HandleCollision<T, U>(T collider, U collidable, Vector3 position, Vector3 normal)
@@ -133,23 +143,28 @@ namespace Singularity.Collisions
 			// the normal vector should ALWAYS be from collidableA to collidableB
 
 			if (collider is SphereCollision && collidable is SphereCollision)
-				return SphereOnSphereCollision.HandleCollision(collider as SphereCollision, collidable as SphereCollision, position, normal);
+				return SphereOnSphereCollision.HandleCollision(collider as SphereCollision, collidable as SphereCollision, position,
+					normal);
 
-			else if (collider is SphereCollision && collidable is BoundPlaneCollision)
-				return SphereOnBoundPlaneCollision.HandleCollision(collider as SphereCollision, collidable as BoundPlaneCollision, position, normal);
+			if (collider is SphereCollision && collidable is BoundPlaneCollision)
+				return SphereOnBoundPlaneCollision.HandleCollision(collider as SphereCollision, collidable as BoundPlaneCollision,
+					position, normal);
 
-			else if (collider is SphereCollision && collidable is RingCollision)
-				return SphereOnRingCollision.HandleCollision(collider as SphereCollision, collidable as RingCollision, position, normal);
+			if (collider is SphereCollision && collidable is RingCollision)
+				return SphereOnRingCollision.HandleCollision(collider as SphereCollision, collidable as RingCollision, position,
+					normal);
 
-			else if (collider is SphereCollision && collidable is PlaneCollision)
-				return SphereOnPlaneCollision.HandleCollision(collider as SphereCollision, collidable as PlaneCollision, position, normal);
+			if (collider is SphereCollision && collidable is PlaneCollision)
+				return SphereOnPlaneCollision.HandleCollision(collider as SphereCollision, collidable as PlaneCollision, position,
+					normal);
 
-			else if (collider is SphereCollision && collidable is BoundEdgeCollision)
-				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
+			if (collider is SphereCollision && collidable is BoundEdgeCollision)
+				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position,
+					normal);
 
-			else if (collider is SphereCollision && collidable is EdgeCollision)
-				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position, normal);
-
+			if (collider is SphereCollision && collidable is EdgeCollision)
+				return SphereOnEdgeCollision.HandleCollision(collider as SphereCollision, collidable as EdgeCollision, position,
+					normal);
 
 
 			return collider.Position;
@@ -158,20 +173,22 @@ namespace Singularity.Collisions
 		public static RayCollisionPoint GetRayCollision<T>(Ray ray, T collision)
 			where T : Collision
 		{
-			
+			if (collision is SphereCollision) return RayOnSphereCollision.GetCollision(ray, collision as SphereCollision);
 
-			if (collision is SphereCollision)
-				return RayOnSphereCollision.GetCollision(ray, collision as SphereCollision); 
-			else if (collision is BoundPlaneCollision)
+			if (collision is BoundPlaneCollision)
 				return RayOnBoundPlaneCollision.GetCollision(ray, collision as BoundPlaneCollision);
-			else if (collision is PlaneCollision)
-				return RayOnPlaneCollision.GetCollision(ray, collision as PlaneCollision);
-			else if (collision is MultiCollision)
+
+			if (collision is PlaneCollision)
 			{
-				RayCollisionPoint rcp = new RayCollisionPoint(); // dummy rcp
+				return RayOnPlaneCollision.GetCollision(ray, collision as PlaneCollision);
+			}
+
+			if (collision is MultiCollision)
+			{
+				var rcp = new RayCollisionPoint(); // dummy rcp
 				foreach (var coll in (collision as MultiCollision).GetCollidables())
 				{
-					RayCollisionPoint testPoint = GetRayCollision(ray, coll);
+					var testPoint = GetRayCollision(ray, coll);
 					if (testPoint.DidCollide && testPoint.RayDistance < rcp.RayDistance && testPoint.RayDistance >= 0) rcp = testPoint;
 				}
 

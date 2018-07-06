@@ -1,24 +1,22 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Singularity.GameObjects
 {
 	public class ModelObject : GameObject
 	{
-		public ModelObject(String modelPath) : this(ModelManager.GetModel(modelPath))
+		public ModelObject(string modelPath) : this(ModelManager.GetModel(modelPath))
 		{
-			this.SetTexture(ModelManager.GetTexture(modelPath));
-
-
+			SetTexture(ModelManager.GetTexture(modelPath));
 		}
-		public ModelObject(Model model) : base()
+
+		public ModelObject(Model model)
 		{
-			this.SetModel(model);
-			
+			SetModel(model);
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)
-		{}
+		{
+		}
 	}
 }

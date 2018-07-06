@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml.Serialization.Configuration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,36 +11,61 @@ using Singularity.Utilities;
 
 namespace Singularity
 {
-	using Microsoft.SqlServer.Server;
-
 	/// <summary>
-	/// A GameObject can be any object in a GameScene.
+	///     A GameObject can be any object in a GameScene.
 	/// </summary>
 	public abstract class GameObject
 	{
+		private readonly List<GameObject> ChildrenBuffer;
+
+		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
+
+		/// <summary>
+		///     Initializing Constructor
+		///     Sets default values for all properties
+		/// </summary>
+		protected GameObject()
+		{
+			// Setting default values for all members
+			Position = new Vector3();
+			Rotation = new Vector3();
+			Scale = Vector3.One;
+			Inertia = new Vector3();
+			EnablePushCollision = true;
+
+			ParentObject = null;
+			ChildObjects = new List<GameObject>();
+			ChildrenBuffer = new List<GameObject>();
+
+			ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
+			CustomData = new CustomData();
+		}
+
 		public Model
 			Model { get; private set; } // Model of the entity. Is Null if the object shall not be rendered.
 
-		public Vector3   Position  { get; private set; } // Current position of the model
-		public Vector3   Rotation  { get; private set; } // Current rotation of the model
-		public Vector3   Scale     { get; private set; } // Scale of the model
-		public Vector3   Inertia   { get; private set; } // only used when implementing IInertia
+		public Vector3 Position { get; private set; } // Current position of the model
+		public Vector3 Rotation { get; private set; } // Current rotation of the model
+		public Vector3 Scale { get; private set; } // Scale of the model
+		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
 		public Texture2D Texture { get; private set; }
 
-		public Boolean EnablePushCollision { get; private set; }
+		public bool EnablePushCollision { get; private set; }
 
-		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+		public GameObject
+			ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
 
-		public List<GameObject> ChildObjects { get; private set; } // Child Objects
-
-		private readonly List<GameObject> ChildrenBuffer;
+		public List<GameObject> ChildObjects { get; } // Child Objects
 
 		public Effect Effect { get; private set; } //Shader of Object
 		public bool CullingEnabled { get; private set; } = true;
-		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
+
+		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene>
+			EffectParams { get; private set; } //Params for shader
+
 		public bool ApplySceneLight { get; private set; } = true;
-		public String DebugName { get; private set; } // Used for debugging.
+		public string DebugName { get; private set; } // Used for debugging.
 
 		public ChildProperties ChildProperties { get; private set; } = ChildProperties.All;
 
@@ -51,28 +75,27 @@ namespace Singularity
 		{
 			get
 			{
-				return this.ScaleMatrix *
-				       this.RotationMatrix *
-				       this.TranslationMatrix;
+				return ScaleMatrix *
+				       RotationMatrix *
+				       TranslationMatrix;
 			}
-
 		}
 
 		public Matrix TranslationMatrix
 		{
-			get { return Matrix.CreateTranslation(this.GetHierarchyPosition()); }
+			get { return Matrix.CreateTranslation(GetHierarchyPosition()); }
 		}
 
 		public Matrix ScaleMatrix
 		{
-			get { return Matrix.CreateScale(this.GetHierarchyScale()); }
+			get { return Matrix.CreateScale(GetHierarchyScale()); }
 		}
 
 		public Matrix RotationMatrix
 		{
 			get
 			{
-				var rotation = this.GetHierarchyRotation();
+				var rotation = GetHierarchyRotation();
 
 				return Matrix.CreateRotationX(rotation.Z)
 				       * Matrix.CreateRotationY(rotation.Y)
@@ -87,29 +110,111 @@ namespace Singularity
 
 		public float ModelRadius { get; private set; }
 
-		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
-
-		public CustomData CustomData { get; private set; }
+		public CustomData CustomData { get; }
 
 		/// <summary>
-		/// Initializing Constructor
-		/// Sets default values for all properties
+		///     Return the multiplies <see cref="Scale" /> from this <see cref="GameObject" /> and the <see cref="ParentObject" />
+		///     <seealso cref="GetHierarchyScale()" />
 		/// </summary>
-		protected GameObject()
+		/// <returns></returns>
+		public Vector3 GetHierarchyScale()
 		{
-			// Setting default values for all members
-			this.Position            = new Vector3();
-			this.Rotation            = new Vector3();
-			this.Scale               = Vector3.One;
-			this.Inertia             = new Vector3();
-			this.EnablePushCollision = true;
+			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.Scale)) return Scale;
+			return Scale * ParentObject.GetHierarchyScale();
+		}
 
-			this.ParentObject = null;
-			this.ChildObjects = new List<GameObject>();
-			this.ChildrenBuffer = new List<GameObject>();
+		/// <summary>
+		///     Return the added <see cref="Position" /> from this <see cref="GameObject" /> and the <see cref="ParentObject" />
+		///     <seealso cref="GetHierarchyPosition()" />
+		/// </summary>
+		/// <returns></returns>
+		public Vector3 GetHierarchyPosition()
+		{
+			if (ParentObject == null) return Position;
+			if (ChildProperties.HasFlag(ChildProperties.TranslationRotation))
+				return Vector3.Transform(Position, ParentObject.RotationMatrix) + ParentObject.GetHierarchyPosition();
+			if (ChildProperties.HasFlag(ChildProperties.Translation)) return Position + ParentObject.GetHierarchyPosition();
 
-			this.ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
-			this.CustomData = new CustomData();
+			return Position;
+		}
+
+
+		public Vector3 GetHierarchyRotation()
+		{
+			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.Rotation)) return Rotation;
+			return Rotation + ParentObject.GetHierarchyRotation();
+		}
+
+		public GameObjectDrawMode GetHierarchyDrawMode()
+		{
+			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.DrawMode)) return DrawMode;
+			return ParentObject.GetHierarchyDrawMode();
+		}
+
+
+		/// <summary>
+		///     Gets all <see cref="Action" />scripts set to this <see cref="GameObject" />
+		/// </summary>
+		/// <returns></returns>
+		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
+		{
+			return ObjectScripts;
+		}
+
+		// By https://pastebin.com/47vwJWSc
+
+		/// <summary>
+		///     Calculate <seealso cref="BoundingBox" /> for this
+		/// </summary>
+		/// <returns></returns>
+		public BoundingBox GetBoundingBox()
+		{
+			return GetBoundingBox(
+				Model,
+				RotationMatrix * ScaleMatrix
+			);
+		}
+
+		/// <summary>
+		///     Calculate <seealso cref="BoundingBox" /> for <seealso cref="Microsoft.Xna.Framework.Graphics.Model" />
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="worldTransformation"></param>
+		/// <returns></returns>
+		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
+		{
+			if (model == null) return new BoundingBox();
+
+			// Initialize minimum and maximum corners of the bounding box to max and min values
+			var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+			var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+			// For each mesh of the model
+			foreach (var mesh in model.Meshes)
+			foreach (var meshPart in mesh.MeshParts)
+			{
+				// Vertex buffer parameters
+				var vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+				var vertexBufferSize = meshPart.NumVertices * vertexStride;
+
+				// Get vertex data as float
+				var vertexData = new float[vertexBufferSize / sizeof(float)];
+				meshPart.VertexBuffer.GetData(vertexData);
+
+				// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
+				for (var i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
+				{
+					var transformedPosition =
+						Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
+							worldTransformation);
+
+					min = Vector3.Min(min, transformedPosition);
+					max = Vector3.Max(max, transformedPosition);
+				}
+			}
+
+			// Create and return bounding box
+			return new BoundingBox(min, max);
 		}
 
 		#region Builder Pattern
@@ -117,45 +222,45 @@ namespace Singularity
 		#region SetModel
 
 		/// <summary>
-		/// Sets the <see cref="Model"/> for the <see cref="GameObject"/>
+		///     Sets the <see cref="Model" /> for the <see cref="GameObject" />
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
 		public GameObject SetModel(Model model)
 		{
-			this.Model = model;
+			Model = model;
 
-			var center = this.GetHierarchyPosition();
+			var center = GetHierarchyPosition();
 
 			// now get max(r + r(v))
-			float rm = 0.0f;
-			foreach (var mesh in this.Model.Meshes)
+			var rm = 0.0f;
+			foreach (var mesh in Model.Meshes)
 			{
 				// get distance
-				var bs   = mesh.BoundingSphere;
+				var bs = mesh.BoundingSphere;
 				var dist = (bs.Center - center).Length() + bs.Radius;
 
 				if (dist > rm) rm = dist;
 			}
 
-			this.ModelRadius = rm;
+			ModelRadius = rm;
 
 			if (this is ICollidable || this is ICollider
 			) // everything that has something to do with collisions gets a sphere at the beginning
-				this.SetCollision(new SphereCollision(this.ModelRadius));
+				SetCollision(new SphereCollision(ModelRadius));
 			return this;
 		}
 
 		/// <summary>
-		/// Sets the <see cref="Model"/> for the <see cref="GameObject"/>
+		///     Sets the <see cref="Model" /> for the <see cref="GameObject" />
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public GameObject SetModel(String model)
+		public GameObject SetModel(string model)
 		{
-			this.SetTexture(ModelManager.GetTexture(model));
+			SetTexture(ModelManager.GetTexture(model));
 
-			return this.SetModel(ModelManager.GetModel(model));
+			return SetModel(ModelManager.GetModel(model));
 		}
 
 		#endregion
@@ -163,43 +268,48 @@ namespace Singularity
 		#region SetPosition
 
 		/// <summary>
-		/// Sets the <see cref="Position"/> by calling <seealso cref="SetPosition(Vector3)"/> with the specified values.
-		/// The Z part of the <see cref="Vector3"/> will be 0.
+		///     Sets the <see cref="Position" /> by calling <seealso cref="SetPosition(Vector3)" /> with the specified values.
+		///     The Z part of the <see cref="Vector3" /> will be 0.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public GameObject SetPosition(float x, float y) => SetPosition(new Vector3(x, y, 0));
+		public GameObject SetPosition(float x, float y)
+		{
+			return SetPosition(new Vector3(x, y, 0));
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Position"/> by calling <seealso cref="SetPosition(Vector3)"/> with the specified values
+		///     Sets the <see cref="Position" /> by calling <seealso cref="SetPosition(Vector3)" /> with the specified values
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject SetPosition(float x, float y, float z) => SetPosition(new Vector3(x, y, z));
+		public GameObject SetPosition(float x, float y, float z)
+		{
+			return SetPosition(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Position"/>
+		///     Sets the <see cref="Position" />
 		/// </summary>
 		/// <param name="position"></param>
 		/// <returns></returns>
 		public GameObject SetPosition(Vector3 position)
 		{
-
-			if (this.ParentObject != null && this.ChildProperties.HasFlag(ChildProperties.KeepPositon))
+			if (ParentObject != null && ChildProperties.HasFlag(ChildProperties.KeepPositon))
 			{
-				Matrix mat = Matrix.Identity;
+				var mat = Matrix.Identity;
 
-				if (this.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.ParentObject.RotationMatrix;
-				if (this.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.ParentObject.TranslationMatrix;
-				
-				this.Position = Vector3.Transform(position, Matrix.Invert(mat));
+				if (ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= ParentObject.RotationMatrix;
+				if (ChildProperties.HasFlag(ChildProperties.Translation)) mat *= ParentObject.TranslationMatrix;
+
+				Position = Vector3.Transform(position, Matrix.Invert(mat));
 			}
 			else
 			{
-				this.Position = position;
+				Position = position;
 			}
 
 			return this;
@@ -210,94 +320,112 @@ namespace Singularity
 		#region AddPosition
 
 		/// <summary>
-		/// Modifies the <see cref="Position"/> by calling <seealso cref="AddPosition(Vector3)"/> with the specified values.
-		/// The Z part of the <see cref="Vector3"/> will be 0.
+		///     Modifies the <see cref="Position" /> by calling <seealso cref="AddPosition(Vector3)" /> with the specified values.
+		///     The Z part of the <see cref="Vector3" /> will be 0.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public GameObject AddPosition(float x, float y) => AddPosition(new Vector3(x, y, 0));
+		public GameObject AddPosition(float x, float y)
+		{
+			return AddPosition(new Vector3(x, y, 0));
+		}
 
 		/// <summary>
-		/// Modifies the <see cref="Position"/> by calling <seealso cref="AddPosition(Vector3)"/> with the specified values
+		///     Modifies the <see cref="Position" /> by calling <seealso cref="AddPosition(Vector3)" /> with the specified values
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject AddPosition(float x, float y, float z) => AddPosition(new Vector3(x, y, z));
+		public GameObject AddPosition(float x, float y, float z)
+		{
+			return AddPosition(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Modifies the <see cref="Position"/> by adding the Vectors
+		///     Modifies the <see cref="Position" /> by adding the Vectors
 		/// </summary>
 		/// <param name="position"></param>
 		/// <returns></returns>
 		public GameObject AddPosition(Vector3 position)
 		{
-			this.Position += position;
+			Position += position;
 			return this;
 		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddPosition(float x, float y, GameTime gameTime) =>
-			AddPosition(new Vector3(x, y, 0), gameTime);
+		public GameObject AddPosition(float x, float y, GameTime gameTime)
+		{
+			return AddPosition(new Vector3(x, y, 0), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddPosition(float x, float y, float z, GameTime gameTime) =>
-			AddPosition(new Vector3(x, y, z), gameTime);
+		public GameObject AddPosition(float x, float y, float z, GameTime gameTime)
+		{
+			return AddPosition(new Vector3(x, y, z), gameTime);
+		}
 
 		/// <summary>
-		/// Modifies the <see cref="Position"/> by adding the Vectors multiplied by the deltaTime
+		///     Modifies the <see cref="Position" /> by adding the Vectors multiplied by the deltaTime
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddPosition(Vector3 position, GameTime gameTime) =>
-			AddPosition(position * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		public GameObject AddPosition(Vector3 position, GameTime gameTime)
+		{
+			return AddPosition(position * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		}
 
 		#endregion
 
 		#region SetRotation
 
 		/// <summary>
-		/// Sets the <see cref="Rotation"/> by calling <seealso cref="SetPosition(Vector3)"/>
-		/// The Z value of the <see cref="Vector3"/> will be 0.
+		///     Sets the <see cref="Rotation" /> by calling <seealso cref="SetPosition(Vector3)" />
+		///     The Z value of the <see cref="Vector3" /> will be 0.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public GameObject SetRotation(float x, float y) => SetRotation(new Vector3(x, y, 0));
+		public GameObject SetRotation(float x, float y)
+		{
+			return SetRotation(new Vector3(x, y, 0));
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Rotation"/> by calling <seealso cref="SetPosition(Vector3)"/>
+		///     Sets the <see cref="Rotation" /> by calling <seealso cref="SetPosition(Vector3)" />
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject SetRotation(float x, float y, float z) => SetRotation(new Vector3(x, y, z));
+		public GameObject SetRotation(float x, float y, float z)
+		{
+			return SetRotation(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Rotation"/>
+		///     Sets the <see cref="Rotation" />
 		/// </summary>
 		/// <param name="rotation"></param>
 		/// <returns></returns>
 		public GameObject SetRotation(Vector3 rotation)
 		{
-			this.Rotation = rotation;
+			Rotation = rotation;
 			return this;
 		}
 
@@ -306,93 +434,111 @@ namespace Singularity
 		#region AddRotation
 
 		/// <summary>
-		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
-		/// The Z value of the <see cref="Vector3"/> will be 0.
+		///     Modifies the <see cref="Rotation" /> by calling <seealso cref="AddRotation(Vector3)" />
+		///     The Z value of the <see cref="Vector3" /> will be 0.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public GameObject AddRotation(float x, float y) => AddRotation(new Vector3(x, y, 0));
+		public GameObject AddRotation(float x, float y)
+		{
+			return AddRotation(new Vector3(x, y, 0));
+		}
 
 		/// <summary>
-		/// Modifies the <see cref="Rotation"/> by calling <seealso cref="AddRotation(Vector3)"/>
+		///     Modifies the <see cref="Rotation" /> by calling <seealso cref="AddRotation(Vector3)" />
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject AddRotation(float x, float y, float z) => AddRotation(new Vector3(x, y, z));
+		public GameObject AddRotation(float x, float y, float z)
+		{
+			return AddRotation(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Modifies the <see cref="Rotation"/> by adding both <see cref="Vector3"/>
+		///     Modifies the <see cref="Rotation" /> by adding both <see cref="Vector3" />
 		/// </summary>
 		/// <param name="rotation"></param>
 		/// <returns></returns>
 		public GameObject AddRotation(Vector3 rotation)
 		{
-			this.Rotation += rotation;
+			Rotation += rotation;
 			return this;
 		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddRotation(float x, float y, GameTime gameTime) =>
-			AddRotation(new Vector3(x, y, 0), gameTime);
+		public GameObject AddRotation(float x, float y, GameTime gameTime)
+		{
+			return AddRotation(new Vector3(x, y, 0), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddRotation(float x, float y, float z, GameTime gameTime) =>
-			AddRotation(new Vector3(x, y, z), gameTime);
+		public GameObject AddRotation(float x, float y, float z, GameTime gameTime)
+		{
+			return AddRotation(new Vector3(x, y, z), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="rotation"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddRotation(Vector3 rotation, GameTime gameTime) =>
-			AddRotation(rotation * (float)gameTime.ElapsedGameTime.TotalSeconds);
+		public GameObject AddRotation(Vector3 rotation, GameTime gameTime)
+		{
+			return AddRotation(rotation * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		}
 
 		#endregion
 
 		#region SetScale
 
 		/// <summary>
-		/// Sets the <see cref="Scale"/> by calling <seealso cref="SetScale(Vector3)"/>
-		/// All dimensions are set to the parameter.
+		///     Sets the <see cref="Scale" /> by calling <seealso cref="SetScale(Vector3)" />
+		///     All dimensions are set to the parameter.
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <returns></returns>
-		public GameObject SetScale(float scale) => SetScale(scale, scale, scale);
+		public GameObject SetScale(float scale)
+		{
+			return SetScale(scale, scale, scale);
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Scale"/> by calling <seealso cref="SetScale(Vector3)"/>
+		///     Sets the <see cref="Scale" /> by calling <seealso cref="SetScale(Vector3)" />
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject SetScale(float x, float y, float z) => SetScale(new Vector3(x, y, z));
+		public GameObject SetScale(float x, float y, float z)
+		{
+			return SetScale(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Sets the <see cref="Scale"/>
+		///     Sets the <see cref="Scale" />
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <returns></returns>
 		public GameObject SetScale(Vector3 scale)
 		{
-			this.Scale = scale;
+			Scale = scale;
 			return this;
 		}
 
@@ -401,112 +547,131 @@ namespace Singularity
 		#region MultiplyScale
 
 		/// <summary>
-		/// Multiplies <see cref="Scale"/> by calling <seealso cref="MultiplyScale(Vector3)"/>
+		///     Multiplies <see cref="Scale" /> by calling <seealso cref="MultiplyScale(Vector3)" />
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject MultiplyScale(float x, float y, float z) => MultiplyScale(new Vector3(x, y, z));
+		public GameObject MultiplyScale(float x, float y, float z)
+		{
+			return MultiplyScale(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Multiplies <see cref="Scale"/> with <paramref name="scale"/>
+		///     Multiplies <see cref="Scale" /> with <paramref name="scale" />
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale)
 		{
-			this.Scale *= scale;
+			Scale *= scale;
 			return this;
 		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject MultiplyScale(float x, float y, float z, GameTime gameTime) =>
-			MultiplyScale(new Vector3(x, y, z), gameTime);
+		public GameObject MultiplyScale(float x, float y, float z, GameTime gameTime)
+		{
+			return MultiplyScale(new Vector3(x, y, z), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime) =>
-			MultiplyScale(scale * (float)gameTime.ElapsedGameTime.TotalSeconds);
+		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime)
+		{
+			return MultiplyScale(scale * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		}
 
 		#endregion
 
 		#region AddScale
 
 		/// <summary>
-		/// Modifies <see cref="Scale"/> by calling <seealso cref="AddScale(Vector3)"/>
-		/// All dimension of the <see cref="Vector3"/> will be set to <paramref name="scale"/>
+		///     Modifies <see cref="Scale" /> by calling <seealso cref="AddScale(Vector3)" />
+		///     All dimension of the <see cref="Vector3" /> will be set to <paramref name="scale" />
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <returns></returns>
-		public GameObject AddScale(float scale) => AddScale(new Vector3(scale));
+		public GameObject AddScale(float scale)
+		{
+			return AddScale(new Vector3(scale));
+		}
 
 		/// <summary>
-		/// Modifies <see cref="Scale"/> by calling <seealso cref="AddScale(Vector3)"/>
+		///     Modifies <see cref="Scale" /> by calling <seealso cref="AddScale(Vector3)" />
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public GameObject AddScale(float x, float y, float z) => AddScale(new Vector3(x, y, z));
+		public GameObject AddScale(float x, float y, float z)
+		{
+			return AddScale(new Vector3(x, y, z));
+		}
 
 		/// <summary>
-		/// Adds <paramref name="scale"/> to the <see cref="Scale"/>
+		///     Adds <paramref name="scale" /> to the <see cref="Scale" />
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <returns></returns>
 		public GameObject AddScale(Vector3 scale)
 		{
-			this.Scale += scale;
+			Scale += scale;
 			return this;
 		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddScale(float scale, GameTime gameTime) =>
-			AddScale(new Vector3(scale), gameTime);
+		public GameObject AddScale(float scale, GameTime gameTime)
+		{
+			return AddScale(new Vector3(scale), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddScale(float x, float y, float z, GameTime gameTime) =>
-			AddScale(new Vector3(x, y, z), gameTime);
+		public GameObject AddScale(float x, float y, float z, GameTime gameTime)
+		{
+			return AddScale(new Vector3(x, y, z), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="scale"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddScale(Vector3 scale, GameTime gameTime) =>
-			AddScale(scale * (float)gameTime.ElapsedGameTime.TotalSeconds);
+		public GameObject AddScale(Vector3 scale, GameTime gameTime)
+		{
+			return AddScale(scale * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		}
 
 		#endregion
 
 		#region SetParent
 
 		/// <summary>
-		/// Sets the <see cref="ParentObject"/>
+		///     Sets the <see cref="ParentObject" />
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <returns></returns>
@@ -522,14 +687,14 @@ namespace Singularity
 		#region RemoveParent
 
 		/// <summary>
-		/// Removes the <see cref="ParentObject"/>
+		///     Removes the <see cref="ParentObject" />
 		/// </summary>
 		/// <returns></returns>
 		public GameObject RemoveParent()
 		{
-			if (this.ParentObject == null) return this;
+			if (ParentObject == null) return this;
 
-			this.ParentObject.RemoveChild(this);
+			ParentObject.RemoveChild(this);
 
 			return this;
 		}
@@ -539,13 +704,13 @@ namespace Singularity
 		#region AddScript
 
 		/// <summary>
-		/// Adds a <see cref="Action"/> to the Scripts, which will be executes after <seealso cref="Update"/> is called.
+		///     Adds a <see cref="Action" /> to the Scripts, which will be executes after <seealso cref="Update" /> is called.
 		/// </summary>
 		/// <param name="script"></param>
 		/// <returns></returns>
 		public GameObject AddScript(Action<GameScene, GameObject, GameTime> script)
 		{
-			this.ObjectScripts.Add(script);
+			ObjectScripts.Add(script);
 
 			return this;
 		}
@@ -558,7 +723,7 @@ namespace Singularity
 		{
 			Debug.Assert(collEvent != null);
 
-			this.CollisionEvent += (s, e) => collEvent(e);
+			CollisionEvent += (s, e) => collEvent(e);
 			return this;
 		}
 
@@ -567,32 +732,22 @@ namespace Singularity
 		#region AddChild
 
 		/// <summary>
-		/// Adds a Childobject which will move relative to this <see cref="GameObject"/>
+		///     Adds a Childobject which will move relative to this <see cref="GameObject" />
 		/// </summary>
 		/// <param name="child"></param>
 		/// <returns></returns>
 		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
 			child.SetChildProperties(properties);
-			if (this.ChildrenBuffer.Contains(child) || this.ChildObjects.Contains(child))
+			if (ChildrenBuffer.Contains(child) || ChildObjects.Contains(child))
 				return this;
 
-			this.ChildrenBuffer.Add(child);
+			ChildrenBuffer.Add(child);
 
 			child.ParentObject = this;
 
-			if (properties.HasFlag(ChildProperties.KeepPositon))
-			{
-				//Matrix mat = Matrix.Identity;
+			if (properties.HasFlag(ChildProperties.KeepPositon)) child.SetPosition(child.Position);
 
-				//if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
-				//if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
-
-				//child.SetPosition(Vector3.Transform(child.Position, Matrix.Invert(mat)));
-
-				child.SetPosition(child.Position);
-			}
-			
 			return this;
 		}
 
@@ -601,23 +756,23 @@ namespace Singularity
 		#region RemoveChild
 
 		/// <summary>
-		/// Removes a Childobject
+		///     Removes a Childobject
 		/// </summary>
 		/// <param name="child"></param>
 		/// <returns></returns>
 		public GameObject RemoveChild(GameObject child)
 		{
-			if (this.ChildObjects.Contains(child))
+			if (ChildObjects.Contains(child))
 			{
-				this.ChildObjects.Remove(child);
+				ChildObjects.Remove(child);
 				child.ParentObject = null;
 
 				if (child.ChildProperties.HasFlag(ChildProperties.KeepPositon))
 				{
-					Matrix mat = Matrix.Identity;
+					var mat = Matrix.Identity;
 
-					if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
-					if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
+					if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= RotationMatrix;
+					if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= TranslationMatrix;
 
 
 					child.SetPosition(Vector3.Transform(child.Position, mat));
@@ -625,9 +780,9 @@ namespace Singularity
 
 				child.SetChildProperties(ChildProperties.All);
 			}
+
 			return this;
 		}
-
 
 		#endregion
 
@@ -635,7 +790,7 @@ namespace Singularity
 
 		public GameObject SetChildProperties(ChildProperties properties)
 		{
-			this.ChildProperties = properties;
+			ChildProperties = properties;
 
 			return this;
 		}
@@ -645,13 +800,13 @@ namespace Singularity
 		#region SetDebugName
 
 		/// <summary>
-		/// Sets the <see cref="DebugName"/> for testing.
+		///     Sets the <see cref="DebugName" /> for testing.
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public GameObject SetDebugName(String name)
+		public GameObject SetDebugName(string name)
 		{
-			this.DebugName = name;
+			DebugName = name;
 			return this;
 		}
 
@@ -661,8 +816,8 @@ namespace Singularity
 
 		public GameObject SetCollision(Collision collision)
 		{
-			this.Collision = (Collision) collision.Clone();
-			this.Collision.SetParent(this);
+			Collision = (Collision) collision.Clone();
+			Collision.SetParent(this);
 			return this;
 		}
 
@@ -670,20 +825,22 @@ namespace Singularity
 
 		#region SetInertia
 
-		public GameObject SetInertia(float x, float y) => SetInertia(x, y, 0);
+		public GameObject SetInertia(float x, float y)
+		{
+			return SetInertia(x, y, 0);
+		}
 
-		public GameObject SetInertia(float x, float y, float z) => SetInertia(new Vector3(x, y, z));
+		public GameObject SetInertia(float x, float y, float z)
+		{
+			return SetInertia(new Vector3(x, y, z));
+		}
 
 		public GameObject SetInertia(Vector3 inertia)
 		{
-			if (!(this is IInertia))
-			{
-				// give out a warning, that inertia should not be used
-				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
-			}
+			if (!(this is IInertia)) Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
 
 
-			this.Inertia = inertia;
+			Inertia = inertia;
 			return this;
 		}
 
@@ -691,59 +848,67 @@ namespace Singularity
 
 		#region AddInertia
 
-		public GameObject AddInertia(float x, float y) => AddInertia(x, y, 0);
+		public GameObject AddInertia(float x, float y)
+		{
+			return AddInertia(x, y, 0);
+		}
 
-		public GameObject AddInertia(float x, float y, float z) => AddInertia(new Vector3(x, y, z));
+		public GameObject AddInertia(float x, float y, float z)
+		{
+			return AddInertia(new Vector3(x, y, z));
+		}
 
 		public GameObject AddInertia(Vector3 inertia)
 		{
-			if (!(this is IInertia))
-			{
-				// give out a warning, that inertia should not be used
-				Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
-			}
+			if (!(this is IInertia)) Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
 
-			this.Inertia += inertia;
+			Inertia += inertia;
 			return this;
 		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddInertia(float x, float y, GameTime gameTime) =>
-			AddInertia(new Vector3(x, y, 0), gameTime);
+		public GameObject AddInertia(float x, float y, GameTime gameTime)
+		{
+			return AddInertia(new Vector3(x, y, 0), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddInertia(float x, float y, float z, GameTime gameTime) =>
-			AddInertia(new Vector3(x, y, z), gameTime);
+		public GameObject AddInertia(float x, float y, float z, GameTime gameTime)
+		{
+			return AddInertia(new Vector3(x, y, z), gameTime);
+		}
 
 		/// <summary>
-		/// TODO
+		///     TODO
 		/// </summary>
 		/// <param name="inertia"></param>
 		/// <param name="gameTime"></param>
 		/// <returns></returns>
-		public GameObject AddInertia(Vector3 inertia, GameTime gameTime) =>
-			AddInertia(inertia * (float)gameTime.ElapsedGameTime.TotalSeconds);
+		public GameObject AddInertia(Vector3 inertia, GameTime gameTime)
+		{
+			return AddInertia(inertia * (float) gameTime.ElapsedGameTime.TotalSeconds);
+		}
 
 		#endregion
 
 		#region SetEnableCollision
 
-		public GameObject SetEnableCollision(Boolean enable)
+		public GameObject SetEnableCollision(bool enable)
 		{
-			this.EnablePushCollision = enable;
+			EnablePushCollision = enable;
 
 			return this;
 		}
@@ -754,8 +919,8 @@ namespace Singularity
 
 		public GameObject SetEffect(Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams)
 		{
-			this.Effect = effect;
-			this.EffectParams = effectParams;
+			Effect = effect;
+			EffectParams = effectParams;
 			return this;
 		}
 
@@ -765,7 +930,7 @@ namespace Singularity
 
 		public GameObject SetTexture(Texture2D texture)
 		{
-			this.Texture = texture;
+			Texture = texture;
 			return this;
 		}
 
@@ -775,7 +940,7 @@ namespace Singularity
 
 		public GameObject SetSceneLight(bool set)
 		{
-			this.ApplySceneLight = set;
+			ApplySceneLight = set;
 			return this;
 		}
 
@@ -785,7 +950,7 @@ namespace Singularity
 
 		public GameObject SetCulling(bool enabled)
 		{
-			this.CullingEnabled = enabled;
+			CullingEnabled = enabled;
 			return this;
 		}
 
@@ -795,7 +960,7 @@ namespace Singularity
 
 		public GameObject SetDrawMode(GameObjectDrawMode drawMode)
 		{
-			this.DrawMode = drawMode;
+			DrawMode = drawMode;
 			return this;
 		}
 
@@ -803,147 +968,40 @@ namespace Singularity
 
 		#endregion
 
-		/// <summary>
-		/// Return the multiplies <see cref="Scale"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyScale()"/>
-		/// </summary>
-		/// <returns></returns>
-		public Vector3 GetHierarchyScale()
-		{
-			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Scale)) return this.Scale;
-			return this.Scale * this.ParentObject.GetHierarchyScale();
-		}
-
-		/// <summary>
-		/// Return the added <see cref="Position"/> from this <see cref="GameObject"/> and the <see cref="ParentObject"/> <seealso cref="GetHierarchyPosition()"/>
-		/// </summary>
-		/// <returns></returns>
-		public Vector3 GetHierarchyPosition()
-		{
-			if (this.ParentObject == null) return this.Position;
-			else if (this.ChildProperties.HasFlag(ChildProperties.TranslationRotation)) return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
-			else if (this.ChildProperties.HasFlag(ChildProperties.Translation)) return this.Position + this.ParentObject.GetHierarchyPosition();
-
-			return this.Position;
-		}
-
-
-		public Vector3 GetHierarchyRotation()
-		{
-			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Rotation)) return this.Rotation;
-			return this.Rotation + this.ParentObject.GetHierarchyRotation();
-		}
-		public GameObjectDrawMode GetHierarchyDrawMode()
-		{
-			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.DrawMode)) return this.DrawMode;
-			return this.ParentObject.GetHierarchyDrawMode();
-		}
-
-
-		/// <summary>
-		/// Gets all <see cref="Action"/>scripts set to this <see cref="GameObject"/>
-		/// </summary>
-		/// <returns></returns>
-		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
-		{
-			return this.ObjectScripts;
-		}
-
-		// By https://pastebin.com/47vwJWSc
-
-		/// <summary>
-		/// Calculate <seealso cref="BoundingBox"/> for this 
-		/// </summary>
-		/// <returns></returns>
-		public BoundingBox GetBoundingBox()
-		{
-			return GetBoundingBox(
-			                      this.Model,
-			                      this.RotationMatrix * this.ScaleMatrix
-			                     );
-		}
-
-		/// <summary>
-		/// Calculate <seealso cref="BoundingBox"/> for <seealso cref="Microsoft.Xna.Framework.Graphics.Model"/>
-		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="worldTransformation"></param>
-		/// <returns></returns>
-		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
-		{
-			if (model == null) return new BoundingBox();
-
-			// Initialize minimum and maximum corners of the bounding box to max and min values
-			Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-			Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-
-			// For each mesh of the model
-			foreach (ModelMesh mesh in model.Meshes)
-			{
-				foreach (ModelMeshPart meshPart in mesh.MeshParts)
-				{
-					// Vertex buffer parameters
-					int vertexStride     = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
-					int vertexBufferSize = meshPart.NumVertices * vertexStride;
-
-					// Get vertex data as float
-					float[] vertexData = new float[vertexBufferSize / sizeof(float)];
-					meshPart.VertexBuffer.GetData<float>(vertexData);
-
-					// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
-					for (int i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
-					{
-						Vector3 transformedPosition =
-							Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
-							                  worldTransformation);
-
-						min = Vector3.Min(min, transformedPosition);
-						max = Vector3.Max(max, transformedPosition);
-					}
-				}
-			}
-
-			// Create and return bounding box
-			return new BoundingBox(min, max);
-		}
-
 		#region Abstract Methods
 
 		/// <summary>
-		/// Calls <seealso cref="Update"/>, and calls back to the scene. 
-		/// After that all <see cref="ChildObjects"/> will be updated.
+		///     Calls <seealso cref="Update" />, and calls back to the scene.
+		///     After that all <see cref="ChildObjects" /> will be updated.
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="gameTime"></param>
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
 			// get a copy of the position
-			var position = this.GetHierarchyPosition();
+			var position = GetHierarchyPosition();
 
-			GameObject[] cbArray = this.ChildrenBuffer.ToArray();
-			this.ChildrenBuffer.Clear();
+			var cbArray = ChildrenBuffer.ToArray();
+			ChildrenBuffer.Clear();
 
 			Update(scene, gameTime);
 
-			this.ChildObjects.AddRange(this.ChildrenBuffer);
-			this.ChildrenBuffer.Clear();
+			ChildObjects.AddRange(ChildrenBuffer);
+			ChildrenBuffer.Clear();
 
 			// add inertia.
 			if (this is IInertia)
-				this.Position += this.Inertia * (float) gameTime.ElapsedGameTime.TotalSeconds;
+				Position += Inertia * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
 			// execute scripts
-			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
+			foreach (var actionScript in ObjectScripts) actionScript(scene, this, gameTime);
 
 
 			// check if we are even able to stay here.
-			scene.HandleCollision(this, this.GetHierarchyPosition());
+			scene.HandleCollision(this, GetHierarchyPosition());
 
 			// did we move?
-			if (this.GetHierarchyPosition() != position)
-			{
-				// we have to talk to the scene about the movement. 
-				scene.MoveOctree(this, position);
-			}
+			if (GetHierarchyPosition() != position) scene.MoveOctree(this, position);
 
 			// if we are allowed to move the camera, do it
 
@@ -952,23 +1010,22 @@ namespace Singularity
 
 			scene.CameraLocked = true;
 
-			foreach (GameObject obj in this.ChildObjects.ToArray())
+			foreach (var obj in ChildObjects.ToArray())
 				obj.UpdateLogic(scene, gameTime);
 
-			this.ChildObjects.AddRange(cbArray);
-
+			ChildObjects.AddRange(cbArray);
 		}
 
 		/// <summary>
-		/// Updates the <see cref="GameObject"/>
+		///     Updates the <see cref="GameObject" />
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="gameTime"></param>
 		public abstract void Update(GameScene scene, GameTime gameTime);
 
 		/// <summary>
-		/// Calls <seealso cref="Draw"/>
-		/// After that draws all <see cref="ChildObjects"/>
+		///     Calls <seealso cref="Draw" />
+		///     After that draws all <see cref="ChildObjects" />
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
@@ -980,13 +1037,14 @@ namespace Singularity
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, Matrix view, Matrix projection,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
 				Draw(scene, view, projection);
 
-			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) &&
+			    GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				Draw2D(spriteBatch);
 
-			foreach (GameObject obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
+			foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
 		}
 
 		public void DrawLogicWithEffect(
@@ -994,38 +1052,41 @@ namespace Singularity
 			SpriteBatch spriteBatch,
 			Effect effect,
 			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams,
-			String technique = null,
+			string technique = null,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
 				DrawWithSpecificEffect(scene, effect, effectParams, technique);
 
-			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) &&
+			    GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				Draw2D(spriteBatch);
 
-			foreach (GameObject obj in this.ChildObjects) obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
+			foreach (var obj in ChildObjects)
+				obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
 
 		public virtual void Draw2D(SpriteBatch spriteBatch)
-		{}
+		{
+		}
 
 		/// <summary>
-		/// Checks if there is a <see cref="Model"/> to draw and draws it.
+		///     Checks if there is a <see cref="Model" /> to draw and draws it.
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public virtual void Draw(GameScene scene, Matrix view, Matrix projection, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams = null)
+		public virtual void Draw(GameScene scene, Matrix view, Matrix projection,
+			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams = null)
 		{
-			if (this.Model == null) return;
+			if (Model == null) return;
 
 
-			if (this.Effect == null)
+			if (Effect == null)
 			{
-
 				Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> BasicEffectParams =
-					(GameObject obj, Effect effect, Matrix[] transformationMatrices, ModelMesh mesh, GameScene s) =>
+					(obj, effect, transformationMatrices, mesh, s) =>
 					{
-						BasicEffect be = (BasicEffect)effect;
+						var be = (BasicEffect) effect;
 						be.View = view;
 						be.World = transformationMatrices[mesh.ParentBone.Index]
 						           * obj.ScaleMatrix
@@ -1036,26 +1097,27 @@ namespace Singularity
 						effectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
 					};
 
-				DrawWithSpecificEffect(scene, this.Model.Meshes[0].Effects[0], BasicEffectParams, null);
+				DrawWithSpecificEffect(scene, Model.Meshes[0].Effects[0], BasicEffectParams, null);
 			}
 			else
 			{
-				DrawWithSpecificEffect(scene, this.Effect, effectParams, null);
+				DrawWithSpecificEffect(scene, Effect, effectParams, null);
 			}
 		}
 
 		/// <summary>
-		/// Checks if there is a <see cref="Model"/> to draw and draws it with specified Effect.
+		///     Checks if there is a <see cref="Model" /> to draw and draws it with specified Effect.
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public virtual void DrawWithSpecificEffect(GameScene scene, Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
+		public virtual void DrawWithSpecificEffect(GameScene scene, Effect effect,
+			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
 		{
-			if (this.Model == null) return; // No model means it can't be rendered.
+			if (Model == null) return; // No model means it can't be rendered.
 
 			// copy the scale of bones from the model to apply it later.
-			var transformMatrices = new Matrix[this.Model.Bones.Count];
-			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
+			var transformMatrices = new Matrix[Model.Bones.Count];
+			Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
 
 			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
 
@@ -1078,17 +1140,16 @@ namespace Singularity
 			if (technique == null)
 			{
 				foreach (var pass in effect.CurrentTechnique.Passes)
+				foreach (var mesh in Model.Meshes)
 				{
-					foreach (var mesh in Model.Meshes)
+					foreach (var part in mesh.MeshParts)
 					{
-						foreach (var part in mesh.MeshParts)
-						{
-							part.Effect = effect;
-							effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
-							//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
-						}
-						mesh.Draw();
+						part.Effect = effect;
+						effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
+						//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
 					}
+
+					mesh.Draw();
 				}
 			}
 			else
@@ -1096,20 +1157,19 @@ namespace Singularity
 				effect.CurrentTechnique = effect.Techniques[technique];
 
 				foreach (var pass in effect.CurrentTechnique.Passes)
+				foreach (var mesh in Model.Meshes)
 				{
-					foreach (var mesh in Model.Meshes)
+					foreach (var part in mesh.MeshParts)
 					{
-						foreach (var part in mesh.MeshParts)
-						{
-							part.Effect = effect;
-							effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
-							//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
-						}
-						mesh.Draw();
+						part.Effect = effect;
+						effectParams.Invoke(this, effect, transformMatrices, mesh, scene);
+						//if (applySceneLighting) scene.AddLightningToEffect(part.Effect);
 					}
+
+					mesh.Draw();
 				}
 			}
-				
+
 
 			if (!CullingEnabled)
 				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
@@ -1117,23 +1177,14 @@ namespace Singularity
 
 		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
 		{
-			foreach (GameObject child in this.ChildObjects)
-			{
-				child.LoadContent(contentManager, graphicsDevice);
-			}
+			foreach (var child in ChildObjects) child.LoadContent(contentManager, graphicsDevice);
 
-			foreach (GameObject child in this.ChildrenBuffer)
-			{
-				child.LoadContent(contentManager, graphicsDevice);
-			}
+			foreach (var child in ChildrenBuffer) child.LoadContent(contentManager, graphicsDevice);
 		}
 
 		public virtual void UnloadContent()
 		{
-			foreach (GameObject child in this.ChildObjects)
-			{
-				child.UnloadContent();
-			}
+			foreach (var child in ChildObjects) child.UnloadContent();
 		}
 
 		#endregion
@@ -1143,11 +1194,15 @@ namespace Singularity
 		protected event EventHandler<CollisionEventArgs> CollisionEvent;
 
 		public virtual void OnCollision(GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
-		                                Vector3    normal) =>
+			Vector3 normal)
+		{
 			OnCollision(new CollisionEventArgs(position, normal, collider, collidable, scene));
+		}
 
-		public virtual void OnCollision(CollisionEventArgs e) =>
+		public virtual void OnCollision(CollisionEventArgs e)
+		{
 			CollisionEvent?.Invoke(this, e);
+		}
 
 		#endregion
 	}

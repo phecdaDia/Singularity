@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Singularity.Utilities;
 
@@ -14,32 +9,28 @@ namespace SingularityTest
 		[IgnoreDataMember] // ignore Savegame when saving
 		private static Savegame Instance;
 
-		[DataMember]
-		public Boolean IsValidSavegame;
+		[DataMember] public Vector3 CameraTarget;
 
-		[DataMember]
-		public Vector3 Position;
+		[DataMember] public bool IsValidSavegame;
 
-		[DataMember]
-		public Vector3 CameraTarget;
+		[DataMember] public Vector3 Position;
 
 		protected override void SetDefaultValues()
 		{
 			// set the instance
 			Instance = this;
-			
-			this.IsValidSavegame = false;
 
-			this.Position = new Vector3();
+			IsValidSavegame = false;
+
+			Position = new Vector3();
 
 
-			this.XmlSaveEvent += (o, e) => this.IsValidSavegame = true;
+			XmlSaveEvent += (o, e) => IsValidSavegame = true;
 		}
 
 		public static Savegame GetSavegame()
 		{
 			return Instance;
 		}
-
 	}
 }

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Singularity.Utilities
 {
@@ -16,9 +11,13 @@ namespace Singularity.Utilities
 		{
 			SetDefaultValues();
 		}
+
 		protected abstract void SetDefaultValues();
 
-		public void SaveToXml(string filePath) => SaveToXml(filePath, this);
+		public void SaveToXml(string filePath)
+		{
+			SaveToXml(filePath, this);
+		}
 
 		public static void SaveToXml(string filePath, XmlManager<T> sourceObject)
 		{
@@ -31,7 +30,7 @@ namespace Singularity.Utilities
 
 				using (var writer = File.Create(filePath))
 				{
-					DataContractSerializer xmlSerializer = new DataContractSerializer(sourceObject.GetType());
+					var xmlSerializer = new DataContractSerializer(sourceObject.GetType());
 					xmlSerializer.WriteObject(writer, sourceObject);
 				}
 			}
@@ -43,19 +42,26 @@ namespace Singularity.Utilities
 		}
 
 		protected event EventHandler<EventArgs> XmlSaveEvent;
-		public void OnXmlSave() => OnXmlSave(EventArgs.Empty);
-		public void OnXmlSave(EventArgs e) =>
+
+		public void OnXmlSave()
+		{
+			OnXmlSave(EventArgs.Empty);
+		}
+
+		public void OnXmlSave(EventArgs e)
+		{
 			XmlSaveEvent?.Invoke(this, e);
+		}
 
 		public static T LoadFromXml(string filePath)
 		{
-
 			try
 			{
 				using (var stream = File.OpenRead(filePath))
 				{
-					DataContractSerializer xmlSerializer = new DataContractSerializer(typeof(T));
-					return (T)xmlSerializer.ReadObject(stream); ;
+					var xmlSerializer = new DataContractSerializer(typeof(T));
+					return (T) xmlSerializer.ReadObject(stream);
+					;
 				}
 			}
 			catch (Exception ex)

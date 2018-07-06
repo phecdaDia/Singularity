@@ -7,6 +7,9 @@
 		public bool IsLoaded;
 		public bool IsRegistered;
 
-		public static implicit operator ScriptingTemplate(ScriptData obj) => obj.Template;
+		public static implicit operator ScriptingTemplate(ScriptData obj)
+		{
+			return obj.Template;
+		}
 	}
 }
