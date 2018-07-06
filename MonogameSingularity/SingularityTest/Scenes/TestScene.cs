@@ -78,6 +78,11 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyPressed(Keys.O))
 						SceneManager.AddSceneToStack("transparency");
 
+					if (KeyboardManager.IsKeyPressed(Keys.R))
+					{
+						obj.SetEnableCollision(!obj.EnablePushCollision);
+					}
+
 					// savegame stuff
 					sg.Position = obj.Position;
 					sg.CameraTarget = ((BasicCamera)obj).GetCameraTarget();
