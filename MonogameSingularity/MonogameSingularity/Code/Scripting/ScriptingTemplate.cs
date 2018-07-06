@@ -39,14 +39,4 @@ namespace Singularity.Scripting
 		/// <param name="effect">BasicEffect</param>
 		public abstract void AddLightningToEffect(Effect effect);
 	}
-
-	/// <summary>
-	/// Settings. Set null for default
-	/// </summary>
-	public struct SceneSettings
-	{
-		public int? SceneSize;
-		public int? MinPartition;
-		public float? Precision;
-	}
 }

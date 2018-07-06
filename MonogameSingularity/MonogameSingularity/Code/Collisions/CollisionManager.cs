@@ -158,14 +158,7 @@ namespace Singularity.Collisions
 		public static RayCollisionPoint GetRayCollision<T>(Ray ray, T collision)
 			where T : Collision
 		{
-			//Console.WriteLine($"Testing RCP with {typeof(T)} (Ray: {ray.Position} + t * {ray.Direction})");
-
-			//if (collision == null)
-			//{
-			//	// ???
-			//	Console.WriteLine($"Received empty collision to check!");
-			//	return new RayCollisionPoint();
-			//}
+			
 
 			if (collision is SphereCollision)
 				return RayOnSphereCollision.GetCollision(ray, collision as SphereCollision); 
@@ -175,10 +168,8 @@ namespace Singularity.Collisions
 				return RayOnPlaneCollision.GetCollision(ray, collision as PlaneCollision);
 			else if (collision is MultiCollision)
 			{
-				// we only want the closest RCP!
 				RayCollisionPoint rcp = new RayCollisionPoint(); // dummy rcp
-				MultiCollision mc = collision as MultiCollision;
-				foreach (var coll in mc.GetCollidables())
+				foreach (var coll in (collision as MultiCollision).GetCollidables())
 				{
 					RayCollisionPoint testPoint = GetRayCollision(ray, coll);
 					if (testPoint.DidCollide && testPoint.RayDistance < rcp.RayDistance && testPoint.RayDistance >= 0) rcp = testPoint;

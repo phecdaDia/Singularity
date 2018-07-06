@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\ChildProperties.cs" />
     <Compile Include="Code\Collisions\BoundEdgeCollision.cs" />
     <Compile Include="Code\Collisions\BoundPlaneCollision.cs" />
     <Compile Include="Code\Collisions\Collision.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\Events\CollisionEventArgs.cs" />
     <Compile Include="Code\GameObject.cs" />
+    <Compile Include="Code\GameObjectDrawMode.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\EmptyGameObject.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
     <Compile Include="Code\Scripting\LoadingScreenTemplate.cs" />
+    <Compile Include="Code\Scripting\SceneSettings.cs" />
+    <Compile Include="Code\Scripting\ScriptData.cs" />
     <Compile Include="Code\Scripting\ScriptingTemplate.cs" />
     <Compile Include="Code\Scripting\ScriptManager.cs" />
     <Compile Include="Code\Scripting\ScriptScene.cs" />
@@ -126,6 +130,7 @@
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
+    <Compile Include="Code\Utilities\SettingsObject.cs" />
     <Compile Include="Code\Utilities\SettingsTemplate.cs" />
     <Compile Include="Code\Utilities\VectorMathHelper.cs" />
     <Compile Include="Code\Utilities\XmlManager.cs" />

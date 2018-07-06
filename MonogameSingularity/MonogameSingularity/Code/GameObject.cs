@@ -1151,29 +1151,4 @@ namespace Singularity
 
 		#endregion
 	}
-
-	[Flags]
-	public enum GameObjectDrawMode
-	{
-		Nothing     = 0b00000000,	// Object won't be drawn
-		Model       = 0b00000001,	// Only the 3d part will be drawn
-		SpriteBatch = 0b00000010,	// Only 2d will be drawn
-		All         = 0b11111111	// Everything will be drawn
-		
-	}
-
-	[Flags]
-	public enum ChildProperties
-	{
-		Nothing             = 0b00000000,
-		None                = 0b00000000,
-		Translation         = 0b00000001,
-		Rotation            = 0b00000010,
-		Scale               = 0b00000100,
-		TranslationRotation = Translation | Rotation,
-		DrawMode			= 0b01000000,
-		KeepPositon			= 0b10000000,
-		AllTransform        = Translation | Rotation | Scale,
-		All                 = AllTransform | DrawMode,
-	}
 }
