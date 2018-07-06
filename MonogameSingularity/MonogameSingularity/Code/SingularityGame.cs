@@ -71,6 +71,8 @@ namespace Singularity
 		/// <param name="gameTime">DeltaTime</param>
 		protected sealed override void Draw(GameTime gameTime)
 		{
+			OnDrawEvent(gameTime);
+
             //Draw everything to RenderTarget instead of the Screen
             GraphicsDevice.SetRenderTarget(RenderTarget);
 			GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -137,6 +139,8 @@ namespace Singularity
 		/// <param name="gameTime">DeltaTime</param>
 		protected sealed override void Update(GameTime gameTime)
 		{
+			OnPreUpdateEvent(gameTime);
+
             //Remove finished ScreenEffects
 		    ScreenEffectList.RemoveAll(f => _removalList.Contains(f));
 		    _removalList.Clear();
@@ -144,6 +148,8 @@ namespace Singularity
 			base.Update(gameTime);
 			this.SceneManager.Update(gameTime);
 			KeyboardManager.Update();
+
+			OnPostUpdateEvent(gameTime);
 		}
 
 		/// <summary>
@@ -193,9 +199,16 @@ namespace Singularity
 
 		#region Events
 
+		protected event EventHandler<GameTime> PreUpdateEvent;
+		private void OnPreUpdateEvent(GameTime e) => PreUpdateEvent?.Invoke(this, e);
 
-		protected event EventHandler<GameTime> UpdateEvent;
+		protected event EventHandler<GameTime> PostUpdateEvent;
+		private void OnPostUpdateEvent(GameTime e) => PostUpdateEvent?.Invoke(this, e);
+
+		protected event EventHandler<GameTime> DrawEvent;
+		private void OnDrawEvent(GameTime e) => DrawEvent?.Invoke(this, e);
 
 		#endregion
+
 	}
 }
