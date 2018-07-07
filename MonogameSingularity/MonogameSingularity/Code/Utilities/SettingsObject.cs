@@ -7,7 +7,7 @@
 	public class SettingsObject<T>
 	{
 		private T Setting;
-		
+		public SettingsObject() { }
 		public SettingsObject(T value)
 		{
 			Setting = value;
