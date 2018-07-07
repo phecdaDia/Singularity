@@ -8,7 +8,6 @@
 #endif
 
 matrix WorldViewProjection;
-float1 clipMax;
 
 struct VSInput
 {
@@ -35,8 +34,6 @@ VSOutput VSShadowMap(in VSInput input)
 
 float4 PSShadowMap(VSOutput input) : COLOR
 {
-    //float4 temp = 1.0f - saturate(input.position2D.z / (input.position2D.w * clipMax));
-    //temp.w = 1.0f;
     return abs(input.Normal);
 
 }

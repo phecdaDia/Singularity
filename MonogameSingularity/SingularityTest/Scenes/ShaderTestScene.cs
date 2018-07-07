@@ -30,20 +30,15 @@ namespace SingularityTest.Scenes
 
 			AddObject(new ModelObject("sphere")
 				.SetPosition(2.5f, 0, 0)
-				.SetScale(0.15f)
-				.SetEffect(Game.Content.Load<Effect>("effects/GenerateShadowMap"), AddEffectParameters)
+				.SetScale(1f)
+				.SetEffect(Game.Content.Load<Effect>("effects/TestShader"), AddEffectParameters)
 			);
 		}
 
 		private void AddEffectParameters(GameObject obj, Effect effect, Matrix[] transformMatrices, ModelMesh mesh,
 			GameScene scene)
 		{
-			var world = transformMatrices[mesh.ParentBone.Index] * obj.ScaleMatrix * obj.RotationMatrix *
-			            Matrix.CreateTranslation(obj.GetHierarchyPosition());
-
-			effect.Parameters["World"].SetValue(world);
-			effect.Parameters["View"].SetValue(scene.GetViewMatrix());
-			effect.Parameters["Projection"].SetValue(scene.GetProjectionMatrix());
+			effect.Parameters["WorldViewProjection"].SetValue(obj.WorldMatrix * scene.GetViewMatrix() * scene.GetProjectionMatrix());
 		}
 	}
 }

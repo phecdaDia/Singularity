@@ -1031,20 +1031,13 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			DrawLogic(scene, spriteBatch, scene.GetViewMatrix(), scene.GetProjectionMatrix(), drawMode);
-		}
-
-		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, Matrix view, Matrix projection,
-			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
-		{
 			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
-				Draw(scene, view, projection);
+				Draw(scene, scene.GetViewMatrix(), scene.GetProjectionMatrix());
 
-			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) &&
-			    GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				Draw2D(spriteBatch);
 
-			foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, view, projection, drawMode);
+			foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
 		}
 
 		public void DrawLogicWithEffect(
@@ -1075,8 +1068,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
-		public virtual void Draw(GameScene scene, Matrix view, Matrix projection,
-			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams = null)
+		public virtual void Draw(GameScene scene, Matrix view, Matrix projection)
 		{
 			if (Model == null) return;
 
@@ -1088,20 +1080,17 @@ namespace Singularity
 					{
 						var be = (BasicEffect) effect;
 						be.View = view;
-						be.World = transformationMatrices[mesh.ParentBone.Index]
-						           * obj.ScaleMatrix
-						           * obj.RotationMatrix
-						           * Matrix.CreateTranslation(obj.GetHierarchyPosition());
+						be.World = obj.WorldMatrix;
 						be.Projection = projection;
 
-						effectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
+						this.EffectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
 					};
 
 				DrawWithSpecificEffect(scene, Model.Meshes[0].Effects[0], BasicEffectParams, null);
 			}
 			else
 			{
-				DrawWithSpecificEffect(scene, Effect, effectParams, null);
+				DrawWithSpecificEffect(scene, Effect, this.EffectParams, null);
 			}
 		}
 

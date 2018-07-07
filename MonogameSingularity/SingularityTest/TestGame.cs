@@ -46,7 +46,7 @@ namespace SingularityTest
 			SceneManager.RegisterScene(new ShaderTestScene(this));
 			SceneManager.RegisterScene(new LightTestScene(this));
 
-			SceneManager.AddSceneToStack("test");
+			SceneManager.AddSceneToStack("shadertest");
 
 			//ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
 			//ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
