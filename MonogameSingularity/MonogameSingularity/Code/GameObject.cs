@@ -1101,6 +1101,9 @@ namespace Singularity
 			}
 			else
 			{
+				if (effectParams == null)
+					effectParams = EffectParams;
+
 				DrawWithSpecificEffect(scene, Effect, effectParams, null);
 			}
 		}
