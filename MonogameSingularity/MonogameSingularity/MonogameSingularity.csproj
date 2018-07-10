@@ -130,7 +130,6 @@
     <Compile Include="Code\Utilities\Octree.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
-    <Compile Include="Code\Utilities\SettingsObject.cs" />
     <Compile Include="Code\Utilities\SettingsTemplate.cs" />
     <Compile Include="Code\Utilities\VectorMathHelper.cs" />
     <Compile Include="Code\Utilities\XmlManager.cs" />

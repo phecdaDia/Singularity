@@ -1,15 +1,18 @@
 ﻿using System;
+
 using Singularity.Utilities;
 
 namespace Singularity
 {
+	using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 	public static class SettingsManager
 	{
 		private static SettingsTemplate _settings;
-		private static bool _isSetUp;
+		private static bool _isSetUp = false;
 
 		/// <summary>
-		///     SetUp Settings in this Project - needs Type of Setting to Set Up
+		/// SetUp Settings in this Project - needs Type of Setting to Set Up
 		/// </summary>
 		/// <typeparam name="T">Setting to set up</typeparam>
 		public static void SetUp<T>() where T : SettingsTemplate
@@ -41,7 +44,7 @@ namespace Singularity
 		}
 
 		/// <summary>
-		///     Check if Settings have been set up
+		/// Check if Settings have been set up
 		/// </summary>
 		private static void CheckSetUp()
 		{
@@ -49,7 +52,7 @@ namespace Singularity
 		}
 
 		/// <summary>
-		///     Get a specific Setting
+		/// Get a specific Setting
 		/// </summary>
 		/// <typeparam name="T">Assumed Type of setting</typeparam>
 		/// <param name="name">Identifier/Name of Setting</param>
@@ -62,7 +65,7 @@ namespace Singularity
 		}
 
 		/// <summary>
-		///     Set a specific Setting
+		/// Set a specific Setting
 		/// </summary>
 		/// <typeparam name="T">Assumed Type of setting</typeparam>
 		/// <param name="name">Identifier/Name of Setting</param>
@@ -75,7 +78,7 @@ namespace Singularity
 		}
 
 		/// <summary>
-		///     Save Settings as Specified in Settings-Class
+		/// Save Settings as Specified in Settings-Class
 		/// </summary>
 		public static void SaveSetting()
 		{
@@ -85,7 +88,7 @@ namespace Singularity
 		}
 
 		/// <summary>
-		///     Reload Settings
+		/// Reload Settings
 		/// </summary>
 		public static void LoadSettings()
 		{
