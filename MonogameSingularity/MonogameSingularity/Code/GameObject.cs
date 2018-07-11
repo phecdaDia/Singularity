@@ -1075,28 +1075,25 @@ namespace Singularity
 
 			if (Effect == null)
 			{
-				Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> BasicEffectParams =
+				Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> basicEffectParams =
 					(obj, effect, transformationMatrices, mesh, s) =>
 					{
 						var be = (BasicEffect) effect;
 						be.View = view;
-						be.World = obj.WorldMatrix;
+						be.World = transformationMatrices[mesh.ParentBone.Index] * obj.WorldMatrix;
 						be.Projection = projection;
 
 						this.EffectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
 					};
 
-				DrawWithSpecificEffect(scene, Model.Meshes[0].Effects[0], BasicEffectParams, null);
+				DrawWithSpecificEffect(scene, Model.Meshes[0].Effects[0], basicEffectParams, null);
 			}
 			else
 			{
 				//TODO: Do we need this?
-				/*
-				if (effectParams == null)
-					effectParams = EffectParams;
 
-				DrawWithSpecificEffect(scene, Effect, effectParams, null);
-				*/
+				DrawWithSpecificEffect(scene, Effect, EffectParams, null);
+
 			}
 		}
 

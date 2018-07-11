@@ -312,15 +312,6 @@ namespace Singularity
 		public virtual void LoadContent()
 		{}
 
-		///// <summary>
-		///// Loads content of all added gameObjects.
-		///// </summary>
-		//public void LoadObjectContent()
-		//{
-		//	// load content
-		//	foreach (var obj in ColliderObjects.GetAllObjects()) obj.LoadContent(Game.Content, Game.GraphicsDevice);
-		//}
-
 		/// <summary>
 		/// TODO
 		/// </summary>
