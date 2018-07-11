@@ -71,8 +71,8 @@ namespace Singularity
 			// pause the current scene
 			_GetCurrentScene()?.OnScenePause();
 
-			scene.SetupScene(entranceId);
 			scene.LoadContent();
+			scene.SetupScene(entranceId);
 			SceneQueue.Enqueue(scene);
 		}
 
