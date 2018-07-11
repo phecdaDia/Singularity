@@ -112,6 +112,7 @@ namespace Singularity
 		{
 			foreach (var children in gameObject.ChildObjects) AddObject(children);
 
+			gameObject.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
 
 			if (gameObject.Collision == null)
 			{
@@ -306,15 +307,19 @@ namespace Singularity
 		}
 
 		///// <summary>
-		///// Adds lightning to the <seealso cref="GameObject"/>
+		///// TODO
 		///// </summary>
-		///// <param name="effect"></param>
-		//public abstract void AddLightningToEffect(Effect effect);
 		public virtual void LoadContent()
-		{
-			// load content
-			foreach (var obj in ColliderObjects.GetAllObjects()) obj.LoadContent(Game.Content, Game.GraphicsDevice);
-		}
+		{}
+
+		///// <summary>
+		///// Loads content of all added gameObjects.
+		///// </summary>
+		//public void LoadObjectContent()
+		//{
+		//	// load content
+		//	foreach (var obj in ColliderObjects.GetAllObjects()) obj.LoadContent(Game.Content, Game.GraphicsDevice);
+		//}
 
 		/// <summary>
 		/// TODO
@@ -347,10 +352,7 @@ namespace Singularity
 
 			// add our buffered objects
 			foreach (var obj in BufferedObjects)
-			{
-				obj.LoadContent(Game.Content, Game.GraphicsDevice);
 				AddObject(obj);
-			}
 
 			// clear buffers
 			BufferedObjects.Clear();
@@ -360,6 +362,7 @@ namespace Singularity
 		///     Draws all <seealso cref="GameObject" />
 		/// </summary>
 		/// <param name="spriteBatch"></param>
+		/// <param name="finalTarget"></param>
 		public virtual void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
 		{
 			// render it on our temporary rendertarget first

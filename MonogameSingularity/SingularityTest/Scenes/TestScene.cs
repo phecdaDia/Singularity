@@ -5,6 +5,7 @@ using Singularity;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using Singularity.Utilities;
+using SingularityTest.GameObjects;
 using SingularityTest.GameObjects.ChildTest;
 using SingularityTest.ScreenEffect;
 
@@ -93,6 +94,9 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("slopes/slope3").SetPosition(0, -0.85f, 0));
 			AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
+
+
+			AddObject(new MappingTestObject().SetPosition(0, 30, 0));
 
 			//AddObject(new TestBallObject().SetPosition(2, 3, 0));
 
