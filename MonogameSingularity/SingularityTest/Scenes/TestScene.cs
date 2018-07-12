@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
@@ -77,7 +78,7 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyDown(Keys.M))
 					{
 						// run a ray and get the closest collision
-						var r = new Ray(obj.Position, ((BasicCamera) obj).GetCameraTarget());
+						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
 						var rcp = scene.CollideRay(r);
 						if (rcp.DidCollide)
 							SpawnObject(new ModelObject("cubes/cube1").SetPosition(rcp.Position).SetScale(0.1f).AddScript(
@@ -85,6 +86,15 @@ namespace SingularityTest.Scenes
 								{
 									if (KeyboardManager.IsKeyPressed(Keys.OemSemicolon)) s.RemoveObject(o);
 								}));
+					}
+
+					if (KeyboardManager.IsKeyPressed(Keys.N))
+					{
+						// run a ray and get the closest collision
+						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
+						var rcp = scene.CollideRay(r);
+						if (rcp.DidCollide)
+							this.RemoveObject(rcp.Collidable);
 					}
 				})
 			);
@@ -152,36 +162,7 @@ namespace SingularityTest.Scenes
 			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
 				(scene, o, arg3) => o.AddRotation(0, 1, 0, arg3)
 			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0), ChildProperties.TranslationRotation));
-
-
-			// relative movement child test
-			//AddObject(new CollidableModelObject("cubes/cube2")
-			//	.SetPosition(20, 0, 0)
-			//	.AddScript((GameScene scene, GameObject obj, GameTime time) =>
-			//	{
-			//		if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
-			//			Console.WriteLine($"True");
-
-			//		if (KeyboardManager.IsKeyPressed(Keys.NumPad2))
-			//		{
-			//			if (obj.ParentObject == null)
-			//			{
-			//				// Add it
-			//				// get player
-			//				BasicCamera player = (BasicCamera)scene.GetAllObjects((GameObject o) => o is BasicCamera).First();
-			//				player.AddChild(obj, ChildProperties.All | ChildProperties.KeepPositon);
-
-			//			}
-			//			else
-			//			{
-			//				// Remove it
-			//				obj.RemoveParent();
-
-			//			}
-			//		}
-
-			//	})
-			//);
+			
 
 			AddObject(new EmptyGameObject().AddScript((scene, obj, time) =>
 			{

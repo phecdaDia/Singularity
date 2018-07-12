@@ -21,7 +21,7 @@ namespace Singularity.Collisions.RayCollisions
 				scale2 = eq.Z;
 
 
-				return new RayCollisionPoint(poc, plane.Normal, eq.X);
+				return new RayCollisionPoint(plane.Parent, poc, plane.Normal, eq.X);
 			}
 			catch (Exception ex)
 			{

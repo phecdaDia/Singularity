@@ -29,7 +29,7 @@ namespace Singularity.Collisions.RayCollisions
 
 			var i = a - h * ray.Direction;
 
-			return new RayCollisionPoint(sphere.Position + i, i, h);
+			return new RayCollisionPoint(sphere.Parent, sphere.Position + i, i, h);
 		}
 	}
 }

@@ -4,8 +4,9 @@ namespace Singularity.Collisions
 {
 	public class RayCollisionPoint
 	{
-		public RayCollisionPoint(Vector3 position, Vector3 normal, float rayDistance)
+		public RayCollisionPoint(GameObject collidable, Vector3 position, Vector3 normal, float rayDistance)
 		{
+			Collidable = collidable;
 			Position = position;
 			Normal = normal;
 			DidCollide = true;
@@ -22,6 +23,8 @@ namespace Singularity.Collisions
 		public Vector3 Normal { get; }
 		public bool DidCollide { get; private set; }
 		public float RayDistance { get; }
+		public GameObject Collidable { get; }
+
 
 		public void SetCollide(bool collide)
 		{

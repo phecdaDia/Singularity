@@ -1029,6 +1029,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="scene"></param>
 		/// <param name="spriteBatch"></param>
+		/// <param name="drawMode"></param>
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
 			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
@@ -1067,7 +1068,8 @@ namespace Singularity
 		///     Checks if there is a <see cref="Model" /> to draw and draws it.
 		/// </summary>
 		/// <param name="scene"></param>
-		/// <param name="spriteBatch"></param>
+		/// <param name="view"></param>
+		/// <param name="projection"></param>
 		public virtual void Draw(GameScene scene, Matrix view, Matrix projection)
 		{
 			if (Model == null) return;
@@ -1090,7 +1092,6 @@ namespace Singularity
 			}
 			else
 			{
-				//TODO: Do we need this?
 
 				DrawWithSpecificEffect(scene, Effect, EffectParams, null);
 
@@ -1101,7 +1102,9 @@ namespace Singularity
 		///     Checks if there is a <see cref="Model" /> to draw and draws it with specified Effect.
 		/// </summary>
 		/// <param name="scene"></param>
-		/// <param name="spriteBatch"></param>
+		/// <param name="effect"></param>
+		/// <param name="effectParams"></param>
+		/// <param name="technique"></param>
 		public virtual void DrawWithSpecificEffect(GameScene scene, Effect effect,
 			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
 		{
