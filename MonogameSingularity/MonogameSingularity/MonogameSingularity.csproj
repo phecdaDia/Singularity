@@ -36,6 +36,9 @@
     <Reference Include="Costura, Version=2.0.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.2.0.1\lib\net452\Costura.dll</HintPath>
     </Reference>
+    <Reference Include="irrKlang.NET4">
+      <HintPath>lib\irrKlang\irrKlang.NET4.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=2.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.8.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
@@ -125,6 +128,7 @@
     <Compile Include="Code\Scripting\StartingScene.cs" />
     <Compile Include="Code\SettingsManager.cs" />
     <Compile Include="Code\SingularityGame.cs" />
+    <Compile Include="Code\SoundManager.cs" />
     <Compile Include="Code\Utilities\CustomData.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
@@ -157,4 +161,7 @@
     <Error Condition="!Exists('..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets'))" />
   </Target>
   <Import Project="..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.2.0.1\build\Costura.Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)lib\irrKlang\ikp*.dll" "$(TargetDir)" /Y /I</PostBuildEvent>
+  </PropertyGroup>
 </Project>
