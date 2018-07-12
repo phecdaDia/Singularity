@@ -387,7 +387,8 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(Vector3 position, GameTime gameTime)
 		{
-			return AddPosition(position * (float) gameTime.ElapsedGameTime.TotalSeconds);
+
+			return AddPosition(position * (float) Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 
 		#endregion
@@ -501,7 +502,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(Vector3 rotation, GameTime gameTime)
 		{
-			return AddRotation(rotation * (float) gameTime.ElapsedGameTime.TotalSeconds);
+			return AddRotation(rotation * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 
 		#endregion
@@ -590,7 +591,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime)
 		{
-			return MultiplyScale(scale * (float) gameTime.ElapsedGameTime.TotalSeconds);
+			return MultiplyScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 
 		#endregion
@@ -663,7 +664,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(Vector3 scale, GameTime gameTime)
 		{
-			return AddScale(scale * (float) gameTime.ElapsedGameTime.TotalSeconds);
+			return AddScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 
 		#endregion
@@ -899,7 +900,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddInertia(Vector3 inertia, GameTime gameTime)
 		{
-			return AddInertia(inertia * (float) gameTime.ElapsedGameTime.TotalSeconds);
+			return AddInertia(inertia * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 
 		#endregion
@@ -991,7 +992,7 @@ namespace Singularity
 
 			// add inertia.
 			if (this is IInertia)
-				Position += Inertia * (float) gameTime.ElapsedGameTime.TotalSeconds;
+				AddPosition(this.Inertia, gameTime);
 
 			// execute scripts
 			foreach (var actionScript in ObjectScripts) actionScript(scene, this, gameTime);

@@ -32,6 +32,10 @@ namespace Singularity
 		public RenderTarget2D RenderTarget;
 		protected SpriteBatch SpriteBatch;
 
+		public static double MinimumFramerate = 0.04d;
+
+		
+
 		public SingularityGame()
 		{
 			SceneManager = new SceneManager(this);
@@ -45,6 +49,7 @@ namespace Singularity
 				PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
 			};
 			Content.RootDirectory = "Content";
+			
 		}
 
 		public SingularityGame(int width, int height) : this()

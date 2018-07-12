@@ -12,18 +12,18 @@ using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
-	public class TestScene : GameScene
+	public class TestScene : LightGameScene
 	{
-		public TestScene(SingularityGame game) : base(game, "test")
+		public TestScene(SingularityGame game) : base(game, "test", 4096)
 		{
 			//this.SetCamera(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
 			SceneResumeEvent += (s, e) => { Mouse.SetPosition(200, 200); };
 
 
-			//SetLightPosition(new Vector3(-50, 50, 0));
-			//SetLightDirection(new Vector3(1, -1, 0));
+			SetLightPosition(new Vector3(-50, 50, 0));
+			SetLightDirection(new Vector3(1, -1, 0));
 
-			//SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
+			SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
 		}
 
 		protected override void AddGameObjects(int entranceId)
@@ -181,6 +181,31 @@ namespace SingularityTest.Scenes
 			// Add Child Test
 			AddObject(new ParentBlock().SetPosition(20, -10, 0).SetDebugName("Parent"));
 			AddObject(new ChildBall().SetPosition(20, 00, 0).SetDebugName("Child"));
+
+			AddObject(new EmptyGameObject().AddScript(((scene, o, time) =>
+			{
+				if (KeyboardManager.IsKeyPressed(Keys.NumPad9))
+				{
+					o.CustomData.SetValue("millisToSleep", o.CustomData.GetValue<int>("millisToSleep") + 1);
+					// REPLACE THIS WITH WHATEVER SYSTEM YOU USE FOR NOTIFICATIONS: 
+					//MessageBoxUtil.Notify("SLEEPING " + millisToSleep + " PER FRAME");
+				}
+				else if (KeyboardManager.IsKeyPressed(Keys.NumPad8))
+				{
+					o.CustomData.SetValue("millisToSleep", o.CustomData.GetValue<int>("millisToSleep") - 1);
+					//MessageBoxUtil.Notify("SLEEPING " + millisToSleep + " PER FRAME");
+				}
+				if (o.CustomData.GetValue<int>("millisToSleep") > 0)
+				{
+					System.Threading.Thread.Sleep(o.CustomData.GetValue<int>("millisToSleep"));
+				}
+				else
+				{
+					o.CustomData.SetValue("millisToSleep", 0);
+				}
+				Console.WriteLine($"Sleeping for {o.CustomData.GetValue<int>("millisToSleep")} ms");
+
+			})));
 		}
 
 		//public override void AddLightningToEffect(Effect eff)

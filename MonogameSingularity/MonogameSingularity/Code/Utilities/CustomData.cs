@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Singularity.Utilities
 {
@@ -14,7 +15,7 @@ namespace Singularity.Utilities
 
 		public T GetValue<T>(string key)
 		{
-			if (!DataDictionary.ContainsKey(key)) throw new ArgumentException($"No value of key {key} found!");
+			if (!DataDictionary.ContainsKey(key)) return default(T);
 
 			if (DataDictionary[key].Item1 != typeof(T))
 				throw new ArgumentException($"Value of key {key} is not of type {DataDictionary[key].Item1}");

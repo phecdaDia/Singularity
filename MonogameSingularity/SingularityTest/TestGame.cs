@@ -18,6 +18,8 @@ namespace SingularityTest
 			IsMouseVisible = false;
 			SettingsManager.SetUp<Settings>();
 			ScriptManager.SetUp<LoadingScreen>(Assembly.GetCallingAssembly(), this);
+
+			MinimumFramerate = 0.0166d;
 		}
 
 		/// <summary>
