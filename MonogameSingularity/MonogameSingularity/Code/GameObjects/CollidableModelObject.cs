@@ -8,9 +8,5 @@ namespace Singularity.GameObjects
 		public CollidableModelObject(string modelPath) : base(modelPath)
 		{
 		}
-
-		public CollidableModelObject(Model model) : base(model)
-		{
-		}
 	}
 }

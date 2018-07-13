@@ -41,8 +41,12 @@ namespace Singularity
 			CustomData = new CustomData();
 		}
 
-		public Model
-			Model { get; private set; } // Model of the entity. Is Null if the object shall not be rendered.
+		public String ModelPath { get; private set; }
+
+		public Model Model
+		{
+			get { return ModelManager.GetModel(this.ModelPath); }
+		}
 
 		public Vector3 Position { get; private set; } // Current position of the model
 		public Vector3 Rotation { get; private set; } // Current rotation of the model
@@ -226,9 +230,11 @@ namespace Singularity
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		public GameObject SetModel(Model model)
+		public GameObject SetModel(string model)
 		{
-			Model = model;
+			SetTexture(ModelManager.GetTexture(model));
+
+			ModelPath = model;
 
 			var center = GetHierarchyPosition();
 
@@ -249,18 +255,6 @@ namespace Singularity
 			) // everything that has something to do with collisions gets a sphere at the beginning
 				SetCollision(new SphereCollision(ModelRadius));
 			return this;
-		}
-
-		/// <summary>
-		///     Sets the <see cref="Model" /> for the <see cref="GameObject" />
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
-		public GameObject SetModel(string model)
-		{
-			SetTexture(ModelManager.GetTexture(model));
-
-			return SetModel(ModelManager.GetModel(model));
 		}
 
 		#endregion

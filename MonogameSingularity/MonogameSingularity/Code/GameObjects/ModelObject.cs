@@ -5,14 +5,9 @@ namespace Singularity.GameObjects
 {
 	public class ModelObject : GameObject
 	{
-		public ModelObject(string modelPath) : this(ModelManager.GetModel(modelPath))
+		public ModelObject(string modelPath) : base()
 		{
-			SetTexture(ModelManager.GetTexture(modelPath));
-		}
-
-		public ModelObject(Model model)
-		{
-			SetModel(model);
+			SetModel(modelPath);
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)
