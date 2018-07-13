@@ -264,10 +264,12 @@ namespace Singularity
 		/// </summary>
 		/// <param name="ray"></param>
 		/// <returns></returns>
-		public RayCollisionPoint CollideRay(Ray ray)
+		public RayCollisionPoint CollideRay(Ray ray, Func<GameObject, Boolean> predicate = null)
 		{
 			// get all objects
-			var collidables = ColliderObjects.GetAllObjects(go => go is ICollidable);
+			List<GameObject> collidables = predicate == null ? 
+				ColliderObjects.GetAllObjects(go => go is ICollidable) : 
+				ColliderObjects.GetAllObjects(go => predicate(go) && go is ICollidable);
 
 			var nearestCollision = new RayCollisionPoint();
 
