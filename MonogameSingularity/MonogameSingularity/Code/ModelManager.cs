@@ -19,16 +19,26 @@ namespace Singularity
 		{
 			if (String.IsNullOrEmpty(path)) return null;
 
-			return SingularityGame.GetContentManager().Load<Model>(path);
+			var model = SingularityGame.GetContentManager().Load<Model>(path);
+			
+
+			if (!ModelTextureDictionary.ContainsKey(path)) LoadTexture(model, path);
+
+			return model;
 		}
 
 		public static Texture2D GetTexture(string path)
 		{
 			if (ModelTextureDictionary.ContainsKey(path)) return ModelTextureDictionary[path];
 
-			ModelTextureDictionary[path] = ((BasicEffect) GetModel(path).Meshes[0].Effects[0]).Texture;
+			GetModel(path);
 
 			return ModelTextureDictionary[path];
+		}
+
+		private static void LoadTexture(Model model, string path)
+		{
+			ModelTextureDictionary[path] = ((BasicEffect)model.Meshes[0].Effects[0]).Texture;
 		}
 	}
 }

@@ -42,7 +42,6 @@ namespace Singularity
 			Instance = this;
 
 			SceneManager = new SceneManager(this);
-			ImageManager.SetContentManager(Content);
 
 			GraphicsDeviceManager = new GraphicsDeviceManager(this)
 			{

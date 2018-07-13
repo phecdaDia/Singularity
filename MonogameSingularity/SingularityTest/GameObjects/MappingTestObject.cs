@@ -43,7 +43,7 @@ namespace SingularityTest.GameObjects
 			//this.WhitePixel = new Texture2D(graphicsDevice, 1, 1);
 			//this.WhitePixel.SetData(new [] {Color.White});
 
-			WhitePixel = ImageManager.GetTexture2D("fallback");
+			WhitePixel = SingularityGame.GetContentManager().Load<Texture2D>("fallback");
 		}
 
 		public override void UnloadContent()

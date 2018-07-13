@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,30 +17,16 @@ namespace Singularity
 	/// </summary>
 	public abstract class GameObject
 	{
-		private readonly List<GameObject> ChildrenBuffer;
+		private readonly List<GameObject> ChildrenBuffer = new List<GameObject>();
 
-		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts; // Basic Actionscripts
+		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();// Basic Actionscripts
 
 		/// <summary>
 		///     Initializing Constructor
 		///     Sets default values for all properties
 		/// </summary>
 		protected GameObject()
-		{
-			// Setting default values for all members
-			Position = new Vector3();
-			Rotation = new Vector3();
-			Scale = Vector3.One;
-			Inertia = new Vector3();
-			EnablePushCollision = true;
-
-			ParentObject = null;
-			ChildObjects = new List<GameObject>();
-			ChildrenBuffer = new List<GameObject>();
-
-			ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();
-			CustomData = new CustomData();
-		}
+		{}
 
 		public String ModelPath { get; private set; }
 
@@ -50,23 +37,25 @@ namespace Singularity
 
 		public Vector3 Position { get; private set; } // Current position of the model
 		public Vector3 Rotation { get; private set; } // Current rotation of the model
-		public Vector3 Scale { get; private set; } // Scale of the model
+		public Vector3 Scale { get; private set; } = Vector3.One;// Scale of the model
 		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
-		public Texture2D Texture { get; private set; }
 
-		public bool EnablePushCollision { get; private set; }
+		public Texture2D Texture
+		{
+			get { return ModelManager.GetTexture(this.ModelPath); }
+		}
 
-		public GameObject
-			ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+		public bool EnablePushCollision { get; private set; } = true;
 
-		public List<GameObject> ChildObjects { get; } // Child Objects
+		public GameObject ParentObject { get; private set; } // Parent Object. This object will be in the ChildObjects of the Parent.
+
+		public List<GameObject> ChildObjects { get; } = new List<GameObject>();// Child Objects
 
 		public Effect Effect { get; private set; } //Shader of Object
 		public bool CullingEnabled { get; private set; } = true;
 
-		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene>
-			EffectParams { get; private set; } //Params for shader
+		public Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> EffectParams { get; private set; } //Params for shader
 
 		public bool ApplySceneLight { get; private set; } = true;
 		public string DebugName { get; private set; } // Used for debugging.
@@ -114,7 +103,7 @@ namespace Singularity
 
 		public float ModelRadius { get; private set; }
 
-		public CustomData CustomData { get; }
+		public CustomData CustomData { get; } = new CustomData();
 
 		/// <summary>
 		///     Return the multiplies <see cref="Scale" /> from this <see cref="GameObject" /> and the <see cref="ParentObject" />
@@ -171,13 +160,13 @@ namespace Singularity
 		///     Calculate <seealso cref="BoundingBox" /> for this
 		/// </summary>
 		/// <returns></returns>
-		public BoundingBox GetBoundingBox()
-		{
-			return GetBoundingBox(
-				Model,
-				RotationMatrix * ScaleMatrix
-			);
-		}
+		//public BoundingBox GetBoundingBox()
+		//{
+		//	return GetBoundingBox(
+		//		Model,
+		//		RotationMatrix * ScaleMatrix
+		//	);
+		//}
 
 		/// <summary>
 		///     Calculate <seealso cref="BoundingBox" /> for <seealso cref="Microsoft.Xna.Framework.Graphics.Model" />
@@ -185,41 +174,41 @@ namespace Singularity
 		/// <param name="model"></param>
 		/// <param name="worldTransformation"></param>
 		/// <returns></returns>
-		public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
-		{
-			if (model == null) return new BoundingBox();
+		//public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
+		//{
+		//	if (model == null) return new BoundingBox();
 
-			// Initialize minimum and maximum corners of the bounding box to max and min values
-			var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-			var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+		//	// Initialize minimum and maximum corners of the bounding box to max and min values
+		//	var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+		//	var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
-			// For each mesh of the model
-			foreach (var mesh in model.Meshes)
-			foreach (var meshPart in mesh.MeshParts)
-			{
-				// Vertex buffer parameters
-				var vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
-				var vertexBufferSize = meshPart.NumVertices * vertexStride;
+		//	// For each mesh of the model
+		//	foreach (var mesh in model.Meshes)
+		//	foreach (var meshPart in mesh.MeshParts)
+		//	{
+		//		// Vertex buffer parameters
+		//		var vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+		//		var vertexBufferSize = meshPart.NumVertices * vertexStride;
 
-				// Get vertex data as float
-				var vertexData = new float[vertexBufferSize / sizeof(float)];
-				meshPart.VertexBuffer.GetData(vertexData);
+		//		// Get vertex data as float
+		//		var vertexData = new float[vertexBufferSize / sizeof(float)];
+		//		meshPart.VertexBuffer.GetData(vertexData);
 
-				// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
-				for (var i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
-				{
-					var transformedPosition =
-						Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
-							worldTransformation);
+		//		// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
+		//		for (var i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
+		//		{
+		//			var transformedPosition =
+		//				Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
+		//					worldTransformation);
 
-					min = Vector3.Min(min, transformedPosition);
-					max = Vector3.Max(max, transformedPosition);
-				}
-			}
+		//			min = Vector3.Min(min, transformedPosition);
+		//			max = Vector3.Max(max, transformedPosition);
+		//		}
+		//	}
 
-			// Create and return bounding box
-			return new BoundingBox(min, max);
-		}
+		//	// Create and return bounding box
+		//	return new BoundingBox(min, max);
+		//}
 
 		#region Builder Pattern
 
@@ -232,7 +221,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetModel(string model)
 		{
-			SetTexture(ModelManager.GetTexture(model));
+			//SetTexture(ModelManager.GetTexture(model));
 
 			ModelPath = model;
 
@@ -921,13 +910,13 @@ namespace Singularity
 
 		#endregion
 
-		#region SetEffect
+		#region SetTexture
 
-		public GameObject SetTexture(Texture2D texture)
-		{
-			Texture = texture;
-			return this;
-		}
+		//public GameObject SetTexture(Texture2D texture)
+		//{
+		//	Texture = texture;
+		//	return this;
+		//}
 
 		#endregion
 

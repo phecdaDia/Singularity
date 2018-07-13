@@ -14,7 +14,7 @@ namespace Singularity.GameObjects
 			Texture = texture;
 		}
 
-		public SpriteObject(string textureKey) : this(ImageManager.GetTexture2D(textureKey))
+		public SpriteObject(string textureKey) : this(SingularityGame.GetContentManager().Load<Texture2D>(textureKey))
 		{
 		}
 
