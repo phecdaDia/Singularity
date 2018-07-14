@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Utilities;
 
@@ -14,12 +15,12 @@ namespace Singularity
 		/// </summary>
 		public static readonly string SINGULARITY_VERSION = "v0.08";
 
+		private static SingularityGame Instance;
+
 		private readonly List<Func<GameTime, Texture2D, ScreenEffectData>> _removalList =
 			new List<Func<GameTime, Texture2D, ScreenEffectData>>();
 
 		protected readonly GraphicsDeviceManager GraphicsDeviceManager;
-
-		protected readonly ModelManager ModelManager;
 
 		private readonly SceneManager SceneManager;
 
@@ -38,9 +39,9 @@ namespace Singularity
 
 		public SingularityGame()
 		{
+			Instance = this;
+
 			SceneManager = new SceneManager(this);
-			ModelManager = new ModelManager(Content);
-			ImageManager.SetContentManager(Content);
 
 			GraphicsDeviceManager = new GraphicsDeviceManager(this)
 			{
@@ -50,6 +51,16 @@ namespace Singularity
 			};
 			Content.RootDirectory = "Content";
 			
+		}
+
+		public static ContentManager GetContentManager()
+		{
+			return GetGameInstance().Content;
+		}
+
+		private static SingularityGame GetGameInstance()
+		{
+			return Instance;
 		}
 
 		public SingularityGame(int width, int height) : this()
