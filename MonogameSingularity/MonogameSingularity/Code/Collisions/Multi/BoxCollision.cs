@@ -4,7 +4,8 @@ namespace Singularity.Collisions.Multi
 {
 	public class BoxCollision : MultiCollision
 	{
-		public BoxCollision(Vector3 Min, Vector3 Max)
+		public BoxCollision(float min, float max) : this(new Vector3(min), new Vector3(max)) { }
+		public BoxCollision(Vector3 min, Vector3 max)
 		{
 			bool _squareBoundary(float f1, float f2)
 			{
@@ -17,38 +18,38 @@ namespace Singularity.Collisions.Multi
 			}
 
 			AddCollisions(
-				new BoundPlaneCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(Max.X - Min.X, 0, 0),
-					new Vector3(0, Max.Y - Min.Y, 0),
+				new BoundPlaneCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(max.X - min.X, 0, 0),
+					new Vector3(0, max.Y - min.Y, 0),
 					_squareBoundary),
-				new BoundPlaneCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(0, Max.Y - Min.Y, 0),
-					new Vector3(0, 0, Max.Z - Min.Z),
+				new BoundPlaneCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(0, max.Y - min.Y, 0),
+					new Vector3(0, 0, max.Z - min.Z),
 					_squareBoundary),
-				new BoundPlaneCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(0, 0, Max.Z - Min.Z),
-					new Vector3(Max.X - Min.X, 0, 0),
+				new BoundPlaneCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(0, 0, max.Z - min.Z),
+					new Vector3(max.X - min.X, 0, 0),
 					_squareBoundary),
-				new BoundPlaneCollision(new Vector3(Max.X, Max.Y, Max.Z), new Vector3(Min.X - Max.X, 0, 0),
-					new Vector3(0, Min.Y - Max.Y, 0),
+				new BoundPlaneCollision(new Vector3(max.X, max.Y, max.Z), new Vector3(min.X - max.X, 0, 0),
+					new Vector3(0, min.Y - max.Y, 0),
 					_squareBoundary),
-				new BoundPlaneCollision(new Vector3(Max.X, Max.Y, Max.Z), new Vector3(0, Min.Y - Max.Y, 0),
-					new Vector3(0, 0, Min.Z - Max.Z),
+				new BoundPlaneCollision(new Vector3(max.X, max.Y, max.Z), new Vector3(0, min.Y - max.Y, 0),
+					new Vector3(0, 0, min.Z - max.Z),
 					_squareBoundary),
-				new BoundPlaneCollision(new Vector3(Max.X, Max.Y, Max.Z), new Vector3(0, 0, Min.Z - Max.Z),
-					new Vector3(Min.X - Max.X, 0, 0),
+				new BoundPlaneCollision(new Vector3(max.X, max.Y, max.Z), new Vector3(0, 0, min.Z - max.Z),
+					new Vector3(min.X - max.X, 0, 0),
 					_squareBoundary),
 
 				// edges
-				new BoundEdgeCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(Max.X - Min.X, 0, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(0, Max.Y - Min.Y, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Min.Y, Min.Z), new Vector3(0, 0, Max.Z - Min.Z), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Max.Y, Max.Z), new Vector3(Max.X - Min.X, 0, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Max.Y, Max.Z), new Vector3(0, Min.Y - Max.Y, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Max.Y, Max.Z), new Vector3(0, 0, Min.Z - Max.Z), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Max.X, Min.Y, Min.Z), new Vector3(0, 0, Max.Z - Min.Z), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Max.X, Min.Y, Min.Z), new Vector3(0, Max.Y - Min.Y, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Max.X, Max.Y, Max.Z), new Vector3(0, Min.Y - Max.Y, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Max.X, Max.Y, Max.Z), new Vector3(0, 0, Min.Z - Max.Z), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Max.Y, Min.Z), new Vector3(Max.X - Min.X, 0, 0), _maxScale1),
-				new BoundEdgeCollision(new Vector3(Min.X, Min.Y, Max.Z), new Vector3(Max.X - Min.X, 0, 0), _maxScale1)
+				new BoundEdgeCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(max.X - min.X, 0, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(0, max.Y - min.Y, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(0, 0, max.Z - min.Z), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, max.Y, max.Z), new Vector3(max.X - min.X, 0, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, max.Y, max.Z), new Vector3(0, min.Y - max.Y, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, max.Y, max.Z), new Vector3(0, 0, min.Z - max.Z), _maxScale1),
+				new BoundEdgeCollision(new Vector3(max.X, min.Y, min.Z), new Vector3(0, 0, max.Z - min.Z), _maxScale1),
+				new BoundEdgeCollision(new Vector3(max.X, min.Y, min.Z), new Vector3(0, max.Y - min.Y, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(max.X, max.Y, max.Z), new Vector3(0, min.Y - max.Y, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(max.X, max.Y, max.Z), new Vector3(0, 0, min.Z - max.Z), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, max.Y, min.Z), new Vector3(max.X - min.X, 0, 0), _maxScale1),
+				new BoundEdgeCollision(new Vector3(min.X, min.Y, max.Z), new Vector3(max.X - min.X, 0, 0), _maxScale1)
 			);
 		}
 	}
