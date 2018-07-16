@@ -64,6 +64,8 @@ namespace Singularity
 
 		public GameObjectDrawMode DrawMode { get; private set; } = GameObjectDrawMode.All;
 
+		public RotationMode RotationMode { get; private set; } = RotationMode.XYZ;
+
 		public Matrix WorldMatrix
 		{
 			get
@@ -90,9 +92,20 @@ namespace Singularity
 			{
 				var rotation = GetHierarchyRotation();
 
-				return Matrix.CreateRotationX(rotation.Z)
-				       * Matrix.CreateRotationY(rotation.Y)
-				       * Matrix.CreateRotationZ(rotation.X);
+				//Matrix.CreateRotationX(rotation.Z)
+				//	* Matrix.CreateRotationY(rotation.Y)
+				//	* Matrix.CreateRotationZ(rotation.X);
+
+				Matrix m = Matrix.Identity;
+				for (int counter = 0; counter < 8; counter += 2)
+				{
+					var rmp = ((int) this.RotationMode >> counter) & 0b11;
+					if (rmp == (int)RotationMode.X) m *= Matrix.CreateRotationX(rotation.X);
+					else if (rmp == (int)RotationMode.Y) m *= Matrix.CreateRotationY(rotation.Y);
+					else if (rmp == (int)RotationMode.Z) m *= Matrix.CreateRotationZ(rotation.Z);
+				}
+
+				return m;
 			}
 		}
 
@@ -153,62 +166,6 @@ namespace Singularity
 		{
 			return ObjectScripts;
 		}
-
-		// By https://pastebin.com/47vwJWSc
-
-		/// <summary>
-		///     Calculate <seealso cref="BoundingBox" /> for this
-		/// </summary>
-		/// <returns></returns>
-		//public BoundingBox GetBoundingBox()
-		//{
-		//	return GetBoundingBox(
-		//		Model,
-		//		RotationMatrix * ScaleMatrix
-		//	);
-		//}
-
-		/// <summary>
-		///     Calculate <seealso cref="BoundingBox" /> for <seealso cref="Microsoft.Xna.Framework.Graphics.Model" />
-		/// </summary>
-		/// <param name="model"></param>
-		/// <param name="worldTransformation"></param>
-		/// <returns></returns>
-		//public static BoundingBox GetBoundingBox(Model model, Matrix worldTransformation)
-		//{
-		//	if (model == null) return new BoundingBox();
-
-		//	// Initialize minimum and maximum corners of the bounding box to max and min values
-		//	var min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-		//	var max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-
-		//	// For each mesh of the model
-		//	foreach (var mesh in model.Meshes)
-		//	foreach (var meshPart in mesh.MeshParts)
-		//	{
-		//		// Vertex buffer parameters
-		//		var vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
-		//		var vertexBufferSize = meshPart.NumVertices * vertexStride;
-
-		//		// Get vertex data as float
-		//		var vertexData = new float[vertexBufferSize / sizeof(float)];
-		//		meshPart.VertexBuffer.GetData(vertexData);
-
-		//		// Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
-		//		for (var i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
-		//		{
-		//			var transformedPosition =
-		//				Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]),
-		//					worldTransformation);
-
-		//			min = Vector3.Min(min, transformedPosition);
-		//			max = Vector3.Max(max, transformedPosition);
-		//		}
-		//	}
-
-		//	// Create and return bounding box
-		//	return new BoundingBox(min, max);
-		//}
 
 		#region Builder Pattern
 
@@ -945,6 +902,17 @@ namespace Singularity
 		public GameObject SetDrawMode(GameObjectDrawMode drawMode)
 		{
 			DrawMode = drawMode;
+			return this;
+		}
+
+		#endregion
+
+		#region SetRotationMode
+
+		public GameObject SetRotationMode(RotationMode rotationMode)
+		{
+			this.RotationMode = rotationMode;
+
 			return this;
 		}
 

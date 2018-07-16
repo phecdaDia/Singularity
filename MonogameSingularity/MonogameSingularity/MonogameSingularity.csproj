@@ -132,6 +132,7 @@
     <Compile Include="Code\Utilities\CustomData.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
+    <Compile Include="Code\Utilities\RotationMode.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
     <Compile Include="Code\Utilities\SettingsTemplate.cs" />
