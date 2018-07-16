@@ -104,6 +104,15 @@ namespace Singularity
 		/// </summary>
 		protected abstract void AddGameObjects(int entranceId);
 
+
+		protected void AddObject(IEnumerable<GameObject> gameObjects)
+		{
+			foreach (var go in gameObjects)
+			{
+				AddObject(go);
+			}
+		}
+
 		/// <summary>
 		///     Adds a <seealso cref="GameObject" />
 		/// </summary>
