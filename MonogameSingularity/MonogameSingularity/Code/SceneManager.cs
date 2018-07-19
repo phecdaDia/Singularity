@@ -72,7 +72,7 @@ namespace Singularity
 			_GetCurrentScene()?.OnScenePause();
 
 			scene.LoadContent();
-			scene.SetupScene(this.SceneQueue.Peek(), entranceId);
+			scene.SetupScene(this.SceneQueue.Count > 0 ? this.SceneQueue.Peek() : null, entranceId);
 			SceneQueue.Enqueue(scene);
 		}
 
