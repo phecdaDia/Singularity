@@ -13,7 +13,7 @@ namespace SingularityTest.Scenes
 			SetCameraPosition(new Vector3(2, 2, 2));
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{

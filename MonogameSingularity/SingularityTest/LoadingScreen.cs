@@ -10,7 +10,7 @@ namespace SingularityTest
 		{
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			AddObject(new TestSpriteObject());
 		}

@@ -20,7 +20,7 @@ namespace Singularity.Scripting
 			Script.Init(game);
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			var objs = Script.AddGameObjects(entranceId);
 			foreach (var gameObject in objs) AddObject(gameObject);

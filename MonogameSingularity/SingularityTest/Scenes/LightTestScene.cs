@@ -15,7 +15,7 @@ namespace SingularityTest.Scenes
 			SetAbsoluteCamera(new Vector3(-20, 20, 20), new Vector3(0, 0, 0));
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			var width = 40.0f;
 

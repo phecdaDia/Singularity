@@ -26,7 +26,7 @@ namespace SingularityTest.Scenes
 			SetProjectionMatrix(Matrix.CreateOrthographic(100, 100, 0.01f, 200f));
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			// load the savegame
 			var sg = Savegame.GetSavegame();

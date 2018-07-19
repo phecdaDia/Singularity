@@ -15,7 +15,7 @@ namespace SingularityTest.Scenes
 			SetCullingDistance(0.01f, 5.0f);
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			{

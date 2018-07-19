@@ -21,7 +21,7 @@ namespace SingularityTest.Scenes
 			SceneResumeEvent += (sender, args) => Mouse.SetPosition(LastMouseX, LastMouseY);
 		}
 
-		protected override void AddGameObjects(int entranceId)
+		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
 			//AddObject(new CollidableModelObject("cubes/cube1")
 			//	.SetPosition(-10.5f, 0, 0)

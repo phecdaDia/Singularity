@@ -55,14 +55,14 @@ namespace Singularity
 		/// <summary>
 		///     Clears all <seealso cref="GameObject" /> and calls <see cref="AddGameObjects" />
 		/// </summary>
-		public void SetupScene(int entranceId)
+		public void SetupScene(GameScene previousScene, int entranceId)
 		{
 			UnloadContent();
 			// clear all current objects.
 			ColliderObjects.Clear();
 
 			// Now setup the new objects
-			AddGameObjects(entranceId);
+			AddGameObjects(previousScene, entranceId);
 		}
 
 		/// <summary>
@@ -100,9 +100,18 @@ namespace Singularity
 		}
 
 		/// <summary>
+		///		DEPRECATED
 		///     Adds all <seealso cref="GameObject" />
 		/// </summary>
-		protected abstract void AddGameObjects(int entranceId);
+		[Obsolete("Please update to include GameScene as first parameter", true)]
+		protected virtual void AddGameObjects(int entranceId) { }
+
+		/// <summary>
+		///     Adds all <seealso cref="GameObject" />
+		/// </summary>
+		/// <param name="previousScene"></param>
+		/// <param name="entranceId"></param>
+		protected abstract void AddGameObjects(GameScene previousScene, int entranceId);
 
 
 		protected void AddObject(IEnumerable<GameObject> gameObjects)
