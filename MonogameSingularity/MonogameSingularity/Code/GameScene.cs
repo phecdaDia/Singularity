@@ -244,7 +244,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="gameObject"></param>
 		/// <param name="safePosition"></param>
-		public void HandleCollision(GameObject gameObject, Vector3 safePosition)
+		public void HandleCollision(GameTime gameTime, GameObject gameObject, Vector3 safePosition)
 		{
 			if (!(gameObject is ICollider)) return;
 
@@ -269,8 +269,8 @@ namespace Singularity
 							if (gameObject.EnablePushCollision)
 								gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 
-							gameObject.OnCollision(gameObject, go, this, pos, nor);
-							go.OnCollision(gameObject, go, this, pos, nor);
+							gameObject.OnCollision(gameTime, gameObject, go, this, pos, nor);
+							go.OnCollision(gameTime, gameObject, go, this, pos, nor);
 
 							didCollide = true;
 						});

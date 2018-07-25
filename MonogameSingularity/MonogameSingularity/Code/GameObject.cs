@@ -1082,7 +1082,7 @@ namespace Singularity
 
 
 			// check if we are even able to stay here.
-			scene.HandleCollision(this, GetHierarchyPosition());
+			scene.HandleCollision(gameTime, this, GetHierarchyPosition());
 
 			// did we move?
 			if (GetHierarchyPosition() != position) scene.MoveOctree(this, position);
@@ -1272,10 +1272,10 @@ namespace Singularity
 
 		protected event EventHandler<CollisionEventArgs> CollisionEvent;
 
-		public virtual void OnCollision(GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
+		public virtual void OnCollision(GameTime gameTime, GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
 			Vector3 normal)
 		{
-			OnCollision(new CollisionEventArgs(position, normal, collider, collidable, scene));
+			OnCollision(new CollisionEventArgs(gameTime, position, normal, collider, collidable, scene));
 		}
 
 		public virtual void OnCollision(CollisionEventArgs e)
