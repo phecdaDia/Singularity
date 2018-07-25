@@ -578,7 +578,13 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale, GameTime gameTime)
 		{
-			return MultiplyScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			var s = new Vector3();
+			var framerate = Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate);
+			s.X = (float) Math.Pow(scale.X, framerate);
+			s.Y = (float) Math.Pow(scale.Y, framerate);
+			s.Z = (float) Math.Pow(scale.Z, framerate);
+			
+			return MultiplyScale(s);
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value)
 		{
@@ -589,7 +595,7 @@ namespace Singularity
 			return this;
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value, GameTime gameTime) =>
-			MultiplyScaleAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			MultiplyScaleAt(axis, (float) Math.Pow(value, Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate)));
 
 		#endregion
 
@@ -1015,28 +1021,30 @@ namespace Singularity
 
 		#region Methods
 
-		public void DecayInertia(Axis axis, float factor, float minimum = 0.01f)
+		public void DecayInertia(Axis axis, GameTime gameTime, float factor, float minimum = 0.01f)
 		{
 			if (!(this is IInertia)) throw new Exception("This object does not implement inertia!");
 
 			if (factor < 0.0f) throw new ArgumentException("decay factor is negative");
 			if (factor >= 1.0f) throw new ArgumentException("decay factor is larger than 1");
 
+			var framerate = Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate);
+
 			if (axis.HasFlag(Axis.X))
 			{
-				var value = this.Inertia.X * factor;
+				var value = this.Inertia.X * (float) Math.Pow(factor, framerate);
 				this.SetInertiaAt(Axis.X, value < minimum ? 0f : value);
 			}
 
 			if (axis.HasFlag(Axis.Y))
 			{
-				var value = this.Inertia.Y * factor;
+				var value = this.Inertia.Y * (float)Math.Pow(factor, framerate);
 				this.SetInertiaAt(Axis.Y, value < minimum ? 0f : value);
 			}
 
 			if (axis.HasFlag(Axis.Z))
 			{
-				var value = this.Inertia.Z * factor;
+				var value = this.Inertia.Z * (float)Math.Pow(factor, framerate);
 				this.SetInertiaAt(Axis.Z, value < minimum ? 0f : value);
 			}
 
