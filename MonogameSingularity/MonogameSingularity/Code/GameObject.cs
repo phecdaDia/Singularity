@@ -1308,12 +1308,6 @@ namespace Singularity
 		}
 
 		#endregion
-
-		public void foo()
-		{
-
-			this.SetRotation(0, 1);
-		}
 	}
 	
 	public enum Axis
