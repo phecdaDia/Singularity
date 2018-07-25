@@ -255,7 +255,7 @@ namespace Singularity
 			return this;
 		}
 
-		public GameObject SetPosition(Axis axis, float value)
+		public GameObject SetPositionAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -347,7 +347,7 @@ namespace Singularity
 
 			return AddPosition(position * (float) Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
-		public GameObject AddPosition(Axis axis, float value)
+		public GameObject AddPositionAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -364,8 +364,8 @@ namespace Singularity
 			}
 		}
 
-		public GameObject AddPosition(Axis axis, float value, GameTime gameTime) => 
-			AddPosition(axis, (float) (value * gameTime.ElapsedGameTime.TotalSeconds));
+		public GameObject AddPositionAt(Axis axis, float value, GameTime gameTime) =>
+			AddPositionAt(axis, (float) (value * gameTime.ElapsedGameTime.TotalSeconds));
 
 		#endregion
 
@@ -405,7 +405,7 @@ namespace Singularity
 			Rotation = rotation;
 			return this;
 		}
-		public GameObject SetRotation(Axis axis, float value)
+		public GameObject SetRotationAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -496,7 +496,7 @@ namespace Singularity
 		{
 			return AddRotation(rotation * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
-		public GameObject AddRotation(Axis axis, float value)
+		public GameObject AddRotationAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -512,8 +512,8 @@ namespace Singularity
 					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
 			}
 		}
-		public GameObject AddRotation(Axis axis, float value, GameTime gameTime) =>
-			AddRotation(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+		public GameObject AddRotationAt(Axis axis, float value, GameTime gameTime) =>
+			AddRotationAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
 
 		#endregion
 
@@ -552,7 +552,7 @@ namespace Singularity
 			Scale = scale;
 			return this;
 		}
-		public GameObject SetScale(Axis axis, float value)
+		public GameObject SetScaleAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -619,7 +619,7 @@ namespace Singularity
 		{
 			return MultiplyScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
-		public GameObject MultiplyScale(Axis axis, float value)
+		public GameObject MultiplyScaleAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -635,8 +635,8 @@ namespace Singularity
 					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
 			}
 		}
-		public GameObject MultiplyScale(Axis axis, float value, GameTime gameTime) =>
-			MultiplyScale(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+		public GameObject MultiplyScaleAt(Axis axis, float value, GameTime gameTime) =>
+			MultiplyScaleAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
 
 		#endregion
 
@@ -710,7 +710,7 @@ namespace Singularity
 		{
 			return AddScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
-		public GameObject AddScale(Axis axis, float value)
+		public GameObject AddScaleAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -726,8 +726,8 @@ namespace Singularity
 					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
 			}
 		}
-		public GameObject AddScale(Axis axis, float value, GameTime gameTime) =>
-			AddScale(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+		public GameObject AddScaleAt(Axis axis, float value, GameTime gameTime) =>
+			AddScaleAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
 
 		#endregion
 
@@ -751,7 +751,7 @@ namespace Singularity
 			Inertia = inertia;
 			return this;
 		}
-		public GameObject SetInertia(Axis axis, float value)
+		public GameObject SetInertiaAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -825,7 +825,7 @@ namespace Singularity
 		{
 			return AddInertia(inertia * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
-		public GameObject AddInertia(Axis axis, float value)
+		public GameObject AddInertiaAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
@@ -841,8 +841,8 @@ namespace Singularity
 					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
 			}
 		}
-		public GameObject AddInertia(Axis axis, float value, GameTime gameTime) =>
-			AddInertia(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+		public GameObject AddInertiaAt(Axis axis, float value, GameTime gameTime) =>
+			AddInertiaAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
 
 		#endregion
 
@@ -1308,10 +1308,19 @@ namespace Singularity
 		}
 
 		#endregion
-	}
 
+		public void foo()
+		{
+
+			this.SetRotation(0, 1);
+		}
+	}
+	
 	public enum Axis
 	{
-		X, Y, Z, W
+		X,
+		Y,
+		Z,
+		W
 	}
 }
