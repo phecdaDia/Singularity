@@ -1076,7 +1076,7 @@ namespace Singularity
 
 		#endregion
 
-		#region Abstract Methods
+		#region Logic Methods
 
 		/// <summary>
 		///     Calls <seealso cref="Update" />, and calls back to the scene.
