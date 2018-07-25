@@ -257,19 +257,12 @@ namespace Singularity
 
 		public GameObject SetPositionAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return SetPosition(value, this.Position.Y, this.Position.Z);
-				case Axis.Y:
-					return SetPosition(this.Position.X, value, this.Position.Z);
-				case Axis.Z:
-					return SetPosition(this.Position.X, this.Position.Y, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+
+			if (axis.HasFlag(Axis.X)) SetPosition(value, this.Position.Y, this.Position.Z);
+			if (axis.HasFlag(Axis.Y)) SetPosition(this.Position.X, value, this.Position.Z);
+			if (axis.HasFlag(Axis.Z)) SetPosition(this.Position.X, this.Position.Y, value);
+
+			return this;
 		}
 
 		#endregion
@@ -349,23 +342,15 @@ namespace Singularity
 		}
 		public GameObject AddPositionAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return AddPosition(value, 0, 0);
-				case Axis.Y:
-					return AddPosition(0, value, 0);
-				case Axis.Z:
-					return AddPosition(0, 0, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) AddPosition(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) AddPosition(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) AddPosition(0, 0, value);
+
+			return this;
 		}
 
 		public GameObject AddPositionAt(Axis axis, float value, GameTime gameTime) =>
-			AddPositionAt(axis, (float) (value * gameTime.ElapsedGameTime.TotalSeconds));
+			AddPositionAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -407,19 +392,11 @@ namespace Singularity
 		}
 		public GameObject SetRotationAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return SetRotation(value, this.Rotation.Y, this.Rotation.Z);
-				case Axis.Y:
-					return SetRotation(this.Rotation.X, value, this.Rotation.Z);
-				case Axis.Z:
-					return SetRotation(this.Rotation.X, this.Rotation.Y, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) SetRotation(value, this.Rotation.Y, this.Rotation.Z);
+			if (axis.HasFlag(Axis.Y)) SetRotation(this.Rotation.X, value, this.Rotation.Z);
+			if (axis.HasFlag(Axis.Z)) SetRotation(this.Rotation.X, this.Rotation.Y, value);
+
+			return this;
 		}
 
 		#endregion
@@ -498,22 +475,14 @@ namespace Singularity
 		}
 		public GameObject AddRotationAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return AddRotation(value, 0, 0);
-				case Axis.Y:
-					return AddRotation(0, value, 0);
-				case Axis.Z:
-					return AddRotation(0, 0, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) AddRotation(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) AddRotation(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) AddRotation(0, 0, value);
+
+			return this;
 		}
 		public GameObject AddRotationAt(Axis axis, float value, GameTime gameTime) =>
-			AddRotationAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+			AddRotationAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -554,19 +523,11 @@ namespace Singularity
 		}
 		public GameObject SetScaleAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return SetScale(value, this.Scale.Y, this.Scale.Z);
-				case Axis.Y:
-					return SetScale(this.Scale.X, value, this.Scale.Z);
-				case Axis.Z:
-					return SetScale(this.Scale.X, this.Scale.Y, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) SetScale(value, this.Scale.Y, this.Scale.Z);
+			if (axis.HasFlag(Axis.Y)) SetScale(this.Scale.X, value, this.Scale.Z);
+			if (axis.HasFlag(Axis.Z)) SetScale(this.Scale.X, this.Scale.Y, value);
+
+			return this;
 		}
 
 		#endregion
@@ -621,22 +582,14 @@ namespace Singularity
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return MultiplyScale(value, 1, 1);
-				case Axis.Y:
-					return MultiplyScale(1, value, 1);
-				case Axis.Z:
-					return MultiplyScale(1, 1, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) MultiplyScale(value, 1, 1);
+			if (axis.HasFlag(Axis.Y)) MultiplyScale(1, value, 1);
+			if (axis.HasFlag(Axis.Z)) MultiplyScale(1, 1, value);
+
+			return this;
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value, GameTime gameTime) =>
-			MultiplyScaleAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+			MultiplyScaleAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -712,22 +665,14 @@ namespace Singularity
 		}
 		public GameObject AddScaleAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return AddScale(value, 0, 0);
-				case Axis.Y:
-					return AddScale(0, value, 0);
-				case Axis.Z:
-					return AddScale(0, 0, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) AddScale(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) AddScale(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) AddScale(0, 0, value);
+
+			return this;
 		}
 		public GameObject AddScaleAt(Axis axis, float value, GameTime gameTime) =>
-			AddScaleAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+			AddScaleAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -753,19 +698,11 @@ namespace Singularity
 		}
 		public GameObject SetInertiaAt(Axis axis, float value)
 		{
-			switch (axis)
-			{
-				case Axis.X:
-					return SetInertia(value, this.Inertia.Y, this.Inertia.Z);
-				case Axis.Y:
-					return SetInertia(this.Inertia.X, value, this.Inertia.Z);
-				case Axis.Z:
-					return SetInertia(this.Inertia.X, this.Inertia.Y, value);
-				case Axis.W:
-					return this; // doesn't use W axis.
-				default:
-					throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
-			}
+			if (axis.HasFlag(Axis.X)) SetInertia(value, this.Inertia.Y, this.Inertia.Z);
+			if (axis.HasFlag(Axis.Y)) SetInertia(this.Inertia.X, value, this.Inertia.Z);
+			if (axis.HasFlag(Axis.Z)) SetInertia(this.Inertia.X, this.Inertia.Y, value);
+
+			return this;
 		}
 
 		#endregion
@@ -842,7 +779,7 @@ namespace Singularity
 			}
 		}
 		public GameObject AddInertiaAt(Axis axis, float value, GameTime gameTime) =>
-			AddInertiaAt(axis, (float)(value * gameTime.ElapsedGameTime.TotalSeconds));
+			AddInertiaAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -1073,6 +1010,37 @@ namespace Singularity
 		}
 
 		#endregion
+
+		#endregion
+
+		#region Methods
+
+		public void DecayInertia(Axis axis, float factor, float minimum = 0.01f)
+		{
+			if (!(this is IInertia)) throw new Exception("This object does not implement inertia!");
+
+			if (factor < 0.0f) throw new ArgumentException("decay factor is negative");
+			if (factor >= 1.0f) throw new ArgumentException("decay factor is larger than 1");
+
+			if (axis.HasFlag(Axis.X))
+			{
+				var value = this.Inertia.X * factor;
+				this.SetInertiaAt(Axis.X, value < minimum ? 0f : value);
+			}
+
+			if (axis.HasFlag(Axis.Y))
+			{
+				var value = this.Inertia.Y * factor;
+				this.SetInertiaAt(Axis.Y, value < minimum ? 0f : value);
+			}
+
+			if (axis.HasFlag(Axis.Z))
+			{
+				var value = this.Inertia.Z * factor;
+				this.SetInertiaAt(Axis.Z, value < minimum ? 0f : value);
+			}
+
+		}
 
 		#endregion
 
@@ -1310,11 +1278,13 @@ namespace Singularity
 		#endregion
 	}
 	
+	[Flags]
 	public enum Axis
 	{
-		X,
-		Y,
-		Z,
-		W
+		X = 0b00000001,
+		Y = 0b00000010,
+		Z = 0b00000100,
+		W = 0b00001000,
+		All = ~0
 	}
 }
