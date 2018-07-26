@@ -12,6 +12,9 @@ using SingularityTest.ScreenEffect;
 
 namespace SingularityTest.Scenes
 {
+	using System.IO;
+	using System.Linq;
+
 	public class TestScene : LightGameScene
 	{
 		public TestScene(SingularityGame game) : base(game, "test", 4096)
@@ -206,6 +209,17 @@ namespace SingularityTest.Scenes
 				Console.WriteLine($"Sleeping for {o.CustomData.GetValue<int>("millisToSleep")} ms");
 
 			})));
+
+			SoundManager.RegisterSoundFromFile("LoopA", "Content/sound/Into The Wide World (OST 1) Loop A.mp3");
+			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.mp3");
+			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
+			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
+			                                          {
+														  if(KeyboardManager.IsKeyPressed(Keys.M))
+															  SoundManager.PlayLoopMusic("LoopA", "LoopB");
+														  if(KeyboardManager.IsKeyPressed(Keys.N))
+															  SoundManager.PlayEffect("Jump");
+			                                          }));
 		}
 
 		//public override void AddLightningToEffect(Effect eff)
