@@ -166,6 +166,8 @@ namespace Singularity
 		{
 			OnPreUpdateEvent(gameTime);
 
+			InputManager.Update();
+
 			//Remove finished ScreenEffects
 			ScreenEffectList.RemoveAll(f => _removalList.Contains(f));
 			_removalList.Clear();
