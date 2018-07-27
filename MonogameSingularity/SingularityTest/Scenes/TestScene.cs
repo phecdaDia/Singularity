@@ -210,8 +210,8 @@ namespace SingularityTest.Scenes
 
 			})));
 
-			SoundManager.RegisterSoundFromFile("LoopA", "Content/sound/Into The Wide World (OST 1) Loop A.mp3");
-			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.mp3");
+			SoundManager.RegisterSoundFromFile("LoopA", "Content/sound/Into The Wide World (OST 1) Loop A.wav");
+			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.wav");
 			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
 			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
 			                                          {
