@@ -35,7 +35,7 @@ namespace Singularity
 
 		public static double MinimumFramerate = 0.04d;
 
-		
+		private bool inSizeChange = false;
 
 		public SingularityGame()
 		{
@@ -50,7 +50,6 @@ namespace Singularity
 				PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
 			};
 			Content.RootDirectory = "Content";
-			
 		}
 
 		public static ContentManager GetContentManager()
@@ -85,6 +84,19 @@ namespace Singularity
 			SpriteBatch = new SpriteBatch(GraphicsDevice);
 
 			base.Initialize();
+			Window.AllowUserResizing = true;
+			Window.ClientSizeChanged += (sender, args) =>
+			                            {
+				                            if (inSizeChange) return;
+
+				                            inSizeChange = true;
+				                            GraphicsDeviceManager.PreferredBackBufferHeight =
+					                            Window.ClientBounds.Height;
+				                            GraphicsDeviceManager.PreferredBackBufferWidth = Window.ClientBounds.Width;
+				                            GraphicsDeviceManager.ApplyChanges();
+
+				                            inSizeChange = false;
+			                            };
 		}
 
 
@@ -145,9 +157,11 @@ namespace Singularity
 			SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 				DepthStencilState.Default, RasterizerState.CullNone);
 
+			var width = 16 * GraphicsDeviceManager.PreferredBackBufferHeight / 9;
+
 			SpriteBatch.Draw(RenderTarget,
-				new Rectangle(new Point(0, 0),
-					new Point(GraphicsDeviceManager.PreferredBackBufferWidth,
+				new Rectangle(new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
+					new Point(width,
 						GraphicsDeviceManager.PreferredBackBufferHeight)),
 				new Rectangle(new Point(0, 0),
 					new Point(RenderTarget.Width, RenderTarget.Height)),
