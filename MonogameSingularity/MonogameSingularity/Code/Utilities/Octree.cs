@@ -347,7 +347,7 @@ namespace Singularity.Utilities
 		/// <returns></returns>
 		public List<T> GetObjects(Vector3 position, Func<T, bool> predicate = null)
 		{
-			if (predicate != null) return GetAllObjects().Where(predicate).ToList();
+			if (predicate != null) return GetObjects(position).Where(predicate).ToList();
 
 			if (Children == null) return Leafs;
 
@@ -355,7 +355,10 @@ namespace Singularity.Utilities
 
 			output.AddRange(Leafs.ToArray());
 
-			output.AddRange(Children[GetQuadrantNumber(position)].GetObjects(position));
+			var qn = GetQuadrantNumber(position);
+
+			if (Children[qn] != null)
+				output.AddRange(Children[qn].GetObjects(position));
 
 			return output;
 		}
