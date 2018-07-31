@@ -36,6 +36,8 @@ namespace Singularity
 		public static double MinimumFramerate = 0.04d;
 
 		private bool inSizeChange = false;
+		private int ratioWidth = 16;
+		private int ratioHeight = 9;
 
 		public SingularityGame()
 		{
@@ -62,11 +64,13 @@ namespace Singularity
 			return Instance;
 		}
 
-		public SingularityGame(int width, int height) : this()
+		public SingularityGame(int width, int height, int ratioWidth = 16, int ratioHeight = 9) : this()
 		{
 			GraphicsDeviceManager.PreferredBackBufferHeight = height;
 			GraphicsDeviceManager.PreferredBackBufferWidth = width;
 			GraphicsDeviceManager.ApplyChanges();
+			this.ratioWidth = ratioWidth;
+			this.ratioHeight = ratioHeight;
 		}
 
 		/// <summary>
@@ -84,7 +88,6 @@ namespace Singularity
 			SpriteBatch = new SpriteBatch(GraphicsDevice);
 
 			base.Initialize();
-			Window.AllowUserResizing = true;
 			Window.ClientSizeChanged += (sender, args) =>
 			                            {
 				                            if (inSizeChange) return;
@@ -157,7 +160,7 @@ namespace Singularity
 			SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 				DepthStencilState.Default, RasterizerState.CullNone);
 
-			var width = 16 * GraphicsDeviceManager.PreferredBackBufferHeight / 9;
+			var width = ratioWidth * GraphicsDeviceManager.PreferredBackBufferHeight / ratioHeight;
 
 			SpriteBatch.Draw(RenderTarget,
 				new Rectangle(new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
@@ -238,6 +241,12 @@ namespace Singularity
 			Stream stream = File.Create(location + "\\" + name + ".png");
 			_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
 			stream.Dispose();
+		}
+
+		public void SetRatio(int _ratioWidth, int _ratioHeight)
+		{
+			ratioWidth = _ratioWidth;
+			ratioHeight = _ratioHeight;
 		}
 
 		#region Events
