@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Singularity.Utilities
 {
 	[DataContract(IsReference = true)]
-	public abstract class XmlManager<T>
+	public abstract class XmlManager<T> where T : XmlManager<T>
 	{
 		public XmlManager()
 		{
@@ -60,8 +60,10 @@ namespace Singularity.Utilities
 				using (var stream = File.OpenRead(filePath))
 				{
 					var xmlSerializer = new DataContractSerializer(typeof(T));
-					return (T) xmlSerializer.ReadObject(stream);
-					;
+					var o = (T) xmlSerializer.ReadObject(stream);
+					o.SetDefaultValues();
+					return o;
+
 				}
 			}
 			catch (Exception ex)
