@@ -18,6 +18,8 @@ namespace Singularity.Collisions
 
 			var didCollide = false;
 
+
+			if (collidableA == null || collidableB == null) return false;
 			#region Sphere On Collision
 
 			#region Sphere on Sphere Collision
@@ -139,6 +141,9 @@ namespace Singularity.Collisions
 			where T : Collision
 			where U : Collision
 		{
+			if (collider == null || collidable == null) return new Vector3();
+
+
 			// check for the different types.
 			// the normal vector should ALWAYS be from collidableA to collidableB
 
@@ -173,6 +178,9 @@ namespace Singularity.Collisions
 		public static RayCollisionPoint GetRayCollision<T>(Ray ray, T collision)
 			where T : Collision
 		{
+			if (collision == null) return new RayCollisionPoint();
+
+
 			if (collision is SphereCollision) return RayOnSphereCollision.GetCollision(ray, collision as SphereCollision);
 
 			if (collision is BoundPlaneCollision)

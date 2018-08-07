@@ -18,7 +18,7 @@ namespace Singularity.Helpers
 			// prevent divion by 0
 			if (Math.Abs(screenPosition.W) > float.Epsilon) screenPosition /= Math.Abs(screenPosition.W);
 
-			Console.WriteLine($"{screenPosition}");
+			//Console.WriteLine($"{screenPosition}");
 
 			return new Vector2(screenWidth / 2f * screenPosition.X + screenWidth / 2f,
 				screenHeight / 2f * -screenPosition.Y + screenHeight / 2f);

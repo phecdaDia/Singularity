@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
+using Singularity.Collisions;
 using Singularity.Collisions.Multi;
 using Singularity.GameObjects;
 using Singularity.Utilities;
@@ -164,8 +165,10 @@ namespace SingularityTest.Scenes
 
 			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
 				(scene, o, arg3) => o.AddRotation(0, 1, 0, arg3)
-			).AddChild(new CollidableModelObject("sphere").SetPosition(5, 0, 0), ChildProperties.TranslationRotation));
-			
+			).AddChild(new CollidableModelObject("sphere").SetPosition(0, 10, 0).SetCollision(new SphereCollision(1)), ChildProperties.TranslationRotation));
+
+
+			this.AddObject(new EmptyGameObject().AddChild(new CollidableModelObject("sphere").SetPosition(10, 10, 0).SetCollision(new SphereCollision(1))));
 
 			AddObject(new EmptyGameObject().AddScript((scene, obj, time) =>
 			{
@@ -206,7 +209,7 @@ namespace SingularityTest.Scenes
 				{
 					o.CustomData.SetValue("millisToSleep", 0);
 				}
-				Console.WriteLine($"Sleeping for {o.CustomData.GetValue<int>("millisToSleep")} ms");
+				//Console.WriteLine($"Sleeping for {o.CustomData.GetValue<int>("millisToSleep")} ms");
 
 			})));
 

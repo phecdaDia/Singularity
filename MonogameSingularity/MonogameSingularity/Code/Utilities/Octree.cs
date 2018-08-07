@@ -350,16 +350,16 @@ namespace Singularity.Utilities
 			if (predicate != null) return GetObjects(position).Where(predicate).ToList();
 
 			if (Children == null) return Leafs;
-
-			var output = new List<T>();
-
-			output.AddRange(Leafs.ToArray());
-
+			
 			var qn = GetQuadrantNumber(position);
 
-			if (Children[qn] != null)
-				output.AddRange(Children[qn].GetObjects(position));
+			if (Children[qn] == null) return this.Leafs;
 
+
+			var output = new List<T>();
+			output.AddRange(Leafs.ToArray());
+			output.AddRange(Children[qn].GetObjects(position));
+			
 			return output;
 		}
 	}

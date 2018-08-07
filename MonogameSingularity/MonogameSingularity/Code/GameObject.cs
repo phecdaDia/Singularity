@@ -17,7 +17,7 @@ namespace Singularity
 	/// </summary>
 	public abstract class GameObject
 	{
-		private readonly List<GameObject> ChildrenBuffer = new List<GameObject>();
+		public List<GameObject> ChildrenBuffer { get; } = new List<GameObject>();
 
 		private readonly List<Action<GameScene, GameObject, GameTime>> ObjectScripts = new List<Action<GameScene, GameObject, GameTime>>();// Basic Actionscripts
 
@@ -197,9 +197,8 @@ namespace Singularity
 
 			ModelRadius = rm;
 
-			if (this is ICollidable || this is ICollider
-			) // everything that has something to do with collisions gets a sphere at the beginning
-				SetCollision(new SphereCollision(ModelRadius));
+			//if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
+			//	SetCollision(new SphereCollision(ModelRadius));
 			return this;
 		}
 
@@ -1071,6 +1070,7 @@ namespace Singularity
 			Update(scene, gameTime);
 
 			ChildObjects.AddRange(ChildrenBuffer);
+			//scene.AddObject(this.ChildrenBuffer);
 			ChildrenBuffer.Clear();
 
 			// add inertia.

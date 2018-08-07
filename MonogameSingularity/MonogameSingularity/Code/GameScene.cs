@@ -129,6 +129,7 @@ namespace Singularity
 		protected void AddObject(GameObject gameObject)
 		{
 			foreach (var children in gameObject.ChildObjects) AddObject(children);
+			foreach (var children in gameObject.ChildrenBuffer) AddObject(children);
 
 			gameObject.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
 
@@ -141,11 +142,10 @@ namespace Singularity
 			var scale = gameObject.GetHierarchyScale();
 			var maxScale = Math.Max(Math.Max(scale.X, scale.Y), scale.Z);
 
-			if (gameObject.Collision.GetType() == typeof(SphereCollision))
-				ColliderObjects.AddObject(gameObject, gameObject.Position,
-					maxScale * (gameObject.Collision as SphereCollision).Radius);
+			if (gameObject.Collision is SphereCollision)
+				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * (gameObject.Collision as SphereCollision).Radius);
 			else
-				ColliderObjects.AddObject(gameObject, gameObject.Position, maxScale * gameObject.ModelRadius);
+				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * gameObject.ModelRadius);
 		}
 
 		/// <summary>
@@ -254,6 +254,23 @@ namespace Singularity
 
 
 			var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+
+
+			// debug
+
+			var allCollidables = this.ColliderObjects.GetAllObjects(go => go is ICollidable && go != gameObject);
+
+			Console.WriteLine($"{collidables.Count} out of {allCollidables.Count}");
+			foreach (var go in allCollidables)
+			{
+				if (!collidables.Contains(go))
+				{
+					Console.WriteLine($"Unknown collidable: {go.GetHierarchyPosition()} => {go.Collision?.GetType() ?? null}");
+				}
+			}
+
+			// debug end
+
 			do
 			{
 				didCollide = false;
