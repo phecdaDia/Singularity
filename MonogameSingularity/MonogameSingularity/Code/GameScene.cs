@@ -256,20 +256,20 @@ namespace Singularity
 			var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
 
 
-			// debug
+			//// debug
 
-			var allCollidables = this.ColliderObjects.GetAllObjects(go => go is ICollidable && go != gameObject);
+			//var allCollidables = this.ColliderObjects.GetAllObjects(go => go is ICollidable && go != gameObject);
 
-			Console.WriteLine($"{collidables.Count} out of {allCollidables.Count}");
-			foreach (var go in allCollidables)
-			{
-				if (!collidables.Contains(go))
-				{
-					Console.WriteLine($"Unknown collidable: {go.GetHierarchyPosition()} => {go.Collision?.GetType() ?? null}");
-				}
-			}
+			//Console.WriteLine($"{collidables.Count} out of {allCollidables.Count}");
+			//foreach (var go in allCollidables)
+			//{
+			//	if (!collidables.Contains(go))
+			//	{
+			//		Console.WriteLine($"Unknown collidable: {go.GetHierarchyPosition()} => {go.Collision?.GetType() ?? null}");
+			//	}
+			//}
 
-			// debug end
+			//// debug end
 
 			do
 			{
