@@ -186,7 +186,10 @@ namespace SingularityTest.Scenes
 
 			// Add Child Test
 			AddObject(new ParentBlock().SetPosition(20, -10, 0).SetDebugName("Parent"));
-			AddObject(new ChildBall().SetPosition(20, 00, 0).SetDebugName("Child"));
+			AddObject(new ChildBall().SetPosition(21, 00, 1).SetDebugName("Child"));
+			AddObject(new ChildBall().SetPosition(21, 00, -1).SetDebugName("Child"));
+			AddObject(new ChildBall().SetPosition(19, 00, 1).SetDebugName("Child"));
+			AddObject(new ChildBall().SetPosition(19, 00, -1).SetDebugName("Child"));
 
 			AddObject(new EmptyGameObject().AddScript(((scene, o, time) =>
 			{

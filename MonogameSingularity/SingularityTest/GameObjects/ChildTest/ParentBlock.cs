@@ -20,7 +20,7 @@ namespace SingularityTest.GameObjects.ChildTest
 
 		private void ParentBlockCollisionEvent(object sender, CollisionEventArgs e)
 		{
-			if (!(e.Collider is ChildBall)) return;
+			//if (!(e.Collider is ChildBall)) return;
 
 
 			// now try to get the ball as child with translation override

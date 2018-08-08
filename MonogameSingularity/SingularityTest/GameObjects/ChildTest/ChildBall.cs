@@ -8,7 +8,7 @@ namespace SingularityTest.GameObjects.ChildTest
 {
 	public class ChildBall : GameObject, IInertia, ICollider
 	{
-		private readonly Vector3 Gravity = new Vector3(0, -10, 0);
+		private readonly Vector3 Gravity = new Vector3(0, -30, 0);
 
 		public ChildBall()
 		{

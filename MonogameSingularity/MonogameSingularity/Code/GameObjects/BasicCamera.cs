@@ -34,7 +34,7 @@ namespace Singularity.GameObjects
 		{
 			var target = GetCameraTarget();
 
-			scene.SetCamera(Position, target);
+			scene.SetCamera(this.GetHierarchyPosition(), target);
 		}
 
 		/// <summary>
