@@ -35,7 +35,9 @@ namespace Singularity
 
 		public static double MinimumFramerate = 0.04d;
 
-		
+		private bool inSizeChange = false;
+		private int ratioWidth = 16;
+		private int ratioHeight = 9;
 
 		public SingularityGame()
 		{
@@ -50,7 +52,6 @@ namespace Singularity
 				PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
 			};
 			Content.RootDirectory = "Content";
-			
 		}
 
 		public static ContentManager GetContentManager()
@@ -63,11 +64,13 @@ namespace Singularity
 			return Instance;
 		}
 
-		public SingularityGame(int width, int height) : this()
+		public SingularityGame(int width, int height, int ratioWidth = 16, int ratioHeight = 9) : this()
 		{
 			GraphicsDeviceManager.PreferredBackBufferHeight = height;
 			GraphicsDeviceManager.PreferredBackBufferWidth = width;
 			GraphicsDeviceManager.ApplyChanges();
+			this.ratioWidth = ratioWidth;
+			this.ratioHeight = ratioHeight;
 		}
 
 		/// <summary>
@@ -85,6 +88,18 @@ namespace Singularity
 			SpriteBatch = new SpriteBatch(GraphicsDevice);
 
 			base.Initialize();
+			Window.ClientSizeChanged += (sender, args) =>
+			                            {
+				                            if (inSizeChange) return;
+
+				                            inSizeChange = true;
+				                            GraphicsDeviceManager.PreferredBackBufferHeight =
+					                            Window.ClientBounds.Height;
+				                            GraphicsDeviceManager.PreferredBackBufferWidth = Window.ClientBounds.Width;
+				                            GraphicsDeviceManager.ApplyChanges();
+
+				                            inSizeChange = false;
+			                            };
 		}
 
 
@@ -145,9 +160,11 @@ namespace Singularity
 			SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 				DepthStencilState.Default, RasterizerState.CullNone);
 
+			var width = ratioWidth * GraphicsDeviceManager.PreferredBackBufferHeight / ratioHeight;
+
 			SpriteBatch.Draw(RenderTarget,
-				new Rectangle(new Point(0, 0),
-					new Point(GraphicsDeviceManager.PreferredBackBufferWidth,
+				new Rectangle(new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
+					new Point(width,
 						GraphicsDeviceManager.PreferredBackBufferHeight)),
 				new Rectangle(new Point(0, 0),
 					new Point(RenderTarget.Width, RenderTarget.Height)),
@@ -165,6 +182,8 @@ namespace Singularity
 		protected sealed override void Update(GameTime gameTime)
 		{
 			OnPreUpdateEvent(gameTime);
+
+			InputManager.Update();
 
 			//Remove finished ScreenEffects
 			ScreenEffectList.RemoveAll(f => _removalList.Contains(f));
@@ -224,6 +243,12 @@ namespace Singularity
 			Stream stream = File.Create(location + "\\" + name + ".png");
 			_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
 			stream.Dispose();
+		}
+
+		public void SetRatio(int _ratioWidth, int _ratioHeight)
+		{
+			ratioWidth = _ratioWidth;
+			ratioHeight = _ratioHeight;
 		}
 
 		#region Events

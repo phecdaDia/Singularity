@@ -46,6 +46,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameObjects\ChildTest\ChildBall.cs" />
     <Compile Include="GameObjects\ChildTest\ParentBlock.cs" />
