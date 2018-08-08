@@ -24,7 +24,7 @@ namespace SingularityTest.GameObjects.ChildTest
 
 
 			// now try to get the ball as child with translation override
-			AddChild(e.Collider, ChildProperties.None | ChildProperties.KeepPositon);
+			AddChild(e.Collider, ChildProperties.Translation | ChildProperties.KeepPositon);
 		}
 
 		public override void Update(GameScene scene, GameTime gameTime)

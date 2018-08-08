@@ -35,7 +35,7 @@ namespace SingularityTest.GameObjects.ChildTest
 		{
 			AddInertia(Gravity, gameTime);
 
-			if (Inertia.Y < 0) RemoveParent();
+			if (Inertia.Y > 0) RemoveParent();
 			//Console.WriteLine($"My parent is: {this.ParentObject}");
 		}
 	}
