@@ -97,16 +97,14 @@ namespace Singularity
 		{
 			if (recursive)
 			{
-				foreach (var go in gameObject.ChildObjects) this.RemoveObject(go, true);
-				foreach (var go in gameObject.ChildrenBuffer) this.RemoveObject(go, true);
+				foreach (var go in gameObject.ChildObjects.ToArray()) this.RemoveObject(go, true);
+				foreach (var go in gameObject.ChildrenBuffer.ToArray()) this.RemoveObject(go, true);
 			}
 
 			gameObject.UnloadContent();
-			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
+			ColliderObjects.RemoveObject(gameObject, gameObject.Position);
 
-			// remove all children
-			foreach (var go in gameObject.ChildObjects.ToArray()) go.RemoveParent();
-			foreach (var go in gameObject.ChildrenBuffer.ToArray()) go.RemoveParent();
+			gameObject.RemoveParent();
 		}
 
 		/// <summary>

@@ -180,7 +180,13 @@ namespace Singularity.Utilities
 		public void MoveObject(T obj, float scale, Vector3 position1, Vector3 position2)
 		{
 			if (RemoveObject(obj, position1))
+			{
 				AddObject(obj, scale, position2);
+			}
+			else
+			{
+				Console.WriteLine($"Something went wrong in the octree!");
+			}
 		}
 
 		/// <summary>
