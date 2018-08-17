@@ -101,12 +101,12 @@ namespace Singularity
 				foreach (var go in gameObject.ChildrenBuffer) this.RemoveObject(go, true);
 			}
 
+			gameObject.UnloadContent();
+			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
+
 			// remove all children
 			foreach (var go in gameObject.ChildObjects.ToArray()) go.RemoveParent();
 			foreach (var go in gameObject.ChildrenBuffer.ToArray()) go.RemoveParent();
-
-			gameObject.UnloadContent();
-			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 		}
 
 		/// <summary>

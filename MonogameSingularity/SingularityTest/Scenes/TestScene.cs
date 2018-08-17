@@ -109,7 +109,7 @@ namespace SingularityTest.Scenes
 			//AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			//AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 
-			AddObject(new ModelObject("cubes/cube1").AddChild(new ModelObject("cubes/cube2").SetPosition(0, 5, 0), ChildProperties.Translation).AddScript(
+			AddObject(new ModelObject("cubes/cube1").SetPosition(2, 2, 2).AddChild(new ModelObject("cubes/cube2").SetPosition(0, 5, 0), ChildProperties.Translation).AddScript(
 				(scene, go, time) =>
 				{
 					if (KeyboardManager.IsKeyDown(Keys.T))
