@@ -93,8 +93,14 @@ namespace Singularity
 			ColliderObjects.MoveObject(gameObject, gameObject.ModelRadius, previousPosition, gameObject.GetHierarchyPosition());
 		}
 
-		public void RemoveObject(GameObject gameObject)
+		public void RemoveObject(GameObject gameObject, bool recursive = false)
 		{
+			if (recursive)
+			{
+				foreach (var go in gameObject.ChildObjects) this.RemoveObject(go, true);
+				foreach (var go in gameObject.ChildrenBuffer) this.RemoveObject(go, true);
+			}
+
 			gameObject.UnloadContent();
 			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 		}
