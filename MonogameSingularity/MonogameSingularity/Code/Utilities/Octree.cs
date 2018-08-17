@@ -183,10 +183,10 @@ namespace Singularity.Utilities
 			{
 				AddObject(obj, scale, position2);
 			}
-			else
-			{
-				Console.WriteLine($"Something went wrong in the octree!");
-			}
+			//else
+			//{
+			//	//Console.WriteLine($"Something went wrong in the octree!");
+			//}
 		}
 
 		/// <summary>
