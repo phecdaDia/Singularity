@@ -17,7 +17,7 @@ namespace SingularityTest.Scenes
 
 		private Matrix SunProjectionMatrix;
 
-		protected LightGameScene(SingularityGame game, string sceneKey, int shadowMapQuality, int sceneSize = 16,
+		protected LightGameScene(SingularityGame game, string sceneKey, int shadowMapQuality, int sceneSize = 8,
 			int minPartition = 2, float precision = 0) : base(game, sceneKey, sceneSize, minPartition, precision)
 		{
 			ShadowTarget2D = new RenderTarget2D(game.GraphicsDevice, shadowMapQuality, shadowMapQuality, false,

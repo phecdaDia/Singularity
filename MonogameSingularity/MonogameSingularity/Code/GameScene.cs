@@ -143,7 +143,7 @@ namespace Singularity
 
 			if (gameObject.Collision == null)
 			{
-				ColliderObjects.AddObject(gameObject, gameObject.Position, 0.0f);
+				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), 0.0f);
 				return;
 			}
 

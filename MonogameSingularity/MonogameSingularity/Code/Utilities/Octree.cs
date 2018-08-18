@@ -86,7 +86,7 @@ namespace Singularity.Utilities
 						Children = new Octree<T>[8];
 
 					if (Children[quadrant] == null)
-						Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
+						Children[quadrant] = new Octree<T>(this, this.Center, this.GetPartitionCorners()[quadrant]);
 
 
 					Children[quadrant].AddObject(obj, radius, position);
@@ -109,7 +109,7 @@ namespace Singularity.Utilities
 						Children = new Octree<T>[8];
 
 					if (Children[quadrant] == null)
-						Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
+						Children[quadrant] = new Octree<T>(this, this.Center, this.GetPartitionCorners()[quadrant]);
 
 					Children[GetQuadrantNumber(position)].AddObject(obj, radius, position);
 				}
@@ -130,9 +130,11 @@ namespace Singularity.Utilities
 		/// <param name="maxScale"></param>
 		public void AddObject(T obj, Vector3 position, float maxScale)
 		{
-			if (obj is IGlobal || !ShouldSubpartition(position, maxScale) || CurrentSize <= MinimumSize)
+			if (obj is IGlobal || !ShouldSubpartition(position, maxScale))
 			{
 				//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+				Console.WriteLine($"Adding {position} to {this.Min} - {this.Max} (Size: {this.CurrentSize})");
+
 				Leafs.Add(obj);
 				return;
 			}
@@ -144,7 +146,7 @@ namespace Singularity.Utilities
 				Children = new Octree<T>[8];
 
 			if (Children[quadrant] == null)
-				Children[quadrant] = new Octree<T>(CurrentSize - 1, MinimumSize, Precision);
+				Children[quadrant] = new Octree<T>(this, this.Center, this.GetPartitionCorners()[quadrant]);
 			Children[quadrant].AddObject(obj, position, maxScale);
 		}
 
@@ -183,10 +185,38 @@ namespace Singularity.Utilities
 			{
 				AddObject(obj, scale, position2);
 			}
-			//else
-			//{
-			//	//Console.WriteLine($"Something went wrong in the octree!");
-			//}
+			else
+			{
+				Console.WriteLine($"Something went wrong in the octree!");
+				// Now try to find the object in the octree manually
+				var ot = FindObjectInOctrees(obj);
+				if (ot == null)
+				{
+					Console.WriteLine("Couldn't find object in Octree at all.");
+				}
+				else
+				{
+					// Describe the OT where it was found in
+					Console.WriteLine($"Found Object in OT: {ot.Min} {ot.Max}");
+					Console.WriteLine($"Octree Information: {ot.CurrentSize} / {ot.MinimumSize}");
+					Console.WriteLine($"Expected position: {position1}");
+				}
+			}
+		}
+
+		private Octree<T> FindObjectInOctrees(T obj)
+		{
+			if (this.Leafs.Contains(obj)) return this;
+
+			if (this.Children == null) return null;
+
+			foreach (var child in this.Children)
+			{
+				var res = child?.FindObjectInOctrees(obj);
+				if (res != null) return res;
+			}
+
+			return null;
 		}
 
 		/// <summary>

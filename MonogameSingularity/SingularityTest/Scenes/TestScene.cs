@@ -109,17 +109,31 @@ namespace SingularityTest.Scenes
 			//AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			//AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 
-			AddObject(new ModelObject("cubes/cube1").SetPosition(2, 2, 2).AddChild(	
-					new ModelObject("cubes/cube2").SetPosition(5, 0, 0), ChildProperties.TranslationRotation
-				).AddScript(
-				(scene, go, time) =>
-				{
-					go.AddRotationAt(Axis.Y, 1, time);
-					if (KeyboardManager.IsKeyDown(Keys.T))
-					{
-						scene.RemoveObject(go, true);
-					}
-				}));
+			AddObject(
+				new ModelObject("cubes/cube1")
+					.SetPosition(10, 10, 10)
+					.AddChild(
+					new ModelObject("cubes/cube1")
+						.SetPosition(2, 0, 2)
+						.SetScale(1.5f)
+						.AddScript((scene, go, time) =>
+							{
+								go.CustomData.SetValue("lifeTime", go.CustomData.GetValue<double>("lifeTime") + time.ElapsedGameTime.TotalSeconds);
+								go.SetPositionAt(Axis.Y, (float) Math.Sin(go.CustomData.GetValue<double>("lifeTime")));
+							})
+					//	.AddChild(
+					//		new ModelObject("cubes/cube2")
+					//			.SetPosition(5, 0, 0)
+					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, 2, time))
+					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, 3, time))
+					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, 5, time))
+					//			.AddChild(
+					//				new ModelObject("cubes/cube1")
+					//					.SetPosition(3, 3, 0)
+					//			, ChildProperties.TranslationRotation)
+					//, ChildProperties.Translation | ChildProperties.Scale)
+				, ChildProperties.Translation)
+			);
 
 
 			AddObject(new MappingTestObject().SetPosition(0, 30, 0));
