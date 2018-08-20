@@ -133,7 +133,11 @@ namespace Singularity.Utilities
 			if (obj is IGlobal || !ShouldSubpartition(position, maxScale))
 			{
 				//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
-				Console.WriteLine($"Adding {position} to {this.Min} - {this.Max} (Size: {this.CurrentSize})");
+
+				Func<Vector3, Vector3, Boolean> IsLess = (a, b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+
+				if (!IsLess(this.Min, position) || !IsLess(position, this.Max))
+					Console.WriteLine($"Adding {position} to {this.Min} - {this.Max} (Size: {this.CurrentSize})");
 
 				Leafs.Add(obj);
 				return;

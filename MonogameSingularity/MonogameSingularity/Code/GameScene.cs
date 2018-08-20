@@ -102,7 +102,7 @@ namespace Singularity
 			}
 
 			gameObject.UnloadContent();
-			ColliderObjects.RemoveObject(gameObject, gameObject.Position);
+			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 
 			gameObject.RemoveParent();
 		}
@@ -261,7 +261,7 @@ namespace Singularity
 			bool didCollide = false;
 
 
-			var collidables = ColliderObjects.GetObjects(gameObject.Position, go => go is ICollidable && go != gameObject);
+			var collidables = ColliderObjects.GetObjects(gameObject.GetHierarchyPosition(), go => go is ICollidable && go != gameObject);
 
 
 			//// debug

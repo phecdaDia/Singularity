@@ -112,6 +112,10 @@ namespace SingularityTest.Scenes
 			AddObject(
 				new ModelObject("cubes/cube1")
 					.SetPosition(10, 10, 10)
+
+					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, -2, time))
+					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, -3, time))
+					.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, -5, time))
 					.AddChild(
 					new ModelObject("cubes/cube1")
 						.SetPosition(2, 0, 2)
@@ -121,18 +125,18 @@ namespace SingularityTest.Scenes
 								go.CustomData.SetValue("lifeTime", go.CustomData.GetValue<double>("lifeTime") + time.ElapsedGameTime.TotalSeconds);
 								go.SetPositionAt(Axis.Y, (float) Math.Sin(go.CustomData.GetValue<double>("lifeTime")));
 							})
-					//	.AddChild(
-					//		new ModelObject("cubes/cube2")
-					//			.SetPosition(5, 0, 0)
-					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, 2, time))
-					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, 3, time))
-					//			.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, 5, time))
-					//			.AddChild(
-					//				new ModelObject("cubes/cube1")
-					//					.SetPosition(3, 3, 0)
-					//			, ChildProperties.TranslationRotation)
-					//, ChildProperties.Translation | ChildProperties.Scale)
-				, ChildProperties.Translation)
+						.AddChild(
+							new ModelObject("cubes/cube2")
+								.SetPosition(5, 0, 0)
+								.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, 2, time))
+								.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, 3, time))
+								.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, 5, time))
+								.AddChild(
+									new ModelObject("cubes/cube1")
+										.SetPosition(3, 3, 0)
+								, ChildProperties.TranslationRotation)
+					, ChildProperties.Translation | ChildProperties.Scale)
+				, ChildProperties.AllTransform)
 			);
 
 
