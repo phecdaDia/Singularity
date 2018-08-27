@@ -1029,22 +1029,24 @@ namespace Singularity
 
 			var framerate = Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate);
 
+			var reduceFactor = (float) Math.Pow(factor, framerate);
+
 			if (axis.HasFlag(Axis.X))
 			{
-				var value = this.Inertia.X * (float) Math.Pow(factor, framerate);
-				this.SetInertiaAt(Axis.X, value < minimum ? 0f : value);
+				var value = this.Inertia.X * reduceFactor;
+				this.SetInertiaAt(Axis.X, Math.Abs(value) < minimum ? 0f : value);
 			}
 
 			if (axis.HasFlag(Axis.Y))
 			{
-				var value = this.Inertia.Y * (float)Math.Pow(factor, framerate);
-				this.SetInertiaAt(Axis.Y, value < minimum ? 0f : value);
+				var value = this.Inertia.Y * reduceFactor;
+				this.SetInertiaAt(Axis.X, Math.Abs(value) < minimum ? 0f : value);
 			}
 
 			if (axis.HasFlag(Axis.Z))
 			{
-				var value = this.Inertia.Z * (float)Math.Pow(factor, framerate);
-				this.SetInertiaAt(Axis.Z, value < minimum ? 0f : value);
+				var value = this.Inertia.Z * reduceFactor;
+				this.SetInertiaAt(Axis.X, Math.Abs(value) < minimum ? 0f : value);
 			}
 
 		}
