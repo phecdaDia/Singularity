@@ -1040,13 +1040,13 @@ namespace Singularity
 			if (axis.HasFlag(Axis.Y))
 			{
 				var value = this.Inertia.Y * reduceFactor;
-				this.SetInertiaAt(Axis.X, Math.Abs(value) < minimum ? 0f : value);
+				this.SetInertiaAt(Axis.Y, Math.Abs(value) < minimum ? 0f : value);
 			}
 
 			if (axis.HasFlag(Axis.Z))
 			{
 				var value = this.Inertia.Z * reduceFactor;
-				this.SetInertiaAt(Axis.X, Math.Abs(value) < minimum ? 0f : value);
+				this.SetInertiaAt(Axis.Z, Math.Abs(value) < minimum ? 0f : value);
 			}
 
 		}
