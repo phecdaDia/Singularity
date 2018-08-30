@@ -113,6 +113,7 @@
     <Compile Include="Code\GameObjects\Interfaces\IInertia.cs" />
     <Compile Include="Code\GameObjects\ModelObject.cs" />
     <Compile Include="Code\GameObjects\SpriteObject.cs" />
+    <Compile Include="Code\GameObjects\StaticCamera.cs" />
     <Compile Include="Code\GameScene.cs" />
     <Compile Include="Code\Helpers\VectorHelper.cs" />
     <Compile Include="Code\ImageManager.cs" />
