@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity.GameObjects
+namespace Singularity.Core.GameObjects
 {
 	public abstract class SpriteObject : GameObject
 	{
@@ -11,7 +11,7 @@ namespace Singularity.GameObjects
 
 		public SpriteObject(Texture2D texture) : this()
 		{
-			Texture = texture;
+			this.Texture = texture;
 		}
 
 		public SpriteObject(string textureKey) : this(SingularityGame.GetContentManager().Load<Texture2D>(textureKey))
@@ -25,34 +25,34 @@ namespace Singularity.GameObjects
 
 		public SpriteObject SetColor(Color color)
 		{
-			Color = color;
+			this.Color = color;
 			return this;
 		}
 
 		public SpriteObject SetOrigin(Vector2 origin)
 		{
-			Origin = origin;
+			this.Origin = origin;
 			return this;
 		}
 
 		public SpriteObject SetDepth(float depth)
 		{
-			Depth = depth;
+			this.Depth = depth;
 			return this;
 		}
 
 		public override void Draw2D(SpriteBatch spriteBatch)
 		{
 			spriteBatch.Draw(
-				Texture,
-				new Vector2(Position.X, Position.Y),
+				this.Texture,
+				new Vector2(this.Position.X, this.Position.Y),
 				null,
-				Color,
-				Rotation.Z,
-				Origin,
-				new Vector2(Scale.X, Scale.Y),
+				this.Color,
+				this.Rotation.Z,
+				this.Origin,
+				new Vector2(this.Scale.X, this.Scale.Y),
 				SpriteEffects.None,
-				Depth
+				this.Depth
 			);
 		}
 	}

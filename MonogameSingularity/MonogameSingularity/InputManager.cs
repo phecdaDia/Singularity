@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
-namespace Singularity
+namespace Singularity.Core
 {
-	using Microsoft.Xna.Framework;
-	using Microsoft.Xna.Framework.Input;
-
 	public enum MouseKeys
 	{
 		Left,
@@ -71,7 +67,7 @@ namespace Singularity
 		/// </summary>
 		/// <param name="point"></param>
 		public void SetMouseAnchor(Point point) => Instance._SetMouseAnchor(point);
-		private void _SetMouseAnchor(Point point) => _mouseStartPos = point;
+		private void _SetMouseAnchor(Point point) => this._mouseStartPos = point;
 
 		/// <summary>
 		/// Lock Mouse to position to observe movement
@@ -79,8 +75,8 @@ namespace Singularity
 		public static void ActivateMouseMovement() => Instance._ActivateMouseMovement();
 		private void _ActivateMouseMovement()
 		{
-			_lockMouse = true;
-			Mouse.SetPosition(_mouseStartPos.X, _mouseStartPos.Y);
+			this._lockMouse = true;
+			Mouse.SetPosition(this._mouseStartPos.X, this._mouseStartPos.Y);
 		}
 
 		/// <summary>
@@ -89,7 +85,7 @@ namespace Singularity
 		public static void DeactivateMouseMovement() => Instance._DeactivateMouseMovement();
 		private void _DeactivateMouseMovement()
 		{
-			_lockMouse = false;
+			this._lockMouse = false;
 		}
 
 		/// <summary>
@@ -109,14 +105,14 @@ namespace Singularity
 		/// </summary>
 		/// <returns>Percentage Mouse moved in relation to sensitivity</returns>
 		public static Vector2 GetMouseMovement() => Instance._GetMouseMovement();
-		private Vector2 _GetMouseMovement() => _lockMouse? _mouseMovement : new Vector2(0);
+		private Vector2 _GetMouseMovement() => this._lockMouse? this._mouseMovement : new Vector2(0);
 
 		/// <summary>
 		/// Set Mousesensitivity
 		/// </summary>
 		/// <param name="sensitivity">Pixels which the Mouse has to move for a 100% movement in each direction</param>
 		public static void SetMouseSensitivity(float sensitivity) => Instance._SetMouseSensitivity(sensitivity);
-		private void _SetMouseSensitivity(float sensitivity) => _mouseSensitivity = sensitivity;
+		private void _SetMouseSensitivity(float sensitivity) => this._mouseSensitivity = sensitivity;
 
 		/// <summary>
 		/// MouseKey down in current frame
@@ -129,15 +125,15 @@ namespace Singularity
 			switch (key)
 			{
 				case MouseKeys.Left:
-					return _leftMouseThisFrame;
+					return this._leftMouseThisFrame;
 				case MouseKeys.Right:
-					return _rightMouseThisFrame;
+					return this._rightMouseThisFrame;
 				case MouseKeys.Middle:
-					return _middleMouseThisFrame;
+					return this._middleMouseThisFrame;
 				case MouseKeys.X1:
-					return _x1MouseThisFrame;
+					return this._x1MouseThisFrame;
 				case MouseKeys.X2:
-					return _x2MouseThisFrame;
+					return this._x2MouseThisFrame;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(key), key, null);
 			}
@@ -149,7 +145,7 @@ namespace Singularity
 		/// <param name="key"></param>
 		/// <returns></returns>
 		public static bool IsUpMouse(MouseKeys key) => Instance._IsUpMouse(key);
-		private bool _IsUpMouse(MouseKeys key) => !_IsDownMouse(key);
+		private bool _IsUpMouse(MouseKeys key) => !this._IsDownMouse(key);
 
 		/// <summary>
 		/// MouseKey was pressed down in current Frame
@@ -162,15 +158,15 @@ namespace Singularity
 			switch (key)
 			{
 				case MouseKeys.Left:
-					return _leftMouseThisFrame && !_leftMouseLastFrame;
+					return this._leftMouseThisFrame && !this._leftMouseLastFrame;
 				case MouseKeys.Right:
-					return _rightMouseThisFrame && !_rightMouseLastFrame;
+					return this._rightMouseThisFrame && !this._rightMouseLastFrame;
 				case MouseKeys.Middle:
-					return _middleMouseThisFrame && !_middleMouseLastFrame;
+					return this._middleMouseThisFrame && !this._middleMouseLastFrame;
 				case MouseKeys.X1:
-					return _x1MouseThisFrame && !_x1MouseLastFrame;
+					return this._x1MouseThisFrame && !this._x1MouseLastFrame;
 				case MouseKeys.X2:
-					return _x2MouseThisFrame && !_x2MouseLastFrame;
+					return this._x2MouseThisFrame && !this._x2MouseLastFrame;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(key), key, null);
 			}
@@ -187,15 +183,15 @@ namespace Singularity
 			switch (key)
 			{
 				case MouseKeys.Left:
-					return !_leftMouseThisFrame && _leftMouseLastFrame;
+					return !this._leftMouseThisFrame && this._leftMouseLastFrame;
 				case MouseKeys.Right:
-					return !_rightMouseThisFrame && _rightMouseLastFrame;
+					return !this._rightMouseThisFrame && this._rightMouseLastFrame;
 				case MouseKeys.Middle:
-					return !_middleMouseThisFrame && _middleMouseLastFrame;
+					return !this._middleMouseThisFrame && this._middleMouseLastFrame;
 				case MouseKeys.X1:
-					return !_x1MouseThisFrame && _x1MouseLastFrame;
+					return !this._x1MouseThisFrame && this._x1MouseLastFrame;
 				case MouseKeys.X2:
-					return !_x2MouseThisFrame && _x2MouseLastFrame;
+					return !this._x2MouseThisFrame && this._x2MouseLastFrame;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(key), key, null);
 			}
@@ -206,14 +202,14 @@ namespace Singularity
 		/// </summary>
 		/// <returns></returns>
 		public static int GetMouseWheelMovement() => Instance._GetMouseWheelMovement();
-		private int _GetMouseWheelMovement() => _mouseWheelLastFrame - _mouseWheelThisFrame;
+		private int _GetMouseWheelMovement() => this._mouseWheelLastFrame - this._mouseWheelThisFrame;
 
 		/// <summary>
 		/// Cumulative Movement of Wheel since start of Game
 		/// </summary>
 		/// <returns></returns>
 		public static int GetMouseWheel() => Instance._GetMouseWheel();
-		private int _GetMouseWheel() => _mouseWheelThisFrame;
+		private int _GetMouseWheel() => this._mouseWheelThisFrame;
 
 		/// <summary>
 		/// Set Deadzone for Thumbsticks
@@ -222,20 +218,20 @@ namespace Singularity
 		public static void SetDeadZone(GamePadDeadZone deadZone) => Instance._SetDeadZone(deadZone);
 		private void _SetDeadZone(GamePadDeadZone deadZone)
 		{
-			_deadZone = deadZone;
+			this._deadZone = deadZone;
 		}
 
 		/// <summary>
 		/// Value of Left Thumbstick - x and y = percentage of movement in direction
 		/// </summary>
 		public static Vector2 GetGamePadLeftStick => Instance._GetGamePadLeftStick();
-		private Vector2 _GetGamePadLeftStick() => _gamepadStickLeft;
+		private Vector2 _GetGamePadLeftStick() => this._gamepadStickLeft;
 
 		/// <summary>
 		/// Value of Right Thumbstick - x and y = percentage of movement in direction
 		/// </summary>
 		public static Vector2 GetGamePadRightStick => Instance._GetGamePadRightStick();
-		private Vector2 _GetGamePadRightStick() => _gamepadStickRight;
+		private Vector2 _GetGamePadRightStick() => this._gamepadStickRight;
 
 		/// <summary>
 		/// Check if Button is down in current Frame - also false if it is not supported by Device
@@ -243,7 +239,7 @@ namespace Singularity
 		/// <param name="button"></param>
 		/// <returns></returns>
 		public static bool IsDownGamePad(Buttons button) => Instance._IsDownGamePad(button);
-		private bool _IsDownGamePad(Buttons button) => _pressedThisFrame.Contains(button);
+		private bool _IsDownGamePad(Buttons button) => this._pressedThisFrame.Contains(button);
 
 		/// <summary>
 		/// Check if Button is up in current Frame - also false if it is not supported by Device
@@ -251,7 +247,7 @@ namespace Singularity
 		/// <param name="button"></param>
 		/// <returns></returns>
 		public static bool IsUpGamePad(Buttons button) => Instance._IsUpGamePad(button);
-		private bool _IsUpGamePad(Buttons button) => !_pressedThisFrame.Contains(button);
+		private bool _IsUpGamePad(Buttons button) => !this._pressedThisFrame.Contains(button);
 
 		/// <summary>
 		/// Check if Button was pressed down in current Frame - also false if it is not supported by Device
@@ -260,7 +256,7 @@ namespace Singularity
 		/// <returns></returns>
 		public static bool IsPressedGamePad(Buttons button) => Instance._IsPressedGamePad(button);
 		private bool _IsPressedGamePad(Buttons button) =>
-			_pressedThisFrame.Contains(button) && !_pressedLastFrame.Contains(button);
+			this._pressedThisFrame.Contains(button) && !this._pressedLastFrame.Contains(button);
 
 		/// <summary>
 		/// Check if Button was released in current Frame - also false if it is not supported by Device
@@ -269,7 +265,7 @@ namespace Singularity
 		/// <returns></returns>
 		public static bool IsReleasedGamePad(Buttons button) => Instance._IsReleasedGamePad(button);
 		private bool _IsReleasedGamePad(Buttons button) =>
-			!_pressedThisFrame.Contains(button) && _pressedLastFrame.Contains(button);
+			!this._pressedThisFrame.Contains(button) && this._pressedLastFrame.Contains(button);
 
 		/// <summary>
 		/// Apply Vibration to Gamepad (if device supports it)
@@ -290,14 +286,14 @@ namespace Singularity
 		/// </summary>
 		/// <returns></returns>
 		public static float GetLeftTrigger() => Instance._GetLeftTrigger();
-		private float _GetLeftTrigger() => _gamepadTriggerLeft;
+		private float _GetLeftTrigger() => this._gamepadTriggerLeft;
 
 		/// <summary>
 		/// Get Value of Right Trigger
 		/// </summary>
 		/// <returns></returns>
 		public static float GetRightTrigger() => Instance._GetRightTrigger();
-		private float _GetRightTrigger() => _gamepadTriggerRight;
+		private float _GetRightTrigger() => this._gamepadTriggerRight;
 
 		/// <summary>
 		/// Update all values - called each Frame
@@ -310,18 +306,18 @@ namespace Singularity
 
 			if (capa.IsConnected)
 			{
-				var state = GamePad.GetState(PlayerIndex.One, _deadZone);
+				var state = GamePad.GetState(PlayerIndex.One, this._deadZone);
 				
 				//Thumbstick movement
 				if (capa.HasLeftXThumbStick && capa.HasLeftYThumbStick)
-					_gamepadStickLeft = state.ThumbSticks.Left;
+					this._gamepadStickLeft = state.ThumbSticks.Left;
 				if (capa.HasRightXThumbStick && capa.HasRightYThumbStick)
-					_gamepadStickRight = state.ThumbSticks.Right;
+					this._gamepadStickRight = state.ThumbSticks.Right;
 
 				//Switch pressedLists and clear
-				var helper = _pressedLastFrame;
+				var helper = this._pressedLastFrame;
 				helper.Clear();
-				_pressedLastFrame = _pressedThisFrame;
+				this._pressedLastFrame = this._pressedThisFrame;
 
 				//Buttons
 				if (capa.HasAButton && state.Buttons.A == ButtonState.Pressed)
@@ -359,50 +355,50 @@ namespace Singularity
 
 				//Trigger
 				if (capa.HasLeftTrigger)
-					_gamepadTriggerLeft = state.Triggers.Left;
+					this._gamepadTriggerLeft = state.Triggers.Left;
 				if (capa.HasRightTrigger)
-					_gamepadTriggerRight = state.Triggers.Right;
+					this._gamepadTriggerRight = state.Triggers.Right;
 
-				if(Math.Abs(_gamepadTriggerLeft) > 0.01f)
+				if(Math.Abs(this._gamepadTriggerLeft) > 0.01f)
 					helper.Add(Buttons.LeftTrigger);
-				if(Math.Abs(_gamepadTriggerRight) > 0.01f)
+				if(Math.Abs(this._gamepadTriggerRight) > 0.01f)
 					helper.Add(Buttons.RightTrigger);
 
-				_pressedThisFrame = helper;
+				this._pressedThisFrame = helper;
 			}
 
 			//Mouse
 			var mouseState = Mouse.GetState();
-			if (_lockMouse)
+			if (this._lockMouse)
 			{
 				
 
 				//Movement TODO
-				var moved = mouseState.Position - _mouseStartPos;
-				var x = moved.X / _mouseSensitivity;
-				var y = moved.Y / _mouseSensitivity;
+				var moved = mouseState.Position - this._mouseStartPos;
+				var x = moved.X / this._mouseSensitivity;
+				var y = moved.Y / this._mouseSensitivity;
 
-				_mouseMovement = new Vector2(x,y);
+				this._mouseMovement = new Vector2(x,y);
 
-				Mouse.SetPosition(_mouseStartPos.X, _mouseStartPos.Y);
+				Mouse.SetPosition(this._mouseStartPos.X, this._mouseStartPos.Y);
 			}
 
 			//Buttons
-			_leftMouseLastFrame   = _leftMouseThisFrame;
-			_rightMouseLastFrame  = _rightMouseThisFrame;
-			_middleMouseLastFrame = _middleMouseThisFrame;
-			_x1MouseLastFrame     = _x1MouseThisFrame;
-			_x2MouseLastFrame     = _x2MouseThisFrame;
+			this._leftMouseLastFrame   = this._leftMouseThisFrame;
+			this._rightMouseLastFrame  = this._rightMouseThisFrame;
+			this._middleMouseLastFrame = this._middleMouseThisFrame;
+			this._x1MouseLastFrame     = this._x1MouseThisFrame;
+			this._x2MouseLastFrame     = this._x2MouseThisFrame;
 
-			_leftMouseThisFrame   = mouseState.LeftButton   == ButtonState.Pressed;
-			_rightMouseThisFrame  = mouseState.RightButton  == ButtonState.Pressed;
-			_middleMouseThisFrame = mouseState.MiddleButton == ButtonState.Pressed;
-			_x1MouseThisFrame     = mouseState.XButton1     == ButtonState.Pressed;
-			_x2MouseThisFrame     = mouseState.XButton2     == ButtonState.Pressed;
+			this._leftMouseThisFrame   = mouseState.LeftButton   == ButtonState.Pressed;
+			this._rightMouseThisFrame  = mouseState.RightButton  == ButtonState.Pressed;
+			this._middleMouseThisFrame = mouseState.MiddleButton == ButtonState.Pressed;
+			this._x1MouseThisFrame     = mouseState.XButton1     == ButtonState.Pressed;
+			this._x2MouseThisFrame     = mouseState.XButton2     == ButtonState.Pressed;
 
 			//Wheel
-			_mouseWheelLastFrame = _mouseWheelThisFrame;
-			_mouseWheelThisFrame = mouseState.ScrollWheelValue;
+			this._mouseWheelLastFrame = this._mouseWheelThisFrame;
+			this._mouseWheelThisFrame = mouseState.ScrollWheelValue;
 
 		}
 	}

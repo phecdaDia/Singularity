@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity.Scripting
+namespace Singularity.Core.Scripting
 {
 	/// <summary>
 	///     Template for scripting
@@ -16,7 +16,7 @@ namespace Singularity.Scripting
 		/// <param name="game">SingularityGame</param>
 		public virtual void Init(SingularityGame game)
 		{
-			Game = game;
+			this.Game = game;
 		}
 
 		/// <summary>

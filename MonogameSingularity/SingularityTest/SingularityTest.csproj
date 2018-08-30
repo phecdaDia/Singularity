@@ -142,9 +142,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonogameSingularity\MonogameSingularity.csproj">
+    <ProjectReference Include="..\MonogameSingularity\Singularity.Core.csproj">
       <Project>{06a6aaec-d41c-4e5b-bb37-125e66293994}</Project>
-      <Name>MonogameSingularity</Name>
+      <Name>Singularity.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

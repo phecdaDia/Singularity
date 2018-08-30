@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Events
+namespace Singularity.Core.Events
 {
 	public class CollisionEventArgs : EventArgs
 	{
@@ -9,12 +9,12 @@ namespace Singularity.Events
 			GameScene scene)
 		{
 
-			GameTime = gameTime;
-			Position = position;
-			Normal = normal;
-			Collider = collider;
-			Collidable = collidable;
-			Scene = scene;
+			this.GameTime = gameTime;
+			this.Position = position;
+			this.Normal = normal;
+			this.Collider = collider;
+			this.Collidable = collidable;
+			this.Scene = scene;
 		}
 
 		public GameTime GameTime { get; }

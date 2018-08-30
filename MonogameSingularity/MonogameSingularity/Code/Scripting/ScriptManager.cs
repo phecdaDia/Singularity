@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Scripting
+namespace Singularity.Core.Scripting
 {
 	public static class ScriptManager
 	{

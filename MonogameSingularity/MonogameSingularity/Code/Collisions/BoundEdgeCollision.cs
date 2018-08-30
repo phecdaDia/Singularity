@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions
+namespace Singularity.Core.Collisions
 {
 	public class BoundEdgeCollision : EdgeCollision
 	{
@@ -13,14 +13,14 @@ namespace Singularity.Collisions
 		public BoundEdgeCollision(Vector3 origin, Vector3 spanVector, float distance, Func<float, float, bool> restriction) :
 			base(origin, spanVector, distance)
 		{
-			Restriction = restriction;
+			this.Restriction = restriction;
 		}
 
 		public Func<float, float, bool> Restriction { get; }
 
 		public override object Clone()
 		{
-			return new BoundEdgeCollision(Origin, SpanVector, Distance, Restriction);
+			return new BoundEdgeCollision(this.Origin, this.SpanVector, this.Distance, this.Restriction);
 		}
 	}
 }

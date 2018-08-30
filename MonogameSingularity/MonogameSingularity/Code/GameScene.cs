@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Collisions;
-using Singularity.GameObjects.Interfaces;
-using Singularity.Utilities;
+using Singularity.Core.Collisions;
+using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.Utilities;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	public abstract class GameScene
 	{
@@ -32,16 +32,16 @@ namespace Singularity
 		public GameScene(SingularityGame game, string sceneKey, int sceneSize = 16, int minPartition = 2,
 			float precision = 0.0f)
 		{
-			Game = game;
+			this.Game = game;
 
-			SceneKey = sceneKey;
+			this.SceneKey = sceneKey;
 
 			// Setting default values for all members
-			CameraPosition = new Vector3();
+			this.CameraPosition = new Vector3();
 			//this.ColliderObjects = new Dictionary<Type, IList>();
-			BufferedObjects = new List<GameObject>();
+			this.BufferedObjects = new List<GameObject>();
 
-			ColliderObjects = new Octree<GameObject>(sceneSize, minPartition, precision);
+			this.ColliderObjects = new Octree<GameObject>(sceneSize, minPartition, precision);
 		}
 
 		public SingularityGame Game { get; }
@@ -57,12 +57,12 @@ namespace Singularity
 		/// </summary>
 		public void SetupScene(GameScene previousScene, int entranceId)
 		{
-			UnloadContent();
+			this.UnloadContent();
 			// clear all current objects.
-			ColliderObjects.Clear();
+			this.ColliderObjects.Clear();
 
 			// Now setup the new objects
-			AddGameObjects(previousScene, entranceId);
+			this.AddGameObjects(previousScene, entranceId);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace Singularity
 		{
 			if (parent != null)
 				gameObject.SetParent(parent, properties);
-			BufferedObjects.Add(gameObject);
+			this.BufferedObjects.Add(gameObject);
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace Singularity
 			//this.ColliderObjects.RemoveObject(gameObject, previousPosition);
 			//this.AddObject(gameObject);
 
-			ColliderObjects.MoveObject(gameObject, gameObject.ModelRadius, previousPosition, gameObject.GetHierarchyPosition());
+			this.ColliderObjects.MoveObject(gameObject, gameObject.ModelRadius, previousPosition, gameObject.GetHierarchyPosition());
 		}
 
 		public void RemoveObject(GameObject gameObject, bool recursive = false)
@@ -102,7 +102,7 @@ namespace Singularity
 			}
 
 			gameObject.UnloadContent();
-			ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
+			this.ColliderObjects.RemoveObject(gameObject, gameObject.GetHierarchyPosition());
 
 			gameObject.RemoveParent();
 		}
@@ -126,7 +126,7 @@ namespace Singularity
 		{
 			foreach (var go in gameObjects)
 			{
-				AddObject(go);
+				this.AddObject(go);
 			}
 		}
 
@@ -136,14 +136,14 @@ namespace Singularity
 		/// <param name="gameObject"></param>
 		protected void AddObject(GameObject gameObject)
 		{
-			foreach (var children in gameObject.ChildObjects) AddObject(children);
-			foreach (var children in gameObject.ChildrenBuffer) AddObject(children);
+			foreach (var children in gameObject.ChildObjects) this.AddObject(children);
+			foreach (var children in gameObject.ChildrenBuffer) this.AddObject(children);
 
 			gameObject.LoadContent(this.Game.Content, this.Game.GraphicsDevice);
 
 			if (gameObject.Collision == null)
 			{
-				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), 0.0f);
+				this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), 0.0f);
 				return;
 			}
 
@@ -151,9 +151,9 @@ namespace Singularity
 			var maxScale = Math.Max(Math.Max(scale.X, scale.Y), scale.Z);
 
 			if (gameObject.Collision is SphereCollision)
-				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * (gameObject.Collision as SphereCollision).Radius);
+				this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * (gameObject.Collision as SphereCollision).Radius);
 			else
-				ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * gameObject.ModelRadius);
+				this.ColliderObjects.AddObject(gameObject, gameObject.GetHierarchyPosition(), maxScale * gameObject.ModelRadius);
 		}
 
 		/// <summary>
@@ -164,8 +164,8 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
-			SetCameraPosition(cameraPosition);
-			SetCameraTarget(cameraTarget);
+			this.SetCameraPosition(cameraPosition);
+			this.SetCameraTarget(cameraTarget);
 		}
 
 		/// <summary>
@@ -176,8 +176,8 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCamera(Vector3 cameraPosition, Vector3 cameraTarget)
 		{
-			SetCameraPosition(cameraPosition);
-			SetAbsoluteCameraTarget(cameraTarget);
+			this.SetCameraPosition(cameraPosition);
+			this.SetAbsoluteCameraTarget(cameraTarget);
 		}
 
 		/// <summary>
@@ -186,13 +186,13 @@ namespace Singularity
 		/// <param name="cameraPosition"></param>
 		public void SetCameraPosition(Vector3 cameraPosition)
 		{
-			if (CameraLocked)
+			if (this.CameraLocked)
 			{
 				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
 				return; // camera is locked!
 			}
 
-			CameraPosition = cameraPosition;
+			this.CameraPosition = cameraPosition;
 		}
 
 
@@ -201,7 +201,7 @@ namespace Singularity
 		/// </summary>
 		public void SetCameraPosition(float x, float y, float z)
 		{
-			SetCameraPosition(new Vector3(x, y, z));
+			this.SetCameraPosition(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -210,14 +210,14 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetCameraTarget(Vector3 cameraTarget)
 		{
-			if (CameraLocked)
+			if (this.CameraLocked)
 			{
 				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
 				return; // camera is locked!
 			}
 
-			UseAbsoluteCameraTarget = false;
-			CameraTarget = cameraTarget;
+			this.UseAbsoluteCameraTarget = false;
+			this.CameraTarget = cameraTarget;
 		}
 
 		/// <summary>
@@ -226,14 +226,14 @@ namespace Singularity
 		/// <param name="cameraTarget"></param>
 		public void SetAbsoluteCameraTarget(Vector3 cameraTarget)
 		{
-			if (CameraLocked)
+			if (this.CameraLocked)
 			{
 				Console.WriteLine($"Camera has been locked. Please refer to ICameraController.SetCamera to set the camera!");
 				return; // camera is locked!
 			}
 
-			UseAbsoluteCameraTarget = true;
-			CameraTarget = cameraTarget;
+			this.UseAbsoluteCameraTarget = true;
+			this.CameraTarget = cameraTarget;
 		}
 
 		/// <summary>
@@ -243,8 +243,8 @@ namespace Singularity
 		/// <param name="c2"></param>
 		public void SetCullingDistance(float c1, float c2)
 		{
-			MinimumCullingDistance = c1;
-			MaximumCullingDistance = c2;
+			this.MinimumCullingDistance = c1;
+			this.MaximumCullingDistance = c2;
 		}
 
 		/// <summary>
@@ -261,7 +261,7 @@ namespace Singularity
 			bool didCollide = false;
 
 
-			var collidables = ColliderObjects.GetObjects(gameObject.GetHierarchyPosition(), go => go is ICollidable && go != gameObject);
+			var collidables = this.ColliderObjects.GetObjects(gameObject.GetHierarchyPosition(), go => go is ICollidable && go != gameObject);
 
 
 			//// debug
@@ -311,8 +311,8 @@ namespace Singularity
 		{
 			// get all objects
 			List<GameObject> collidables = predicate == null ? 
-				ColliderObjects.GetAllObjects(go => go is ICollidable) : 
-				ColliderObjects.GetAllObjects(go => predicate(go) && go is ICollidable);
+				this.ColliderObjects.GetAllObjects(go => go is ICollidable) : 
+				this.ColliderObjects.GetAllObjects(go => predicate(go) && go is ICollidable);
 
 			var nearestCollision = new RayCollisionPoint();
 
@@ -337,8 +337,8 @@ namespace Singularity
 		/// <returns></returns>
 		public virtual Matrix GetViewMatrix()
 		{
-			return Matrix.CreateLookAt(CameraPosition,
-				UseAbsoluteCameraTarget ? CameraTarget : CameraPosition + 5f * CameraTarget, Vector3.Up);
+			return Matrix.CreateLookAt(this.CameraPosition,
+				this.UseAbsoluteCameraTarget ? this.CameraTarget : this.CameraPosition + 5f * this.CameraTarget, Vector3.Up);
 		}
 
 		/// <summary>
@@ -347,8 +347,8 @@ namespace Singularity
 		/// <returns></returns>
 		public virtual Matrix GetProjectionMatrix()
 		{
-			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, MinimumCullingDistance,
-				MaximumCullingDistance);
+			return Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, this.MinimumCullingDistance,
+				this.MaximumCullingDistance);
 		}
 
 		///// <summary>
@@ -362,12 +362,12 @@ namespace Singularity
 		/// </summary>
 		public virtual void UnloadContent()
 		{
-			foreach (var obj in ColliderObjects.GetAllObjects()) obj.UnloadContent();
+			foreach (var obj in this.ColliderObjects.GetAllObjects()) obj.UnloadContent();
 		}
 
 		public List<GameObject> GetAllObjects(Func<GameObject, bool> predicate = null)
 		{
-			return ColliderObjects.GetAllObjects(predicate);
+			return this.ColliderObjects.GetAllObjects(predicate);
 		}
 
 
@@ -377,7 +377,7 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void Update(GameTime gameTime)
 		{
-			var objs = ColliderObjects.GetAllObjects().ToArray();
+			var objs = this.ColliderObjects.GetAllObjects().ToArray();
 			//Console.WriteLine($"{objs.Length} objects in the octree.");
 
 			//Console.WriteLine($"{objs.Length}");
@@ -387,11 +387,11 @@ namespace Singularity
 					obj.UpdateLogic(this, gameTime);
 
 			// add our buffered objects
-			foreach (var obj in BufferedObjects)
-				AddObject(obj);
+			foreach (var obj in this.BufferedObjects)
+				this.AddObject(obj);
 
 			// clear buffers
-			BufferedObjects.Clear();
+			this.BufferedObjects.Clear();
 		}
 
 		/// <summary>
@@ -403,13 +403,13 @@ namespace Singularity
 		{
 			// render it on our temporary rendertarget first
 			// will be used later for shadows.
-			Game.GraphicsDevice.SetRenderTarget(finalTarget);
+			this.Game.GraphicsDevice.SetRenderTarget(finalTarget);
 
 			spriteBatch.Begin(SpriteSortMode.FrontToBack); // allows for better 2d drawing.
 
-			Game.GraphicsDevice.Clear(Color.Transparent); // sets everything to transparent, clears the entire RenderTarget
+			this.Game.GraphicsDevice.Clear(Color.Transparent); // sets everything to transparent, clears the entire RenderTarget
 
-			foreach (var obj in ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
+			foreach (var obj in this.ColliderObjects.GetAllObjects(o => o.ParentObject == null)) obj.DrawLogic(this, spriteBatch);
 
 
 			spriteBatch.End();
@@ -425,7 +425,7 @@ namespace Singularity
 		/// <summary>
 		/// TODO
 		/// </summary>
-		public void OnScenePause() => ScenePauseEvent?.Invoke(this, EventArgs.Empty);
+		public void OnScenePause() => this.ScenePauseEvent?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
 		/// TODO
@@ -435,7 +435,7 @@ namespace Singularity
 		/// <summary>
 		/// TODO
 		/// </summary>
-		public void OnSceneResume() => SceneResumeEvent?.Invoke(this, EventArgs.Empty);
+		public void OnSceneResume() => this.SceneResumeEvent?.Invoke(this, EventArgs.Empty);
 
 		#endregion
 	}

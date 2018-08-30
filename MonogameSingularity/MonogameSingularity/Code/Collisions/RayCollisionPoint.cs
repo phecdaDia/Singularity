@@ -1,22 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions
+namespace Singularity.Core.Collisions
 {
 	public class RayCollisionPoint
 	{
 		public RayCollisionPoint(GameObject collidable, Vector3 position, Vector3 normal, float rayDistance)
 		{
-			Collidable = collidable;
-			Position = position;
-			Normal = normal;
-			DidCollide = true;
-			RayDistance = rayDistance;
+			this.Collidable = collidable;
+			this.Position = position;
+			this.Normal = normal;
+			this.DidCollide = true;
+			this.RayDistance = rayDistance;
 		}
 
 		public RayCollisionPoint()
 		{
-			RayDistance = float.PositiveInfinity;
-			DidCollide = false;
+			this.RayDistance = float.PositiveInfinity;
+			this.DidCollide = false;
 		}
 
 		public Vector3 Position { get; }
@@ -28,7 +28,7 @@ namespace Singularity.Collisions
 
 		public void SetCollide(bool collide)
 		{
-			DidCollide = collide;
+			this.DidCollide = collide;
 		}
 	}
 }

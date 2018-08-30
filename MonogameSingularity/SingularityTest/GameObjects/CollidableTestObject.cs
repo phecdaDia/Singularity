@@ -1,6 +1,6 @@
-﻿using Singularity.GameObjects;
-using Singularity.GameObjects.Interfaces;
-using Singularity.Utilities;
+﻿using Singularity.Core.GameObjects;
+using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.Utilities;
 
 namespace SingularityTest.GameObjects
 {

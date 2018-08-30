@@ -2,14 +2,14 @@
 using System.IO;
 using System.Runtime.Serialization;
 
-namespace Singularity.Utilities
+namespace Singularity.Core.Utilities
 {
 	[DataContract(IsReference = true)]
 	public abstract class XmlManager<T> where T : XmlManager<T>
 	{
 		public XmlManager()
 		{
-			SetDefaultValues();
+			this.SetDefaultValues();
 		}
 
 		protected abstract void SetDefaultValues();
@@ -45,12 +45,12 @@ namespace Singularity.Utilities
 
 		public void OnXmlSave()
 		{
-			OnXmlSave(EventArgs.Empty);
+			this.OnXmlSave(EventArgs.Empty);
 		}
 
 		public void OnXmlSave(EventArgs e)
 		{
-			XmlSaveEvent?.Invoke(this, e);
+			this.XmlSaveEvent?.Invoke(this, e);
 		}
 
 		public static T LoadFromXml(string filePath)

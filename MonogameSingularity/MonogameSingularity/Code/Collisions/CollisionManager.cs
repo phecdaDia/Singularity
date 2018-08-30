@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Singularity.Collisions.CollisionTypes;
-using Singularity.Collisions.RayCollisions;
+using Singularity.Core.Collisions.CollisionTypes;
+using Singularity.Core.Collisions.RayCollisions;
 
-namespace Singularity.Collisions
+namespace Singularity.Core.Collisions
 {
 	public static class CollisionManager
 	{

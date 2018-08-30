@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions.CollisionTypes
+namespace Singularity.Core.Collisions.CollisionTypes
 {
 	internal static class SphereOnRingCollision
 	{

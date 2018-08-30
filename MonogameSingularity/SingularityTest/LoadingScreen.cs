@@ -1,5 +1,6 @@
 ﻿using Singularity;
-using Singularity.Scripting;
+using Singularity.Core;
+using Singularity.Core.Scripting;
 using SingularityTest.GameObjects;
 
 namespace SingularityTest

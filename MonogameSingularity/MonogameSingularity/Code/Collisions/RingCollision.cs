@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions
+namespace Singularity.Core.Collisions
 {
 	public class RingCollision : PlaneCollision
 	{
 		public RingCollision(Vector3 origin, Vector3 spanVector1, Vector3 spanVector2, float radius, float innerRadius) :
 			base(origin, spanVector1, spanVector2)
 		{
-			Radius = radius;
-			InnerRadius = innerRadius;
+			this.Radius = radius;
+			this.InnerRadius = innerRadius;
 		}
 
 		public float Radius { get; }
@@ -16,7 +16,7 @@ namespace Singularity.Collisions
 
 		public override object Clone()
 		{
-			return new RingCollision(Origin, SpanVector1, SpanVector2, Radius, InnerRadius);
+			return new RingCollision(this.Origin, this.SpanVector1, this.SpanVector2, this.Radius, this.InnerRadius);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
-using Singularity.Utilities;
+using Singularity.Core.Utilities;
 
 namespace SingularityTest
 {

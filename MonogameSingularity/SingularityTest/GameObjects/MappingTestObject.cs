@@ -2,8 +2,9 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity;
-using Singularity.GameObjects;
-using Singularity.Helpers;
+using Singularity.Core;
+using Singularity.Core.GameObjects;
+using Singularity.Core.Helpers;
 
 namespace SingularityTest.GameObjects
 {

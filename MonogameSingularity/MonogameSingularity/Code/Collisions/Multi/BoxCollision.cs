@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions.Multi
+namespace Singularity.Core.Collisions.Multi
 {
 	public class BoxCollision : MultiCollision
 	{
@@ -17,7 +17,7 @@ namespace Singularity.Collisions.Multi
 				return 0 <= scale && scale <= 1;
 			}
 
-			AddCollisions(
+			this.AddCollisions(
 				new BoundPlaneCollision(new Vector3(min.X, min.Y, min.Z), new Vector3(max.X - min.X, 0, 0),
 					new Vector3(0, max.Y - min.Y, 0),
 					_squareBoundary),

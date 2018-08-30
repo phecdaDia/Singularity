@@ -1,4 +1,4 @@
-﻿namespace Singularity.Scripting
+﻿namespace Singularity.Core.Scripting
 {
 	internal struct ScriptData
 	{

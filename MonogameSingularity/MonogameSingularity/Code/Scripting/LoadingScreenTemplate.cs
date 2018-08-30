@@ -1,4 +1,4 @@
-﻿namespace Singularity.Scripting
+﻿namespace Singularity.Core.Scripting
 {
 	public abstract class LoadingScreenTemplate : GameScene
 	{

@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Singularity.Collisions;
-using Singularity.GameObjects.Interfaces;
+using Singularity.Core.Collisions;
+using Singularity.Core.GameObjects.Interfaces;
 
-namespace Singularity.GameObjects
+namespace Singularity.Core.GameObjects
 {
 	public class BasicCamera : GameObject, ICollider, ICameraController
 	{
@@ -17,22 +17,22 @@ namespace Singularity.GameObjects
 
 		public BasicCamera()
 		{
-			HorizontalRotation = 0.0d;
-			VerticalRotation = 0.0d;
+			this.HorizontalRotation = 0.0d;
+			this.VerticalRotation = 0.0d;
 
 
-			DefaultX = 200;
-			DefaultY = 200;
-			Mouse.SetPosition(DefaultX, DefaultY); // capture the mouse
+			this.DefaultX = 200;
+			this.DefaultY = 200;
+			Mouse.SetPosition(this.DefaultX, this.DefaultY); // capture the mouse
 
-			SetCollision(new SphereCollision(0.25f));
+			this.SetCollision(new SphereCollision(0.25f));
 		}
 
 		public bool Is3DEnabled { get; private set; }
 
 		public void SetCamera(GameScene scene)
 		{
-			var target = GetCameraTarget();
+			var target = this.GetCameraTarget();
 
 			scene.SetCamera(this.GetHierarchyPosition(), target);
 		}
@@ -43,7 +43,7 @@ namespace Singularity.GameObjects
 		/// <param name="enable"></param>
 		public BasicCamera Set3DEnabled(bool enable)
 		{
-			Is3DEnabled = enable;
+			this.Is3DEnabled = enable;
 
 			return this;
 		}
@@ -53,30 +53,30 @@ namespace Singularity.GameObjects
 			if (!scene.Game.IsActive) return;
 
 
-			if (firstFrame)
+			if (this.firstFrame)
 			{
-				firstFrame = false;
+				this.firstFrame = false;
 
 				return;
 			}
 
 			var mouseState = Mouse.GetState();
 			// Capture Mouse
-			var dx = mouseState.X - DefaultX;
-			var dy = DefaultY - mouseState.Y;
+			var dx = mouseState.X - this.DefaultX;
+			var dy = this.DefaultY - mouseState.Y;
 
-			HorizontalRotation += dx / 100f;
+			this.HorizontalRotation += dx / 100f;
 
-			if (Is3DEnabled)
-				VerticalRotation += dy / 100f;
+			if (this.Is3DEnabled)
+				this.VerticalRotation += dy / 100f;
 
-			DefaultX = mouseState.X;
-			DefaultY = mouseState.Y;
+			this.DefaultX = mouseState.X;
+			this.DefaultY = mouseState.Y;
 
 			if (mouseState.X <= 100 || mouseState.X >= 300)
 			{
 				Mouse.SetPosition(200, mouseState.Y);
-				DefaultX = 200;
+				this.DefaultX = 200;
 			}
 
 			mouseState = Mouse.GetState();
@@ -84,7 +84,7 @@ namespace Singularity.GameObjects
 			if (mouseState.Y <= 100 || mouseState.Y >= 300)
 			{
 				Mouse.SetPosition(mouseState.X, 200);
-				DefaultY = 200;
+				this.DefaultY = 200;
 			}
 
 			//MouseState ms = Mouse.GetState();
@@ -93,17 +93,17 @@ namespace Singularity.GameObjects
 
 			// Constraint rotation
 
-			if (HorizontalRotation >= MathHelper.Pi) HorizontalRotation -= MathHelper.TwoPi;
-			else if (HorizontalRotation < -MathHelper.Pi)
-				HorizontalRotation += MathHelper.TwoPi;
+			if (this.HorizontalRotation >= MathHelper.Pi) this.HorizontalRotation -= MathHelper.TwoPi;
+			else if (this.HorizontalRotation < -MathHelper.Pi)
+				this.HorizontalRotation += MathHelper.TwoPi;
 
-			if (VerticalRotation > MathHelper.PiOver2)
-				VerticalRotation = MathHelper.PiOver2;
-			else if (VerticalRotation < -MathHelper.PiOver2)
-				VerticalRotation = -MathHelper.PiOver2;
+			if (this.VerticalRotation > MathHelper.PiOver2)
+				this.VerticalRotation = MathHelper.PiOver2;
+			else if (this.VerticalRotation < -MathHelper.PiOver2)
+				this.VerticalRotation = -MathHelper.PiOver2;
 
 			// calculate forward vector
-			var target = GetCameraTarget();
+			var target = this.GetCameraTarget();
 
 			var movement = new Vector3();
 			var ks = Keyboard.GetState();
@@ -135,7 +135,7 @@ namespace Singularity.GameObjects
 
 			if (movement.LengthSquared() > 0f) movement.Normalize();
 
-			AddPosition(movement * (float) gameTime.ElapsedGameTime.TotalSeconds * 5f);
+			this.AddPosition(movement * (float) gameTime.ElapsedGameTime.TotalSeconds * 5f);
 		}
 
 		public BasicCamera SetCameraTarget(Vector3 target)
@@ -152,20 +152,20 @@ namespace Singularity.GameObjects
 			//var h2 = (float) Math.Asin(target.Z);
 			//Console.WriteLine($"{horizontal} == {h2}?, {vertical}");
 
-			return SetCameraTarget(horizontal, vertical);
+			return this.SetCameraTarget(horizontal, vertical);
 		}
 
 		public BasicCamera SetCameraTarget(float horizontal, float vertical)
 		{
-			HorizontalRotation = horizontal;
-			VerticalRotation = vertical;
+			this.HorizontalRotation = horizontal;
+			this.VerticalRotation = vertical;
 			return this;
 		}
 
 		public Vector3 GetCameraTarget()
 		{
-			return new Vector3((float) Math.Cos(HorizontalRotation), Is3DEnabled ? (float) Math.Sin(VerticalRotation) : 0f,
-				(float) Math.Sin(HorizontalRotation));
+			return new Vector3((float) Math.Cos(this.HorizontalRotation), this.Is3DEnabled ? (float) Math.Sin(this.VerticalRotation) : 0f,
+				(float) Math.Sin(this.HorizontalRotation));
 		}
 	}
 }

@@ -4,9 +4,9 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Utilities;
+using Singularity.Core.Utilities;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	public class SingularityGame : Game
 	{
@@ -43,15 +43,15 @@ namespace Singularity
 		{
 			Instance = this;
 
-			SceneManager = new SceneManager(this);
+			this.SceneManager = new SceneManager(this);
 
-			GraphicsDeviceManager = new GraphicsDeviceManager(this)
+			this.GraphicsDeviceManager = new GraphicsDeviceManager(this)
 			{
 				PreferredBackBufferWidth = 1280,
 				PreferredBackBufferHeight = 720,
 				PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
 			};
-			Content.RootDirectory = "Content";
+			this.Content.RootDirectory = "Content";
 		}
 
 		public static ContentManager GetContentManager()
@@ -66,9 +66,9 @@ namespace Singularity
 
 		public SingularityGame(int width, int height, int ratioWidth = 16, int ratioHeight = 9) : this()
 		{
-			GraphicsDeviceManager.PreferredBackBufferHeight = height;
-			GraphicsDeviceManager.PreferredBackBufferWidth = width;
-			GraphicsDeviceManager.ApplyChanges();
+			this.GraphicsDeviceManager.PreferredBackBufferHeight = height;
+			this.GraphicsDeviceManager.PreferredBackBufferWidth = width;
+			this.GraphicsDeviceManager.ApplyChanges();
 			this.ratioWidth = ratioWidth;
 			this.ratioHeight = ratioHeight;
 		}
@@ -78,27 +78,27 @@ namespace Singularity
 		/// </summary>
 		protected override void Initialize()
 		{
-			SceneManager.SetSceneRender(new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
+			SceneManager.SetSceneRender(new RenderTarget2D(this.GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
 				DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents));
 
-			RenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
+			this.RenderTarget = new RenderTarget2D(this.GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
 				DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PlatformContents);
-			_tempRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
+			this._tempRenderTarget = new RenderTarget2D(this.GraphicsDevice, 1920, 1080, false, SurfaceFormat.Color,
 				DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.PlatformContents);
-			SpriteBatch = new SpriteBatch(GraphicsDevice);
+			this.SpriteBatch = new SpriteBatch(this.GraphicsDevice);
 
 			base.Initialize();
-			Window.ClientSizeChanged += (sender, args) =>
+			this.Window.ClientSizeChanged += (sender, args) =>
 			                            {
-				                            if (inSizeChange) return;
+				                            if (this.inSizeChange) return;
 
-				                            inSizeChange = true;
-				                            GraphicsDeviceManager.PreferredBackBufferHeight =
-					                            Window.ClientBounds.Height;
-				                            GraphicsDeviceManager.PreferredBackBufferWidth = Window.ClientBounds.Width;
-				                            GraphicsDeviceManager.ApplyChanges();
+				                            this.inSizeChange = true;
+				                            this.GraphicsDeviceManager.PreferredBackBufferHeight =
+					                            this.Window.ClientBounds.Height;
+				                            this.GraphicsDeviceManager.PreferredBackBufferWidth = this.Window.ClientBounds.Width;
+				                            this.GraphicsDeviceManager.ApplyChanges();
 
-				                            inSizeChange = false;
+				                            this.inSizeChange = false;
 			                            };
 		}
 
@@ -109,30 +109,30 @@ namespace Singularity
 		/// <param name="gameTime">DeltaTime</param>
 		protected sealed override void Draw(GameTime gameTime)
 		{
-			OnDrawEvent(gameTime);
+			this.OnDrawEvent(gameTime);
 
 			//Draw everything to RenderTarget instead of the Screen
-			GraphicsDevice.SetRenderTarget(RenderTarget);
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			this.GraphicsDevice.SetRenderTarget(this.RenderTarget);
+			this.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			ResetGraphic();
-			BeginRender3D();
+			this.ResetGraphic();
+			this.BeginRender3D();
 
 			// Add Drawing stuff here!
 
-			SceneManager.Draw(SpriteBatch);
+			this.SceneManager.Draw(this.SpriteBatch);
 
 			//Apply each function for 2D Screenwide effects
-			foreach (var func in ScreenEffectList)
+			foreach (var func in this.ScreenEffectList)
 			{
-				var data = func.Invoke(gameTime, RenderTarget);
+				var data = func.Invoke(gameTime, this.RenderTarget);
 
-				GraphicsDevice.SetRenderTarget(_tempRenderTarget);
-				GraphicsDevice.Clear(Color.Black);
+				this.GraphicsDevice.SetRenderTarget(this._tempRenderTarget);
+				this.GraphicsDevice.Clear(Color.Black);
 
-				SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
+				this.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 					DepthStencilState.Default, RasterizerState.CullNone);
-				SpriteBatch.Draw(RenderTarget,
+				this.SpriteBatch.Draw(this.RenderTarget,
 					data.Destination,
 					data.Source,
 					data.Color ?? Color.White,
@@ -140,37 +140,37 @@ namespace Singularity
 					data.Origin,
 					data.Effect ?? SpriteEffects.None,
 					0);
-				SpriteBatch.End();
+				this.SpriteBatch.End();
 
-				var tempRenderSwitchHelper = RenderTarget;
-				RenderTarget = _tempRenderTarget;
-				_tempRenderTarget = tempRenderSwitchHelper;
+				var tempRenderSwitchHelper = this.RenderTarget;
+				this.RenderTarget = this._tempRenderTarget;
+				this._tempRenderTarget = tempRenderSwitchHelper;
 
 				if (data.IsDone)
-					_removalList.Add(func);
+					this._removalList.Add(func);
 			}
 
-			_lastFrame = RenderTarget;
+			this._lastFrame = this.RenderTarget;
 
 
 			//Draw RenderTarget to Screen
-			GraphicsDevice.SetRenderTarget(null);
-			GraphicsDevice.Clear(Color.Black);
+			this.GraphicsDevice.SetRenderTarget(null);
+			this.GraphicsDevice.Clear(Color.Black);
 
-			SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
+			this.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 				DepthStencilState.Default, RasterizerState.CullNone);
 
-			var width = ratioWidth * GraphicsDeviceManager.PreferredBackBufferHeight / ratioHeight;
+			var width = this.ratioWidth * this.GraphicsDeviceManager.PreferredBackBufferHeight / this.ratioHeight;
 
-			SpriteBatch.Draw(RenderTarget,
-				new Rectangle(new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
+			this.SpriteBatch.Draw(this.RenderTarget,
+				new Rectangle(new Point((this.GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
 					new Point(width,
-						GraphicsDeviceManager.PreferredBackBufferHeight)),
+						this.GraphicsDeviceManager.PreferredBackBufferHeight)),
 				new Rectangle(new Point(0, 0),
-					new Point(RenderTarget.Width, RenderTarget.Height)),
+					new Point(this.RenderTarget.Width, this.RenderTarget.Height)),
 				Color.White);
 
-			SpriteBatch.End();
+			this.SpriteBatch.End();
 
 			base.Draw(gameTime);
 		}
@@ -181,19 +181,19 @@ namespace Singularity
 		/// <param name="gameTime">DeltaTime</param>
 		protected sealed override void Update(GameTime gameTime)
 		{
-			OnPreUpdateEvent(gameTime);
+			this.OnPreUpdateEvent(gameTime);
 
 			InputManager.Update();
 
 			//Remove finished ScreenEffects
-			ScreenEffectList.RemoveAll(f => _removalList.Contains(f));
-			_removalList.Clear();
+			this.ScreenEffectList.RemoveAll(f => this._removalList.Contains(f));
+			this._removalList.Clear();
 
 			base.Update(gameTime);
-			SceneManager.Update(gameTime);
+			this.SceneManager.Update(gameTime);
 			KeyboardManager.Update();
 
-			OnPostUpdateEvent(gameTime);
+			this.OnPostUpdateEvent(gameTime);
 		}
 
 		/// <summary>
@@ -201,10 +201,10 @@ namespace Singularity
 		/// </summary>
 		protected void ResetGraphic()
 		{
-			GraphicsDevice.BlendState = BlendState.AlphaBlend;
-			GraphicsDevice.DepthStencilState = DepthStencilState.None;
-			GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-			GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+			this.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+			this.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+			this.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+			this.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
 		}
 
 		/// <summary>
@@ -212,8 +212,8 @@ namespace Singularity
 		/// </summary>
 		public void BeginRender3D()
 		{
-			GraphicsDevice.BlendState = BlendState.Opaque;
-			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+			this.GraphicsDevice.BlendState = BlendState.Opaque;
+			this.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 		}
 
 		/// <summary>
@@ -225,30 +225,30 @@ namespace Singularity
 			base.LoadContent();
 
 			// Create a new SpriteBatch, which can be used to draw textures.
-			SpriteBatch = new SpriteBatch(GraphicsDevice);
+			this.SpriteBatch = new SpriteBatch(this.GraphicsDevice);
 		}
 
 		public Texture2D GetScreenShot()
 		{
-			return _lastFrame;
+			return this._lastFrame;
 		}
 
 		public void SaveScreenshot(string location)
 		{
-			SaveScreenshot(location, DateTime.Now.ToString("yyy_MM_dd_hh_mm_ss"));
+			this.SaveScreenshot(location, DateTime.Now.ToString("yyy_MM_dd_hh_mm_ss"));
 		}
 
 		public void SaveScreenshot(string location, string name)
 		{
 			Stream stream = File.Create(location + "\\" + name + ".png");
-			_lastFrame.SaveAsPng(stream, _lastFrame.Width, _lastFrame.Height);
+			this._lastFrame.SaveAsPng(stream, this._lastFrame.Width, this._lastFrame.Height);
 			stream.Dispose();
 		}
 
 		public void SetRatio(int _ratioWidth, int _ratioHeight)
 		{
-			ratioWidth = _ratioWidth;
-			ratioHeight = _ratioHeight;
+			this.ratioWidth = _ratioWidth;
+			this.ratioHeight = _ratioHeight;
 		}
 
 		#region Events
@@ -257,21 +257,21 @@ namespace Singularity
 
 		private void OnPreUpdateEvent(GameTime e)
 		{
-			PreUpdateEvent?.Invoke(this, e);
+			this.PreUpdateEvent?.Invoke(this, e);
 		}
 
 		protected event EventHandler<GameTime> PostUpdateEvent;
 
 		private void OnPostUpdateEvent(GameTime e)
 		{
-			PostUpdateEvent?.Invoke(this, e);
+			this.PostUpdateEvent?.Invoke(this, e);
 		}
 
 		protected event EventHandler<GameTime> DrawEvent;
 
 		private void OnDrawEvent(GameTime e)
 		{
-			DrawEvent?.Invoke(this, e);
+			this.DrawEvent?.Invoke(this, e);
 		}
 
 		#endregion

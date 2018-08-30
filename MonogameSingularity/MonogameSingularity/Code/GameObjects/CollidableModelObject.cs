@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Singularity.GameObjects.Interfaces;
+﻿using Singularity.Core.GameObjects.Interfaces;
 
-namespace Singularity.GameObjects
+namespace Singularity.Core.GameObjects
 {
 	public class CollidableModelObject : ModelObject, ICollidable
 	{

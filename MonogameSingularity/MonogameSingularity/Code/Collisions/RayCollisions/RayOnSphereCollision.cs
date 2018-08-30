@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions.RayCollisions
+namespace Singularity.Core.Collisions.RayCollisions
 {
 	internal static class RayOnSphereCollision
 	{

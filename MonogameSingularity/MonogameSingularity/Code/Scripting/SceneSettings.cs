@@ -1,4 +1,4 @@
-﻿namespace Singularity.Scripting
+﻿namespace Singularity.Core.Scripting
 {
 	/// <summary>
 	///     Settings. Set null for default

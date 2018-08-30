@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Singularity;
-using Singularity.Collisions;
-using Singularity.Events;
-using Singularity.GameObjects.Interfaces;
+using Singularity.Core;
+using Singularity.Core.Collisions;
+using Singularity.Core.Events;
+using Singularity.Core.GameObjects.Interfaces;
 
 namespace SingularityTest.GameObjects
 {

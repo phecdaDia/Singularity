@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
-namespace Singularity.Utilities
+namespace Singularity.Core.Utilities
 {
 	/// <summary>
 	/// Template for Settings
@@ -42,13 +42,13 @@ namespace Singularity.Utilities
 		public virtual void ApplyUserSettings()
 		{
 			//Try get Stuff from User
-			var user = GetUserSettings();
+			var user = this.GetUserSettings();
 
 			//Apply it to SettingsList. if it was delete -> ignore
 			foreach (var key in user.Keys)
 			{
-				if(!SettingsList.ContainsKey(key)) continue;
-				SettingsList[key] = user[key];
+				if(!this.SettingsList.ContainsKey(key)) continue;
+				this.SettingsList[key] = user[key];
 			}
 		}
 
@@ -107,9 +107,9 @@ namespace Singularity.Utilities
 		/// <param name="setting">value of Setting</param>
 		protected void AddSetting<T>(string name, T setting)
 		{
-			SettingsList.Add(name, new SettingsObject<T>(setting));
-			KnownTypes.Add(typeof(T));
-			KnownTypes.Add(typeof(SettingsObject<T>));
+			this.SettingsList.Add(name, new SettingsObject<T>(setting));
+			this.KnownTypes.Add(typeof(T));
+			this.KnownTypes.Add(typeof(SettingsObject<T>));
 		}
 
 		/// <summary>
@@ -120,9 +120,9 @@ namespace Singularity.Utilities
 		/// <returns></returns>
 		public SettingsObject<T> GetSetting<T>(string name)
 		{
-			if (SettingsList.ContainsKey(name))
+			if (this.SettingsList.ContainsKey(name))
 			{
-				if (SettingsList[name] is SettingsObject<T> data)
+				if (this.SettingsList[name] is SettingsObject<T> data)
 				{
 					return data;
 				}
@@ -139,9 +139,9 @@ namespace Singularity.Utilities
 		/// <param name="setting">new setting value</param>
 		public void SetSetting<T>(string name, T setting)
 		{
-			if (SettingsList.ContainsKey(name))
+			if (this.SettingsList.ContainsKey(name))
 			{
-				if (SettingsList[name] is SettingsObject<T> data)
+				if (this.SettingsList[name] is SettingsObject<T> data)
 				{
 					data.SetValue(setting);
 				}
@@ -163,7 +163,7 @@ namespace Singularity.Utilities
 
 		public SettingsObject(T value)
 		{
-			Setting = value;
+			this.Setting = value;
 		}
 
 		/// <summary>
@@ -174,9 +174,9 @@ namespace Singularity.Utilities
 			=> obj.GetValue();
 
 		public void SetValue(T value) 
-			=> Setting = value;
+			=> this.Setting = value;
 
 		public T GetValue() 
-			=> Setting;
+			=> this.Setting;
 	}
 }

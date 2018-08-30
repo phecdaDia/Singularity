@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Collisions;
-using Singularity.Events;
-using Singularity.GameObjects.Interfaces;
-using Singularity.Utilities;
+using Singularity.Core.Collisions;
+using Singularity.Core.Events;
+using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.Utilities;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	/// <summary>
 	///     A GameObject can be any object in a GameScene.
@@ -70,27 +69,27 @@ namespace Singularity
 		{
 			get
 			{
-				return ScaleMatrix *
-				       RotationMatrix *
-				       TranslationMatrix;
+				return this.ScaleMatrix *
+				       this.RotationMatrix *
+				       this.TranslationMatrix;
 			}
 		}
 
 		public Matrix TranslationMatrix
 		{
-			get { return Matrix.CreateTranslation(GetHierarchyPosition()); }
+			get { return Matrix.CreateTranslation(this.GetHierarchyPosition()); }
 		}
 
 		public Matrix ScaleMatrix
 		{
-			get { return Matrix.CreateScale(GetHierarchyScale()); }
+			get { return Matrix.CreateScale(this.GetHierarchyScale()); }
 		}
 
 		public Matrix RotationMatrix
 		{
 			get
 			{
-				var rotation = GetHierarchyRotation();
+				var rotation = this.GetHierarchyRotation();
 
 				//Matrix.CreateRotationX(rotation.Z)
 				//	* Matrix.CreateRotationY(rotation.Y)
@@ -111,7 +110,7 @@ namespace Singularity
 
 		public Matrix TransformationMatrix
 		{
-			get { return ScaleMatrix * RotationMatrix; }
+			get { return this.ScaleMatrix * this.RotationMatrix; }
 		}
 
 		public float ModelRadius { get; private set; }
@@ -125,8 +124,8 @@ namespace Singularity
 		/// <returns></returns>
 		public Vector3 GetHierarchyScale()
 		{
-			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.Scale)) return Scale;
-			return Scale * ParentObject.GetHierarchyScale();
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Scale)) return this.Scale;
+			return this.Scale * this.ParentObject.GetHierarchyScale();
 		}
 
 		/// <summary>
@@ -136,25 +135,25 @@ namespace Singularity
 		/// <returns></returns>
 		public Vector3 GetHierarchyPosition()
 		{
-			if (ParentObject == null) return Position;
-			if (ChildProperties.HasFlag(ChildProperties.TranslationRotation))
-				return Vector3.Transform(Position, ParentObject.RotationMatrix) + ParentObject.GetHierarchyPosition();
-			if (ChildProperties.HasFlag(ChildProperties.Translation)) return Position + ParentObject.GetHierarchyPosition();
+			if (this.ParentObject == null) return this.Position;
+			if (this.ChildProperties.HasFlag(ChildProperties.TranslationRotation))
+				return Vector3.Transform(this.Position, this.ParentObject.RotationMatrix) + this.ParentObject.GetHierarchyPosition();
+			if (this.ChildProperties.HasFlag(ChildProperties.Translation)) return this.Position + this.ParentObject.GetHierarchyPosition();
 
-			return Position;
+			return this.Position;
 		}
 
 
 		public Vector3 GetHierarchyRotation()
 		{
-			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.Rotation)) return Rotation;
-			return Rotation + ParentObject.GetHierarchyRotation();
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.Rotation)) return this.Rotation;
+			return this.Rotation + this.ParentObject.GetHierarchyRotation();
 		}
 
 		public GameObjectDrawMode GetHierarchyDrawMode()
 		{
-			if (ParentObject == null || !ChildProperties.HasFlag(ChildProperties.DrawMode)) return DrawMode;
-			return ParentObject.GetHierarchyDrawMode();
+			if (this.ParentObject == null || !this.ChildProperties.HasFlag(ChildProperties.DrawMode)) return this.DrawMode;
+			return this.ParentObject.GetHierarchyDrawMode();
 		}
 
 
@@ -164,7 +163,7 @@ namespace Singularity
 		/// <returns></returns>
 		public List<Action<GameScene, GameObject, GameTime>> GetScripts()
 		{
-			return ObjectScripts;
+			return this.ObjectScripts;
 		}
 
 		#region Builder Pattern
@@ -180,13 +179,13 @@ namespace Singularity
 		{
 			//SetTexture(ModelManager.GetTexture(model));
 
-			ModelPath = model;
+			this.ModelPath = model;
 
-			var center = GetHierarchyPosition();
+			var center = this.GetHierarchyPosition();
 
 			// now get max(r + r(v))
 			var rm = 0.0f;
-			foreach (var mesh in Model.Meshes)
+			foreach (var mesh in this.Model.Meshes)
 			{
 				// get distance
 				var bs = mesh.BoundingSphere;
@@ -195,7 +194,7 @@ namespace Singularity
 				if (dist > rm) rm = dist;
 			}
 
-			ModelRadius = rm;
+			this.ModelRadius = rm;
 
 			//if (this is ICollidable || this is ICollider) // everything that has something to do with collisions gets a sphere at the beginning
 			//	SetCollision(new SphereCollision(ModelRadius));
@@ -215,7 +214,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetPosition(float x, float y)
 		{
-			return SetPosition(new Vector3(x, y, 0));
+			return this.SetPosition(new Vector3(x, y, 0));
 		}
 
 		/// <summary>
@@ -227,7 +226,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetPosition(float x, float y, float z)
 		{
-			return SetPosition(new Vector3(x, y, z));
+			return this.SetPosition(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -237,18 +236,18 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetPosition(Vector3 position)
 		{
-			if (ParentObject != null && ChildProperties.HasFlag(ChildProperties.KeepPositon))
+			if (this.ParentObject != null && this.ChildProperties.HasFlag(ChildProperties.KeepPositon))
 			{
 				var mat = Matrix.Identity;
 
-				if (ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= ParentObject.RotationMatrix;
-				if (ChildProperties.HasFlag(ChildProperties.Translation)) mat *= ParentObject.TranslationMatrix;
+				if (this.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.ParentObject.RotationMatrix;
+				if (this.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.ParentObject.TranslationMatrix;
 
-				Position = Vector3.Transform(position, Matrix.Invert(mat));
+				this.Position = Vector3.Transform(position, Matrix.Invert(mat));
 			}
 			else
 			{
-				Position = position;
+				this.Position = position;
 			}
 
 			return this;
@@ -257,9 +256,9 @@ namespace Singularity
 		public GameObject SetPositionAt(Axis axis, float value)
 		{
 
-			if (axis.HasFlag(Axis.X)) SetPosition(value, this.Position.Y, this.Position.Z);
-			if (axis.HasFlag(Axis.Y)) SetPosition(this.Position.X, value, this.Position.Z);
-			if (axis.HasFlag(Axis.Z)) SetPosition(this.Position.X, this.Position.Y, value);
+			if (axis.HasFlag(Axis.X)) this.SetPosition(value, this.Position.Y, this.Position.Z);
+			if (axis.HasFlag(Axis.Y)) this.SetPosition(this.Position.X, value, this.Position.Z);
+			if (axis.HasFlag(Axis.Z)) this.SetPosition(this.Position.X, this.Position.Y, value);
 
 			return this;
 		}
@@ -277,7 +276,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(float x, float y)
 		{
-			return AddPosition(new Vector3(x, y, 0));
+			return this.AddPosition(new Vector3(x, y, 0));
 		}
 
 		/// <summary>
@@ -289,7 +288,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(float x, float y, float z)
 		{
-			return AddPosition(new Vector3(x, y, z));
+			return this.AddPosition(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -299,7 +298,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(Vector3 position)
 		{
-			Position += position;
+			this.Position += position;
 			return this;
 		}
 
@@ -312,7 +311,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(float x, float y, GameTime gameTime)
 		{
-			return AddPosition(new Vector3(x, y, 0), gameTime);
+			return this.AddPosition(new Vector3(x, y, 0), gameTime);
 		}
 
 		/// <summary>
@@ -325,7 +324,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddPosition(float x, float y, float z, GameTime gameTime)
 		{
-			return AddPosition(new Vector3(x, y, z), gameTime);
+			return this.AddPosition(new Vector3(x, y, z), gameTime);
 		}
 
 		/// <summary>
@@ -337,19 +336,19 @@ namespace Singularity
 		public GameObject AddPosition(Vector3 position, GameTime gameTime)
 		{
 
-			return AddPosition(position * (float) Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			return this.AddPosition(position * (float) Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 		public GameObject AddPositionAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) AddPosition(value, 0, 0);
-			if (axis.HasFlag(Axis.Y)) AddPosition(0, value, 0);
-			if (axis.HasFlag(Axis.Z)) AddPosition(0, 0, value);
+			if (axis.HasFlag(Axis.X)) this.AddPosition(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) this.AddPosition(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) this.AddPosition(0, 0, value);
 
 			return this;
 		}
 
 		public GameObject AddPositionAt(Axis axis, float value, GameTime gameTime) =>
-			AddPositionAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			this.AddPositionAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -364,7 +363,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetRotation(float x, float y)
 		{
-			return SetRotation(new Vector3(x, y, 0));
+			return this.SetRotation(new Vector3(x, y, 0));
 		}
 
 		/// <summary>
@@ -376,7 +375,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetRotation(float x, float y, float z)
 		{
-			return SetRotation(new Vector3(x, y, z));
+			return this.SetRotation(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -386,14 +385,14 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetRotation(Vector3 rotation)
 		{
-			Rotation = rotation;
+			this.Rotation = rotation;
 			return this;
 		}
 		public GameObject SetRotationAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) SetRotation(value, this.Rotation.Y, this.Rotation.Z);
-			if (axis.HasFlag(Axis.Y)) SetRotation(this.Rotation.X, value, this.Rotation.Z);
-			if (axis.HasFlag(Axis.Z)) SetRotation(this.Rotation.X, this.Rotation.Y, value);
+			if (axis.HasFlag(Axis.X)) this.SetRotation(value, this.Rotation.Y, this.Rotation.Z);
+			if (axis.HasFlag(Axis.Y)) this.SetRotation(this.Rotation.X, value, this.Rotation.Z);
+			if (axis.HasFlag(Axis.Z)) this.SetRotation(this.Rotation.X, this.Rotation.Y, value);
 
 			return this;
 		}
@@ -411,7 +410,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y)
 		{
-			return AddRotation(new Vector3(x, y, 0));
+			return this.AddRotation(new Vector3(x, y, 0));
 		}
 
 		/// <summary>
@@ -423,7 +422,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y, float z)
 		{
-			return AddRotation(new Vector3(x, y, z));
+			return this.AddRotation(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -433,7 +432,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(Vector3 rotation)
 		{
-			Rotation += rotation;
+			this.Rotation += rotation;
 			return this;
 		}
 
@@ -446,7 +445,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y, GameTime gameTime)
 		{
-			return AddRotation(new Vector3(x, y, 0), gameTime);
+			return this.AddRotation(new Vector3(x, y, 0), gameTime);
 		}
 
 		/// <summary>
@@ -459,7 +458,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(float x, float y, float z, GameTime gameTime)
 		{
-			return AddRotation(new Vector3(x, y, z), gameTime);
+			return this.AddRotation(new Vector3(x, y, z), gameTime);
 		}
 
 		/// <summary>
@@ -470,18 +469,18 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddRotation(Vector3 rotation, GameTime gameTime)
 		{
-			return AddRotation(rotation * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			return this.AddRotation(rotation * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 		public GameObject AddRotationAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) AddRotation(value, 0, 0);
-			if (axis.HasFlag(Axis.Y)) AddRotation(0, value, 0);
-			if (axis.HasFlag(Axis.Z)) AddRotation(0, 0, value);
+			if (axis.HasFlag(Axis.X)) this.AddRotation(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) this.AddRotation(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) this.AddRotation(0, 0, value);
 
 			return this;
 		}
 		public GameObject AddRotationAt(Axis axis, float value, GameTime gameTime) =>
-			AddRotationAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			this.AddRotationAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -495,7 +494,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetScale(float scale)
 		{
-			return SetScale(scale, scale, scale);
+			return this.SetScale(scale, scale, scale);
 		}
 
 		/// <summary>
@@ -507,7 +506,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetScale(float x, float y, float z)
 		{
-			return SetScale(new Vector3(x, y, z));
+			return this.SetScale(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -517,14 +516,14 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetScale(Vector3 scale)
 		{
-			Scale = scale;
+			this.Scale = scale;
 			return this;
 		}
 		public GameObject SetScaleAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) SetScale(value, this.Scale.Y, this.Scale.Z);
-			if (axis.HasFlag(Axis.Y)) SetScale(this.Scale.X, value, this.Scale.Z);
-			if (axis.HasFlag(Axis.Z)) SetScale(this.Scale.X, this.Scale.Y, value);
+			if (axis.HasFlag(Axis.X)) this.SetScale(value, this.Scale.Y, this.Scale.Z);
+			if (axis.HasFlag(Axis.Y)) this.SetScale(this.Scale.X, value, this.Scale.Z);
+			if (axis.HasFlag(Axis.Z)) this.SetScale(this.Scale.X, this.Scale.Y, value);
 
 			return this;
 		}
@@ -542,7 +541,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject MultiplyScale(float x, float y, float z)
 		{
-			return MultiplyScale(new Vector3(x, y, z));
+			return this.MultiplyScale(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -552,7 +551,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject MultiplyScale(Vector3 scale)
 		{
-			Scale *= scale;
+			this.Scale *= scale;
 			return this;
 		}
 
@@ -566,7 +565,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject MultiplyScale(float x, float y, float z, GameTime gameTime)
 		{
-			return MultiplyScale(new Vector3(x, y, z), gameTime);
+			return this.MultiplyScale(new Vector3(x, y, z), gameTime);
 		}
 
 		/// <summary>
@@ -583,18 +582,18 @@ namespace Singularity
 			s.Y = (float) Math.Pow(scale.Y, framerate);
 			s.Z = (float) Math.Pow(scale.Z, framerate);
 			
-			return MultiplyScale(s);
+			return this.MultiplyScale(s);
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) MultiplyScale(value, 1, 1);
-			if (axis.HasFlag(Axis.Y)) MultiplyScale(1, value, 1);
-			if (axis.HasFlag(Axis.Z)) MultiplyScale(1, 1, value);
+			if (axis.HasFlag(Axis.X)) this.MultiplyScale(value, 1, 1);
+			if (axis.HasFlag(Axis.Y)) this.MultiplyScale(1, value, 1);
+			if (axis.HasFlag(Axis.Z)) this.MultiplyScale(1, 1, value);
 
 			return this;
 		}
 		public GameObject MultiplyScaleAt(Axis axis, float value, GameTime gameTime) =>
-			MultiplyScaleAt(axis, (float) Math.Pow(value, Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate)));
+			this.MultiplyScaleAt(axis, (float) Math.Pow(value, Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate)));
 
 		#endregion
 
@@ -608,7 +607,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(float scale)
 		{
-			return AddScale(new Vector3(scale));
+			return this.AddScale(new Vector3(scale));
 		}
 
 		/// <summary>
@@ -620,7 +619,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(float x, float y, float z)
 		{
-			return AddScale(new Vector3(x, y, z));
+			return this.AddScale(new Vector3(x, y, z));
 		}
 
 		/// <summary>
@@ -630,7 +629,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(Vector3 scale)
 		{
-			Scale += scale;
+			this.Scale += scale;
 			return this;
 		}
 
@@ -642,7 +641,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(float scale, GameTime gameTime)
 		{
-			return AddScale(new Vector3(scale), gameTime);
+			return this.AddScale(new Vector3(scale), gameTime);
 		}
 
 		/// <summary>
@@ -655,7 +654,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(float x, float y, float z, GameTime gameTime)
 		{
-			return AddScale(new Vector3(x, y, z), gameTime);
+			return this.AddScale(new Vector3(x, y, z), gameTime);
 		}
 
 		/// <summary>
@@ -666,18 +665,18 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScale(Vector3 scale, GameTime gameTime)
 		{
-			return AddScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			return this.AddScale(scale * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 		public GameObject AddScaleAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) AddScale(value, 0, 0);
-			if (axis.HasFlag(Axis.Y)) AddScale(0, value, 0);
-			if (axis.HasFlag(Axis.Z)) AddScale(0, 0, value);
+			if (axis.HasFlag(Axis.X)) this.AddScale(value, 0, 0);
+			if (axis.HasFlag(Axis.Y)) this.AddScale(0, value, 0);
+			if (axis.HasFlag(Axis.Z)) this.AddScale(0, 0, value);
 
 			return this;
 		}
 		public GameObject AddScaleAt(Axis axis, float value, GameTime gameTime) =>
-			AddScaleAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			this.AddScaleAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -685,12 +684,12 @@ namespace Singularity
 
 		public GameObject SetInertia(float x, float y)
 		{
-			return SetInertia(x, y, 0);
+			return this.SetInertia(x, y, 0);
 		}
 
 		public GameObject SetInertia(float x, float y, float z)
 		{
-			return SetInertia(new Vector3(x, y, z));
+			return this.SetInertia(new Vector3(x, y, z));
 		}
 
 		public GameObject SetInertia(Vector3 inertia)
@@ -698,14 +697,14 @@ namespace Singularity
 			if (!(this is IInertia)) Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
 
 
-			Inertia = inertia;
+			this.Inertia = inertia;
 			return this;
 		}
 		public GameObject SetInertiaAt(Axis axis, float value)
 		{
-			if (axis.HasFlag(Axis.X)) SetInertia(value, this.Inertia.Y, this.Inertia.Z);
-			if (axis.HasFlag(Axis.Y)) SetInertia(this.Inertia.X, value, this.Inertia.Z);
-			if (axis.HasFlag(Axis.Z)) SetInertia(this.Inertia.X, this.Inertia.Y, value);
+			if (axis.HasFlag(Axis.X)) this.SetInertia(value, this.Inertia.Y, this.Inertia.Z);
+			if (axis.HasFlag(Axis.Y)) this.SetInertia(this.Inertia.X, value, this.Inertia.Z);
+			if (axis.HasFlag(Axis.Z)) this.SetInertia(this.Inertia.X, this.Inertia.Y, value);
 
 			return this;
 		}
@@ -716,19 +715,19 @@ namespace Singularity
 
 		public GameObject AddInertia(float x, float y)
 		{
-			return AddInertia(x, y, 0);
+			return this.AddInertia(x, y, 0);
 		}
 
 		public GameObject AddInertia(float x, float y, float z)
 		{
-			return AddInertia(new Vector3(x, y, z));
+			return this.AddInertia(new Vector3(x, y, z));
 		}
 
 		public GameObject AddInertia(Vector3 inertia)
 		{
 			if (!(this is IInertia)) Console.WriteLine($"Not inheriting IInertia. Inertia should not be used!");
 
-			Inertia += inertia;
+			this.Inertia += inertia;
 			return this;
 		}
 
@@ -741,7 +740,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddInertia(float x, float y, GameTime gameTime)
 		{
-			return AddInertia(new Vector3(x, y, 0), gameTime);
+			return this.AddInertia(new Vector3(x, y, 0), gameTime);
 		}
 
 		/// <summary>
@@ -754,7 +753,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddInertia(float x, float y, float z, GameTime gameTime)
 		{
-			return AddInertia(new Vector3(x, y, z), gameTime);
+			return this.AddInertia(new Vector3(x, y, z), gameTime);
 		}
 
 		/// <summary>
@@ -765,18 +764,18 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddInertia(Vector3 inertia, GameTime gameTime)
 		{
-			return AddInertia(inertia * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			return this.AddInertia(inertia * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 		}
 		public GameObject AddInertiaAt(Axis axis, float value)
 		{
 			switch (axis)
 			{
 				case Axis.X:
-					return AddInertia(value, 0, 0);
+					return this.AddInertia(value, 0, 0);
 				case Axis.Y:
-					return AddInertia(0, value, 0);
+					return this.AddInertia(0, value, 0);
 				case Axis.Z:
-					return AddInertia(0, 0, value);
+					return this.AddInertia(0, 0, value);
 				case Axis.W:
 					return this; // doesn't use W axis.
 				default:
@@ -784,7 +783,7 @@ namespace Singularity
 			}
 		}
 		public GameObject AddInertiaAt(Axis axis, float value, GameTime gameTime) =>
-			AddInertiaAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
+			this.AddInertiaAt(axis, value * (float)Math.Min(gameTime.ElapsedGameTime.TotalSeconds, SingularityGame.MinimumFramerate));
 
 		#endregion
 
@@ -812,9 +811,9 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject RemoveParent()
 		{
-			if (ParentObject == null) return this;
+			if (this.ParentObject == null) return this;
 
-			ParentObject.RemoveChild(this);
+			this.ParentObject.RemoveChild(this);
 
 			return this;
 		}
@@ -830,7 +829,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject AddScript(Action<GameScene, GameObject, GameTime> script)
 		{
-			ObjectScripts.Add(script);
+			this.ObjectScripts.Add(script);
 
 			return this;
 		}
@@ -843,7 +842,7 @@ namespace Singularity
 		{
 			Debug.Assert(collEvent != null);
 
-			CollisionEvent += (s, e) => collEvent(e);
+			this.CollisionEvent += (s, e) => collEvent(e);
 			return this;
 		}
 
@@ -859,10 +858,10 @@ namespace Singularity
 		public GameObject AddChild(GameObject child, ChildProperties properties = ChildProperties.All)
 		{
 			child.SetChildProperties(properties);
-			if (ChildrenBuffer.Contains(child) || ChildObjects.Contains(child))
+			if (this.ChildrenBuffer.Contains(child) || this.ChildObjects.Contains(child))
 				return this;
 
-			ChildrenBuffer.Add(child);
+			this.ChildrenBuffer.Add(child);
 
 			child.ParentObject = this;
 
@@ -882,17 +881,17 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject RemoveChild(GameObject child)
 		{
-			if (ChildObjects.Contains(child))
+			if (this.ChildObjects.Contains(child))
 			{
-				ChildObjects.Remove(child);
+				this.ChildObjects.Remove(child);
 				child.ParentObject = null;
 
 				if (child.ChildProperties.HasFlag(ChildProperties.KeepPositon))
 				{
 					var mat = Matrix.Identity;
 
-					if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= RotationMatrix;
-					if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= TranslationMatrix;
+					if (child.ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= this.RotationMatrix;
+					if (child.ChildProperties.HasFlag(ChildProperties.Translation)) mat *= this.TranslationMatrix;
 
 
 					child.SetPosition(Vector3.Transform(child.Position, mat));
@@ -910,7 +909,7 @@ namespace Singularity
 
 		public GameObject SetChildProperties(ChildProperties properties)
 		{
-			ChildProperties = properties;
+			this.ChildProperties = properties;
 
 			return this;
 		}
@@ -926,7 +925,7 @@ namespace Singularity
 		/// <returns></returns>
 		public GameObject SetDebugName(string name)
 		{
-			DebugName = name;
+			this.DebugName = name;
 			return this;
 		}
 
@@ -936,8 +935,8 @@ namespace Singularity
 
 		public GameObject SetCollision(Collision collision)
 		{
-			Collision = (Collision) collision.Clone();
-			Collision.SetParent(this);
+			this.Collision = (Collision) collision.Clone();
+			this.Collision.SetParent(this);
 			return this;
 		}
 
@@ -947,7 +946,7 @@ namespace Singularity
 
 		public GameObject SetEnableCollision(bool enable)
 		{
-			EnablePushCollision = enable;
+			this.EnablePushCollision = enable;
 
 			return this;
 		}
@@ -958,8 +957,8 @@ namespace Singularity
 
 		public GameObject SetEffect(Effect effect, Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams)
 		{
-			Effect = effect;
-			EffectParams = effectParams;
+			this.Effect = effect;
+			this.EffectParams = effectParams;
 			return this;
 		}
 
@@ -979,7 +978,7 @@ namespace Singularity
 
 		public GameObject SetSceneLight(bool set)
 		{
-			ApplySceneLight = set;
+			this.ApplySceneLight = set;
 			return this;
 		}
 
@@ -989,7 +988,7 @@ namespace Singularity
 
 		public GameObject SetCulling(bool enabled)
 		{
-			CullingEnabled = enabled;
+			this.CullingEnabled = enabled;
 			return this;
 		}
 
@@ -999,7 +998,7 @@ namespace Singularity
 
 		public GameObject SetDrawMode(GameObjectDrawMode drawMode)
 		{
-			DrawMode = drawMode;
+			this.DrawMode = drawMode;
 			return this;
 		}
 
@@ -1064,30 +1063,30 @@ namespace Singularity
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
 			// get a copy of the position
-			var position = GetHierarchyPosition();
+			var position = this.GetHierarchyPosition();
 
-			var cbArray = ChildrenBuffer.ToArray();
-			ChildrenBuffer.Clear();
+			var cbArray = this.ChildrenBuffer.ToArray();
+			this.ChildrenBuffer.Clear();
 
-			Update(scene, gameTime);
+			this.Update(scene, gameTime);
 
-			ChildObjects.AddRange(ChildrenBuffer);
+			this.ChildObjects.AddRange(this.ChildrenBuffer);
 			//scene.AddObject(this.ChildrenBuffer);
-			ChildrenBuffer.Clear();
+			this.ChildrenBuffer.Clear();
 
 			// add inertia.
 			if (this is IInertia)
-				AddPosition(this.Inertia, gameTime);
+				this.AddPosition(this.Inertia, gameTime);
 
 			// execute scripts
-			foreach (var actionScript in ObjectScripts) actionScript(scene, this, gameTime);
+			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
 
 
 			// check if we are even able to stay here.
-			scene.HandleCollision(gameTime, this, GetHierarchyPosition());
+			scene.HandleCollision(gameTime, this, this.GetHierarchyPosition());
 
 			// did we move?
-			if (GetHierarchyPosition() != position) scene.MoveOctree(this, position);
+			if (this.GetHierarchyPosition() != position) scene.MoveOctree(this, position);
 
 			// if we are allowed to move the camera, do it
 
@@ -1096,10 +1095,10 @@ namespace Singularity
 
 			scene.CameraLocked = true;
 
-			foreach (var obj in ChildObjects.ToArray())
+			foreach (var obj in this.ChildObjects.ToArray())
 				obj.UpdateLogic(scene, gameTime);
 
-			ChildObjects.AddRange(cbArray);
+			this.ChildObjects.AddRange(cbArray);
 		}
 
 		/// <summary>
@@ -1118,13 +1117,13 @@ namespace Singularity
 		/// <param name="drawMode"></param>
 		public void DrawLogic(GameScene scene, SpriteBatch spriteBatch, GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
-				Draw(scene, scene.GetViewMatrix(), scene.GetProjectionMatrix());
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+				this.Draw(scene, scene.GetViewMatrix(), scene.GetProjectionMatrix());
 
-			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
-				Draw2D(spriteBatch);
+			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+				this.Draw2D(spriteBatch);
 
-			foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
+			foreach (var obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
 		}
 
 		public void DrawLogicWithEffect(
@@ -1135,14 +1134,14 @@ namespace Singularity
 			string technique = null,
 			GameObjectDrawMode drawMode = GameObjectDrawMode.All)
 		{
-			if (drawMode.HasFlag(GameObjectDrawMode.Model) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
-				DrawWithSpecificEffect(scene, effect, effectParams, technique);
+			if (drawMode.HasFlag(GameObjectDrawMode.Model) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.Model))
+				this.DrawWithSpecificEffect(scene, effect, effectParams, technique);
 
 			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) &&
-			    GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
-				Draw2D(spriteBatch);
+			    this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
+				this.Draw2D(spriteBatch);
 
-			foreach (var obj in ChildObjects)
+			foreach (var obj in this.ChildObjects)
 				obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
 
@@ -1158,10 +1157,10 @@ namespace Singularity
 		/// <param name="projection"></param>
 		public virtual void Draw(GameScene scene, Matrix view, Matrix projection)
 		{
-			if (Model == null) return;
+			if (this.Model == null) return;
 
 
-			if (Effect == null)
+			if (this.Effect == null)
 			{
 				Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> basicEffectParams =
 					(obj, effect, transformationMatrices, mesh, s) =>
@@ -1174,12 +1173,12 @@ namespace Singularity
 						this.EffectParams?.Invoke(obj, be, transformationMatrices, mesh, s);
 					};
 
-				DrawWithSpecificEffect(scene, Model.Meshes[0].Effects[0], basicEffectParams, null);
+				this.DrawWithSpecificEffect(scene, this.Model.Meshes[0].Effects[0], basicEffectParams, null);
 			}
 			else
 			{
 
-				DrawWithSpecificEffect(scene, Effect, EffectParams, null);
+				this.DrawWithSpecificEffect(scene, this.Effect, this.EffectParams, null);
 
 			}
 		}
@@ -1194,15 +1193,15 @@ namespace Singularity
 		public virtual void DrawWithSpecificEffect(GameScene scene, Effect effect,
 			Action<GameObject, Effect, Matrix[], ModelMesh, GameScene> effectParams, string technique = null)
 		{
-			if (Model == null) return; // No model means it can't be rendered.
+			if (this.Model == null) return; // No model means it can't be rendered.
 
 			// copy the scale of bones from the model to apply it later.
-			var transformMatrices = new Matrix[Model.Bones.Count];
-			Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
+			var transformMatrices = new Matrix[this.Model.Bones.Count];
+			this.Model.CopyAbsoluteBoneTransformsTo(transformMatrices);
 
 			var originalRastState = scene.Game.GraphicsDevice.RasterizerState;
 
-			if (!CullingEnabled)
+			if (!this.CullingEnabled)
 			{
 				var newRastState = new RasterizerState
 				{
@@ -1221,7 +1220,7 @@ namespace Singularity
 			if (technique == null)
 			{
 				foreach (var pass in effect.CurrentTechnique.Passes)
-				foreach (var mesh in Model.Meshes)
+				foreach (var mesh in this.Model.Meshes)
 				{
 					foreach (var part in mesh.MeshParts)
 					{
@@ -1238,7 +1237,7 @@ namespace Singularity
 				effect.CurrentTechnique = effect.Techniques[technique];
 
 				foreach (var pass in effect.CurrentTechnique.Passes)
-				foreach (var mesh in Model.Meshes)
+				foreach (var mesh in this.Model.Meshes)
 				{
 					foreach (var part in mesh.MeshParts)
 					{
@@ -1252,20 +1251,20 @@ namespace Singularity
 			}
 
 
-			if (!CullingEnabled)
+			if (!this.CullingEnabled)
 				scene.Game.GraphicsDevice.RasterizerState = originalRastState;
 		}
 
 		public virtual void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
 		{
-			foreach (var child in ChildObjects) child.LoadContent(contentManager, graphicsDevice);
+			foreach (var child in this.ChildObjects) child.LoadContent(contentManager, graphicsDevice);
 
-			foreach (var child in ChildrenBuffer) child.LoadContent(contentManager, graphicsDevice);
+			foreach (var child in this.ChildrenBuffer) child.LoadContent(contentManager, graphicsDevice);
 		}
 
 		public virtual void UnloadContent()
 		{
-			foreach (var child in ChildObjects) child.UnloadContent();
+			foreach (var child in this.ChildObjects) child.UnloadContent();
 		}
 
 		#endregion
@@ -1277,12 +1276,12 @@ namespace Singularity
 		public virtual void OnCollision(GameTime gameTime, GameObject collider, GameObject collidable, GameScene scene, Vector3 position,
 			Vector3 normal)
 		{
-			OnCollision(new CollisionEventArgs(gameTime, position, normal, collider, collidable, scene));
+			this.OnCollision(new CollisionEventArgs(gameTime, position, normal, collider, collidable, scene));
 		}
 
 		public virtual void OnCollision(CollisionEventArgs e)
 		{
-			CollisionEvent?.Invoke(this, e);
+			this.CollisionEvent?.Invoke(this, e);
 		}
 
 		#endregion

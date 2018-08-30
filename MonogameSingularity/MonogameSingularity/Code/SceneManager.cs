@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	public class SceneManager
 	{
@@ -31,12 +31,12 @@ namespace Singularity
 
 		public SceneManager(SingularityGame game)
 		{
-			Game = game;
+			this.Game = game;
 			Instance = this;
 
-			GameScenes = new Dictionary<string, GameScene>();
-			SceneStack = new Stack<GameScene>();
-			SceneQueue = new Queue<GameScene>();
+			this.GameScenes = new Dictionary<string, GameScene>();
+			this.SceneStack = new Stack<GameScene>();
+			this.SceneQueue = new Queue<GameScene>();
 		}
 
 		/// <summary>
@@ -50,9 +50,9 @@ namespace Singularity
 
 		public GameScene _GetCurrentScene()
 		{
-			if (SceneStack.Count == 0) return null;
+			if (this.SceneStack.Count == 0) return null;
 
-			return SceneStack.Peek();
+			return this.SceneStack.Peek();
 		}
 
 		/// <summary>
@@ -69,11 +69,11 @@ namespace Singularity
 		{
 			// add scene to queue first..
 			// pause the current scene
-			_GetCurrentScene()?.OnScenePause();
+			this._GetCurrentScene()?.OnScenePause();
 
 			scene.LoadContent();
 			scene.SetupScene(this.SceneStack.Count > 0 ? this.SceneStack.Peek() : null, entranceId);
-			SceneQueue.Enqueue(scene);
+			this.SceneQueue.Enqueue(scene);
 		}
 
 		/// <summary>
@@ -90,9 +90,9 @@ namespace Singularity
 
 		public void _AddSceneToStack(string sceneKey, int entranceId)
 		{
-			if (!GameScenes.ContainsKey(sceneKey)) throw new Exception("SceneKey \"" + sceneKey + "\" was not registered");
+			if (!this.GameScenes.ContainsKey(sceneKey)) throw new Exception("SceneKey \"" + sceneKey + "\" was not registered");
 
-			AddSceneToStack(GameScenes[sceneKey], entranceId);
+			AddSceneToStack(this.GameScenes[sceneKey], entranceId);
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace Singularity
 
 		public void _CloseScene()
 		{
-			IsSceneClosing = true;
+			this.IsSceneClosing = true;
 		}
 
 		/// <summary>
@@ -124,7 +124,7 @@ namespace Singularity
 
 		public string _RegisterScene(GameScene scene, RegisterBehavior behavior = RegisterBehavior.Ignore)
 		{
-			if (GameScenes.ContainsKey(scene.SceneKey))
+			if (this.GameScenes.ContainsKey(scene.SceneKey))
 				switch (behavior)
 				{
 					case RegisterBehavior.Ignore:
@@ -136,7 +136,7 @@ namespace Singularity
 					default:
 						throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null);
 				}
-			GameScenes[scene.SceneKey] = scene;
+			this.GameScenes[scene.SceneKey] = scene;
 			return scene.SceneKey;
 		}
 
@@ -147,14 +147,14 @@ namespace Singularity
 		public void Update(GameTime gameTime)
 		{
 			// add scenes to the stack
-			while (SceneQueue.Count > 0) SceneStack.Push(SceneQueue.Dequeue());
+			while (this.SceneQueue.Count > 0) this.SceneStack.Push(this.SceneQueue.Dequeue());
 
-			var scene = _GetCurrentScene();
+			var scene = this._GetCurrentScene();
 
 			if (scene == null)
 			{
 				// close game, as there are no scenes left
-				Game.Exit();
+				this.Game.Exit();
 
 				return;
 			}
@@ -163,27 +163,27 @@ namespace Singularity
 
 			// close scene is it's schedules to close
 
-			if (IsSceneClosing)
+			if (this.IsSceneClosing)
 			{
-				IsSceneClosing = false;
-				SceneStack.Pop();
+				this.IsSceneClosing = false;
+				this.SceneStack.Pop();
 				scene.UnloadContent();
 				// unload content from the scene.
 
 				// get current scene and call OnResume if possible
 				// check if we don't add any new scenes
-				if (SceneQueue.Count == 0)
-					_GetCurrentScene()?.OnSceneResume();
+				if (this.SceneQueue.Count == 0)
+					this._GetCurrentScene()?.OnSceneResume();
 			}
 
-			if (IsStackClearing)
+			if (this.IsStackClearing)
 			{
-				IsStackClearing = false;
-				foreach (var gameScene in SceneStack) gameScene.UnloadContent();
-				SceneStack.Clear();
+				this.IsStackClearing = false;
+				foreach (var gameScene in this.SceneStack) gameScene.UnloadContent();
+				this.SceneStack.Clear();
 			}
 
-			while (SceneQueue.Count > 0) SceneStack.Push(SceneQueue.Dequeue());
+			while (this.SceneQueue.Count > 0) this.SceneStack.Push(this.SceneQueue.Dequeue());
 		}
 
 		/// <summary>
@@ -192,34 +192,34 @@ namespace Singularity
 		/// <param name="spriteBatch"></param>
 		public void Draw(SpriteBatch spriteBatch)
 		{
-			if (SceneStack.Count == 0)
+			if (this.SceneStack.Count == 0)
 			{
-				Game.Exit();
+				this.Game.Exit();
 				return;
 			}
 
 			var drawScenes = new Stack<GameScene>();
-			while (SceneStack.Count > 0 && SceneStack.Peek() is ITransparent)
+			while (this.SceneStack.Count > 0 && this.SceneStack.Peek() is ITransparent)
 				// add scenes we want to draw.
-				drawScenes.Push(SceneStack.Pop());
+				drawScenes.Push(this.SceneStack.Pop());
 
 			// add one more scene, if there is any
-			if (SceneStack.Count > 0)
-				drawScenes.Push(SceneStack.Pop()); // this is the lowest scene
+			if (this.SceneStack.Count > 0)
+				drawScenes.Push(this.SceneStack.Pop()); // this is the lowest scene
 
 			// now work these scenes from down to top
 			while (drawScenes.Count > 0)
 			{
-				SceneStack.Push(drawScenes.Pop()); // puts scene back on the sceneStack so it doesn't go missing
-				SceneStack.Peek().Draw(spriteBatch, SceneRender); // draws the entire scene to our RenderTarget
+				this.SceneStack.Push(drawScenes.Pop()); // puts scene back on the sceneStack so it doesn't go missing
+				this.SceneStack.Peek().Draw(spriteBatch, this.SceneRender); // draws the entire scene to our RenderTarget
 
-				Game.GraphicsDevice.SetRenderTarget(Game.RenderTarget);
+				this.Game.GraphicsDevice.SetRenderTarget(this.Game.RenderTarget);
 
 				spriteBatch.Begin(); // draws the scene on top of everything else that was already drawn
 				spriteBatch.Draw( // causes a layered effect. We can see the scenes below
-					SceneRender,
-					new Rectangle(0, 0, Game.RenderTarget.Width, Game.RenderTarget.Height),
-					new Rectangle(0, 0, SceneRender.Width, SceneRender.Height),
+					this.SceneRender,
+					new Rectangle(0, 0, this.Game.RenderTarget.Width, this.Game.RenderTarget.Height),
+					new Rectangle(0, 0, this.SceneRender.Width, this.SceneRender.Height),
 					Color.White
 				);
 				spriteBatch.End();
@@ -238,7 +238,7 @@ namespace Singularity
 
 		private GameScene _GetScene(string key)
 		{
-			return GameScenes.ContainsKey(key) ? GameScenes[key] : null;
+			return this.GameScenes.ContainsKey(key) ? this.GameScenes[key] : null;
 		}
 
 		/// <summary>
@@ -251,7 +251,7 @@ namespace Singularity
 
 		private void _ClearStack()
 		{
-			IsStackClearing = true;
+			this.IsStackClearing = true;
 		}
 
 		/// <summary>
@@ -268,9 +268,9 @@ namespace Singularity
 		private void _ChangeScene(GameScene newScene, int entranceId = 0, bool clearStack = false)
 		{
 			if (clearStack)
-				_ClearStack();
-			_CloseScene();
-			_AddSceneToStack(newScene, entranceId);
+				this._ClearStack();
+			this._CloseScene();
+			this._AddSceneToStack(newScene, entranceId);
 		}
 
 		/// <summary>
@@ -288,9 +288,9 @@ namespace Singularity
 		private void _ChangeScene(string newSceneKey, int entranceId = 0, bool clearStack = false)
 		{
 			if (clearStack)
-				_ClearStack();
-			_CloseScene();
-			_AddSceneToStack(newSceneKey, entranceId);
+				this._ClearStack();
+			this._CloseScene();
+			this._AddSceneToStack(newSceneKey, entranceId);
 		}
 
 		public static void SetSceneRender(RenderTarget2D render)

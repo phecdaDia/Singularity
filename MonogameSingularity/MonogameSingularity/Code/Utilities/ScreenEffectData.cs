@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity.Utilities
+namespace Singularity.Core.Utilities
 {
 	public struct ScreenEffectData
 	{
@@ -17,14 +17,14 @@ namespace Singularity.Utilities
 		public ScreenEffectData(Rectangle destinationRectangle, Rectangle sourceRectangle, Vector2 origin, float rotation,
 			SpriteEffects effect, Color color, bool isDone, object caller)
 		{
-			Destination = destinationRectangle;
-			Source = sourceRectangle;
-			Origin = origin;
-			Rotation = rotation;
-			Effect = effect;
-			Color = color;
-			IsDone = isDone;
-			Caller = caller;
+			this.Destination = destinationRectangle;
+			this.Source = sourceRectangle;
+			this.Origin = origin;
+			this.Rotation = rotation;
+			this.Effect = effect;
+			this.Color = color;
+			this.IsDone = isDone;
+			this.Caller = caller;
 		}
 	}
 }

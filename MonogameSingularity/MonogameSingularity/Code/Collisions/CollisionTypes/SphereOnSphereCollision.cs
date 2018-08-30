@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions.CollisionTypes
+namespace Singularity.Core.Collisions.CollisionTypes
 {
 	internal static class SphereOnSphereCollision
 	{

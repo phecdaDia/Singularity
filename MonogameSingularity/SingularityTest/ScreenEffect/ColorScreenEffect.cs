@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Utilities;
+using Singularity.Core.Utilities;
 
 namespace SingularityTest.ScreenEffect
 {
-	public class ColorScreenEffect : Singularity.Utilities.ScreenEffect
+	public class ColorScreenEffect : Singularity.Core.Utilities.ScreenEffect
 	{
 		private readonly Color _color;
 		private readonly float _duration;

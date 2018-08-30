@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	/// <summary>
 	///     Improves kayboard controls with new functions.

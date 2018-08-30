@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions.Multi
+namespace Singularity.Core.Collisions.Multi
 {
 	public class CylinderCollision : MultiCollision
 	{
@@ -9,7 +9,7 @@ namespace Singularity.Collisions.Multi
 		{
 			Func<float, float, bool> circle = (f1, f2) => f1 * f1 + f2 * f2 <= radius * radius;
 
-			AddCollisions(
+			this.AddCollisions(
 				//new BoundEdgeCollision(this, new Vector3(0, -0.5f, 0), new Vector3(0, 1, 0), 1.0f, (scale, distance) => 0 <= scale && scale <= 1),
 				//new BoundPlaneCollision(this, new Vector3(0, 0.5f, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), (f1, f2) => f1 * f1 + f2 * f2 <= 1),
 				//new BoundPlaneCollision(this, new Vector3(0, -0.5f, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), (f1, f2) => f1 * f1 + f2 * f2 <= 1),

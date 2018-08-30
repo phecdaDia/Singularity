@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	/// <summary>
 	///     Loads <see cref="Texture2D" /> from the ContentPipeline

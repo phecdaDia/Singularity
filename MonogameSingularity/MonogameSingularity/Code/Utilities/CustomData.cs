@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
-namespace Singularity.Utilities
+namespace Singularity.Core.Utilities
 {
 	public class CustomData
 	{
@@ -10,27 +9,27 @@ namespace Singularity.Utilities
 
 		public CustomData()
 		{
-			DataDictionary = new Dictionary<string, Tuple<Type, object>>();
+			this.DataDictionary = new Dictionary<string, Tuple<Type, object>>();
 		}
 
 		public T GetValue<T>(string key)
 		{
-			if (!DataDictionary.ContainsKey(key)) return default(T);
+			if (!this.DataDictionary.ContainsKey(key)) return default(T);
 
-			if (DataDictionary[key].Item1 != typeof(T))
-				throw new ArgumentException($"Value of key {key} is not of type {DataDictionary[key].Item1}");
+			if (this.DataDictionary[key].Item1 != typeof(T))
+				throw new ArgumentException($"Value of key {key} is not of type {this.DataDictionary[key].Item1}");
 
-			return (T) DataDictionary[key].Item2;
+			return (T) this.DataDictionary[key].Item2;
 		}
 
 		public void SetValue<T>(string key, T value)
 		{
-			DataDictionary[key] = new Tuple<Type, object>(typeof(T), value);
+			this.DataDictionary[key] = new Tuple<Type, object>(typeof(T), value);
 		}
 
 		public bool ContainsKey(string key)
 		{
-			return DataDictionary.ContainsKey(key);
+			return this.DataDictionary.ContainsKey(key);
 		}
 	}
 }

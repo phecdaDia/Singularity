@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Utilities
+namespace Singularity.Core.Utilities
 {
 	public static class VectorMathHelper
 	{

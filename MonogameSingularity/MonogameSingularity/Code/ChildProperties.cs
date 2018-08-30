@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Singularity
+namespace Singularity.Core
 {
 	[Flags]
 	public enum ChildProperties

@@ -1,11 +1,8 @@
 ﻿using System;
+using Singularity.Core.Utilities;
 
-using Singularity.Utilities;
-
-namespace Singularity
+namespace Singularity.Core
 {
-	using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 	public static class SettingsManager
 	{
 		private static SettingsTemplate _settings;

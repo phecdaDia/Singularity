@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using IrrKlang;
 
-namespace Singularity
+namespace Singularity.Core
 { 
 	public class SoundManager
 	{
@@ -22,11 +22,11 @@ namespace Singularity
 
 		private SoundManager()
 		{
-			_engine = new ISoundEngine();
-			_sounds = new Dictionary<string, ISoundSource>();
-			_currentMusic = null;
-			_effectVolume = 1f;
-			_musicVolume = 1f;
+			this._engine = new ISoundEngine();
+			this._sounds = new Dictionary<string, ISoundSource>();
+			this._currentMusic = null;
+			this._effectVolume = 1f;
+			this._musicVolume = 1f;
 		}
 
 		#region Register Sounds
@@ -40,14 +40,14 @@ namespace Singularity
 		public static void RegisterSoundFromFile(string name, string path, float defaultVolume = 1f) => Instance._registerSoundFromFile(name, path, defaultVolume);
 		private void _registerSoundFromFile(string name, string path, float defaultVolume)
 		{
-			if (_sounds.ContainsKey(name))
+			if (this._sounds.ContainsKey(name))
 			{
 				Console.WriteLine("Sound already registred");
 				return;
 			}
 
-			_sounds.Add(name, _engine.AddSoundSourceFromFile(path));
-			_sounds[name].DefaultVolume = defaultVolume;
+			this._sounds.Add(name, this._engine.AddSoundSourceFromFile(path));
+			this._sounds[name].DefaultVolume = defaultVolume;
 		}
 
 		/// <summary>
@@ -59,14 +59,14 @@ namespace Singularity
 		public static void RegisterSoundFromMemory(string name, byte[] data, float defaultVolume = 1f) => Instance._registerSoundFromMemory(name, data, defaultVolume);
 		private void _registerSoundFromMemory(string name, byte[] data, float defaultVolume)
 		{
-			if (_sounds.ContainsKey(name))
+			if (this._sounds.ContainsKey(name))
 			{
 				Console.WriteLine("Sound already registred");
 				return;
 			}
 
-			_sounds.Add(name, _engine.AddSoundSourceFromMemory(data, name));
-			_sounds[name].DefaultVolume = defaultVolume;
+			this._sounds.Add(name, this._engine.AddSoundSourceFromMemory(data, name));
+			this._sounds[name].DefaultVolume = defaultVolume;
 		}
 
 		/// <summary>
@@ -78,14 +78,14 @@ namespace Singularity
 		public static void RegisterSoundFromIOStream(string name, Stream stream, float defaultVolume = 1f) => Instance._registerSoundFromIOStream(stream, name, defaultVolume);
 		private void _registerSoundFromIOStream(Stream stream, string name, float defaultVolume)
 		{
-			if (_sounds.ContainsKey(name))
+			if (this._sounds.ContainsKey(name))
 			{
 				Console.WriteLine("Sound already registred");
 				return;
 			}
 
-			_sounds.Add(name, _engine.AddSoundSourceFromIOStream(stream, name));
-			_sounds[name].DefaultVolume = defaultVolume;
+			this._sounds.Add(name, this._engine.AddSoundSourceFromIOStream(stream, name));
+			this._sounds[name].DefaultVolume = defaultVolume;
 		}
 
 		/// <summary>
@@ -95,8 +95,8 @@ namespace Singularity
 		public static void UnregisterSound(string name) => Instance._unregisterSound(name);
 		private void _unregisterSound(string name)
 		{
-			if (_sounds.ContainsKey(name))
-				_sounds.Remove(name);
+			if (this._sounds.ContainsKey(name))
+				this._sounds.Remove(name);
 		}
 
 		#endregion
@@ -165,7 +165,7 @@ namespace Singularity
 
 		private void CheckSound(string name)
 		{
-			if (!_sounds.ContainsKey(name))
+			if (!this._sounds.ContainsKey(name))
 				throw new ArgumentException(name + " not registred as Sound");
 		}
 
@@ -178,15 +178,15 @@ namespace Singularity
 
 			public SoundStop(Action<StopEventCause> onStop = null)
 			{
-				_onStop = onStop;
+				this._onStop = onStop;
 			}
 
 			public void OnSoundStopped(ISound sound, StopEventCause reason, object userData)
 			{
 				if (sound == Instance._currentMusic)
-					MusicStopped();
+					this.MusicStopped();
 
-				_onStop?.Invoke(reason);
+				this._onStop?.Invoke(reason);
 			}
 
 			private void MusicStopped()
@@ -213,20 +213,20 @@ namespace Singularity
 		public static void PlayMusic(string name, bool loop, bool startPaused = false, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null, bool enableReset = false) => Instance._PlayMusic(name, loop, startPaused, speed, pan, onStop, enableReset);
 		private void _PlayMusic(string name, bool loop, bool startPaused, float speed, float pan, Action<StopEventCause> onStop, bool enableReset)
 		{
-			CheckSound(name);
+			this.CheckSound(name);
 
-			if (_engine.IsCurrentlyPlaying(_sounds[name].Name) && !enableReset)
+			if (this._engine.IsCurrentlyPlaying(this._sounds[name].Name) && !enableReset)
 				return;
 
-			_currentMusic?.Stop();
+			this._currentMusic?.Stop();
 
-			_currentMusic = _engine.Play2D(_sounds[name], loop, true, true);
-			_currentMusic.PlaybackSpeed = speed;
-			_currentMusic.Pan           = pan;
-			_currentMusic.Volume        = _musicVolume;
+			this._currentMusic = this._engine.Play2D(this._sounds[name], loop, true, true);
+			this._currentMusic.PlaybackSpeed = speed;
+			this._currentMusic.Pan           = pan;
+			this._currentMusic.Volume        = this._musicVolume;
 			if(onStop != null)
-				_currentMusic.setSoundStopEventReceiver(new SoundStop(onStop));
-			_currentMusic.Paused = startPaused;
+				this._currentMusic.setSoundStopEventReceiver(new SoundStop(onStop));
+			this._currentMusic.Paused = startPaused;
 		}
 
 
@@ -234,7 +234,7 @@ namespace Singularity
 		{
 			public LoopHelper(string nameLooppart, float speed, float pan)
 			{
-				nameLoop = nameLooppart;
+				this.nameLoop = nameLooppart;
 				this.speed = speed;
 				this.pan = pan;
 			}
@@ -247,7 +247,7 @@ namespace Singularity
 			{
 				if (reason == StopEventCause.SoundFinishedPlaying)
 				{
-					PlayMusic(nameLoop, true, false, speed, pan, null, true);
+					PlayMusic(this.nameLoop, true, false, this.speed, this.pan, null, true);
 				}
 			}
 		}
@@ -267,21 +267,21 @@ namespace Singularity
 		private void _PlayLoopMusic(string nameBeginning, string nameLooppart, bool startPaused, float speed, float pan,
 		                            bool   enableReset)
 		{
-			CheckSound(nameBeginning);
-			CheckSound(nameLooppart);
+			this.CheckSound(nameBeginning);
+			this.CheckSound(nameLooppart);
 
-			if ((_engine.IsCurrentlyPlaying(_sounds[nameBeginning].Name) ||
-			     _engine.IsCurrentlyPlaying(_sounds[nameLooppart].Name)) && !enableReset)
+			if ((this._engine.IsCurrentlyPlaying(this._sounds[nameBeginning].Name) ||
+			     this._engine.IsCurrentlyPlaying(this._sounds[nameLooppart].Name)) && !enableReset)
 				return;
 
-			_currentMusic?.Stop();
+			this._currentMusic?.Stop();
 
-			_currentMusic = _engine.Play2D(_sounds[nameBeginning], false, true, true);
-			_currentMusic.PlaybackSpeed = speed;
-			_currentMusic.Pan = pan;
-			_currentMusic.Volume = _musicVolume;
-			_currentMusic.setSoundStopEventReceiver(new LoopHelper(nameLooppart, speed, pan));
-			_currentMusic.Paused = startPaused;
+			this._currentMusic = this._engine.Play2D(this._sounds[nameBeginning], false, true, true);
+			this._currentMusic.PlaybackSpeed = speed;
+			this._currentMusic.Pan = pan;
+			this._currentMusic.Volume = this._musicVolume;
+			this._currentMusic.setSoundStopEventReceiver(new LoopHelper(nameLooppart, speed, pan));
+			this._currentMusic.Paused = startPaused;
 		}
 
 		/// <summary>
@@ -290,8 +290,8 @@ namespace Singularity
 		public static void PauseMusic() => Instance._PauseMusic();
 		private void _PauseMusic()
 		{
-			if(_currentMusic != null)
-				_currentMusic.Paused = true;
+			if(this._currentMusic != null)
+				this._currentMusic.Paused = true;
 		}
 
 		/// <summary>
@@ -300,8 +300,8 @@ namespace Singularity
 		public static void ContinueMusic() => Instance._ContinueMusic();
 		private void _ContinueMusic()
 		{
-			if (_currentMusic != null)
-				_currentMusic.Paused = false;
+			if (this._currentMusic != null)
+				this._currentMusic.Paused = false;
 		}
 
 		/// <summary>
@@ -310,13 +310,13 @@ namespace Singularity
 		public static void ToggleMusic() => Instance._ToggleMusic();
 		private void _ToggleMusic()
 		{
-			if(_currentMusic == null)
+			if(this._currentMusic == null)
 				return;
 
-			if(_currentMusic.Paused)
-				_ContinueMusic();
+			if(this._currentMusic.Paused)
+				this._ContinueMusic();
 			else
-				_PauseMusic();
+				this._PauseMusic();
 		}
 
 		/// <summary>
@@ -325,7 +325,7 @@ namespace Singularity
 		public static void StopMusic() => Instance._StopMusic();
 		private void _StopMusic()
 		{
-			_currentMusic?.Stop();
+			this._currentMusic?.Stop();
 		}
 
 		/// <summary>
@@ -335,9 +335,9 @@ namespace Singularity
 		public static void SetSpeed(float speed) => Instance._SetSpeed(speed);
 		private void _SetSpeed(float speed)
 		{
-			if(_currentMusic == null)
+			if(this._currentMusic == null)
 				return;
-			_currentMusic.PlaybackSpeed = speed;
+			this._currentMusic.PlaybackSpeed = speed;
 		}
 
 		/// <summary>
@@ -347,9 +347,9 @@ namespace Singularity
 		public static void SetPan(float pan) => Instance._SetPan(pan);
 		private void _SetPan(float pan)
 		{
-			if (_currentMusic == null)
+			if (this._currentMusic == null)
 				return;
-			_currentMusic.Pan = pan;
+			this._currentMusic.Pan = pan;
 		}
 
 		#endregion
@@ -366,12 +366,12 @@ namespace Singularity
 		public static void PlayEffect(string name, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null) => Instance._playEffect(name, speed, pan, onStop);
 		private void _playEffect(string name, float speed, float pan, Action<StopEventCause> onStop)
 		{
-			CheckSound(name);
+			this.CheckSound(name);
 
-			var sound = _engine.Play2D(_sounds[name], false, true, true);
+			var sound = this._engine.Play2D(this._sounds[name], false, true, true);
 			sound.PlaybackSpeed = speed;
 			sound.Pan           = pan;
-			sound.Volume        = _effectVolume;
+			sound.Volume        = this._effectVolume;
 			sound.setSoundStopEventReceiver(new SoundStop(onStop));
 			sound.Paused = false;
 		}
@@ -387,12 +387,12 @@ namespace Singularity
 		public static void PlayEffect3D(string name, Vector3D position, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null) => Instance._playEffect3D(name, position, speed, pan, onStop);
 		private void _playEffect3D(string name, Vector3D position, float speed, float pan, Action<StopEventCause> onStop)
 		{
-			CheckSound(name);
+			this.CheckSound(name);
 
-			var sound = _engine.Play3D(_sounds[name], position.X, position.Y, position.Z, false, true, true);
+			var sound = this._engine.Play3D(this._sounds[name], position.X, position.Y, position.Z, false, true, true);
 			sound.PlaybackSpeed = speed;
 			sound.Pan           = pan;
-			sound.Volume        = _effectVolume;
+			sound.Volume        = this._effectVolume;
 			sound.setSoundStopEventReceiver(new SoundStop(onStop));
 			sound.Paused = false;
 		}

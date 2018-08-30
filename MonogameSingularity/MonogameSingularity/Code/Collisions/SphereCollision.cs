@@ -1,17 +1,17 @@
-﻿namespace Singularity.Collisions
+﻿namespace Singularity.Core.Collisions
 {
 	public class SphereCollision : Collision
 	{
 		public SphereCollision(float radius = 1.0f)
 		{
-			Radius = radius;
+			this.Radius = radius;
 		}
 
 		public float Radius { get; }
 
 		public override object Clone()
 		{
-			return new SphereCollision(Radius);
+			return new SphereCollision(this.Radius);
 		}
 	}
 }

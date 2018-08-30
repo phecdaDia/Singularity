@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Singularity.Collisions
+namespace Singularity.Core.Collisions
 {
 	public abstract class Collision : ICloneable
 	{
 		public Collision(GameObject parent) : this()
 		{
-			Parent = parent;
+			this.Parent = parent;
 		}
 
 		public Collision()
@@ -16,7 +16,7 @@ namespace Singularity.Collisions
 
 		public Vector3 Position
 		{
-			get { return Parent.GetHierarchyPosition(); }
+			get { return this.Parent.GetHierarchyPosition(); }
 		}
 
 		public GameObject Parent { get; private set; }
@@ -25,7 +25,7 @@ namespace Singularity.Collisions
 
 		public virtual void SetParent(GameObject parent)
 		{
-			Parent = parent;
+			this.Parent = parent;
 		}
 
 		public virtual bool DoesCollide(Collision collidable, Action<Collision, Collision, Vector3, Vector3> callback = null,

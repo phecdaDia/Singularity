@@ -1,4 +1,4 @@
-﻿namespace Singularity.Utilities
+﻿namespace Singularity.Core.Utilities
 {
 	public interface IGlobal
 	{

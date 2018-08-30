@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Singularity;
-using Singularity.Scripting;
+using Singularity.Core;
+using Singularity.Core.Scripting;
 using SingularityTest.Scenes;
 
 namespace SingularityTest

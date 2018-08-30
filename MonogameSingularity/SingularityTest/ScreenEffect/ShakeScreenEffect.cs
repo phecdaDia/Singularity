@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Singularity.Utilities;
+using Singularity.Core.Utilities;
 
 namespace SingularityTest.ScreenEffect
 {
-	public class ShakeScreenEffect : Singularity.Utilities.ScreenEffect
+	public class ShakeScreenEffect : Singularity.Core.Utilities.ScreenEffect
 	{
 		private readonly int _amplitude;
 		private readonly float _duration;
