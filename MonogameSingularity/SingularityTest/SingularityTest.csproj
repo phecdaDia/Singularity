@@ -146,6 +146,10 @@
       <Project>{06a6aaec-d41c-4e5b-bb37-125e66293994}</Project>
       <Name>Singularity.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Singularity.Examples\Singularity.Examples.csproj">
+      <Project>{c50e2278-e75d-448d-af51-19184e768289}</Project>
+      <Name>Singularity.Examples</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\effects\Diffuse.fx" />

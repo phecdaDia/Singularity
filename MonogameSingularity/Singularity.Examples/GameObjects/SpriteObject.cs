@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Singularity.Core;
 
-namespace Singularity.Core.GameObjects
+namespace Singularity.Examples.GameObjects
 {
 	public abstract class SpriteObject : GameObject
 	{

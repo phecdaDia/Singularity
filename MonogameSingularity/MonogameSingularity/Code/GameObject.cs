@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Core.Collisions;
 using Singularity.Core.Events;
-using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.GameObjects;
 using Singularity.Core.Utilities;
 
 namespace Singularity.Core

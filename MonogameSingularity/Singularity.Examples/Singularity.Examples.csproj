@@ -43,10 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameObjects\BasicCamera.cs" />
+    <Compile Include="GameObjects\CollidableModelObject.cs" />
+    <Compile Include="GameObjects\EmptyGameObject.cs" />
+    <Compile Include="GameObjects\ModelObject.cs" />
+    <Compile Include="GameObjects\SpriteObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonogameSingularity\Singularity.Core.csproj">
+      <Project>{06a6aaec-d41c-4e5b-bb37-125e66293994}</Project>
+      <Name>Singularity.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

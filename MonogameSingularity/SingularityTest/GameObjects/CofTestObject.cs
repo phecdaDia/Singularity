@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Singularity;
 using Singularity.Core;
-using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.GameObjects;
 
 namespace SingularityTest.GameObjects
 {

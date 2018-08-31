@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Singularity.Core.Collisions;
-using Singularity.Core.GameObjects.Interfaces;
+using Singularity.Core.GameObjects;
 using Singularity.Core.Utilities;
 
 namespace Singularity.Core

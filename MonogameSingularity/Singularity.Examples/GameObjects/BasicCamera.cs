@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity.Core.Collisions;
-using Singularity.Core.GameObjects.Interfaces;
 
 namespace Singularity.Core.GameObjects
 {

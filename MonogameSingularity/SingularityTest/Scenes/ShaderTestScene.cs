@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Singularity;
 using Singularity.Core;
 using Singularity.Core.GameObjects;
+using Singularity.Examples.GameObjects;
 
 namespace SingularityTest.Scenes
 {

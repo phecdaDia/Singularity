@@ -41,4 +41,8 @@ namespace Singularity.Core.Scripting
 		//    Script.AddLightningToEffect(effect);
 		//}
 	}
+
+	public class EmptyGameObject
+	{
+	}
 }

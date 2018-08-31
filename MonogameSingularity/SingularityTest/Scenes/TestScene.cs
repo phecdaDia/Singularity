@@ -8,6 +8,7 @@ using Singularity.Core.Collisions;
 using Singularity.Core.Collisions.Multi;
 using Singularity.Core.GameObjects;
 using Singularity.Core.Utilities;
+using Singularity.Examples.GameObjects;
 using SingularityTest.GameObjects;
 using SingularityTest.GameObjects.ChildTest;
 using SingularityTest.ScreenEffect;

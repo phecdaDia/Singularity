@@ -1,4 +1,4 @@
-﻿namespace Singularity.Core.GameObjects.Interfaces
+﻿namespace Singularity.Core.GameObjects
 {
 	public interface ICameraController
 	{

@@ -5,6 +5,7 @@ using Singularity;
 using Singularity.Core;
 using Singularity.Core.Collisions;
 using Singularity.Core.GameObjects;
+using Singularity.Examples.GameObjects;
 using SingularityTest.GameObjects;
 
 namespace SingularityTest.Scenes

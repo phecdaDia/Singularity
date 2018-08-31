@@ -1,6 +1,6 @@
-﻿using Singularity.Core.GameObjects.Interfaces;
+﻿using Singularity.Core.GameObjects;
 
-namespace Singularity.Core.GameObjects
+namespace Singularity.Examples.GameObjects
 {
 	public class CollidableModelObject : ModelObject, ICollidable
 	{

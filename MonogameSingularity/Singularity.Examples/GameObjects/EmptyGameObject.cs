@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Singularity.Core;
 
-namespace Singularity.Core.GameObjects
+namespace Singularity.Examples.GameObjects
 {
 	public class EmptyGameObject : GameObject
 	{
