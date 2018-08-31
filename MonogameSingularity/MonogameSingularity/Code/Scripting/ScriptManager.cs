@@ -194,7 +194,12 @@ namespace Singularity.Core.Scripting
 		{
 			CheckSetUp();
 			var scriptData = _scriptList[path];
+#if DEBUG
+			var scriptCode = File.ReadAllText("../../../../" + path);
+#else
 			var scriptCode = File.ReadAllText(path);
+#endif
+
 			var script =
 				CSharpScript.Create(scriptCode, ScriptOptions.Default.WithReferences(Assembly.GetCallingAssembly(),
 					Assembly

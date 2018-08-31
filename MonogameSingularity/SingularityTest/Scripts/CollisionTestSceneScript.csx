@@ -29,7 +29,7 @@ public class CollisionTestSceneScript : ScriptingTemplate
 				SceneManager.ClearStack();
 		}));
 
-        objList.Add(new BasicCamera().Set3DEnabled(true).SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50)
+        objList.Add(new StaticCamera().SetCameraTarget(new Vector3(0, 0, 1)).SetPosition(0, 1, -50)
 								   .SetEnableCollision(false));
 
 
@@ -87,7 +87,7 @@ public class CollisionTestSceneScript : ScriptingTemplate
 
 		Random random = new Random();
 
-		for (int i = 0; i <= 20; i++)
+		for (int i = 0; i <= 5; i++)
 		{
 		    objList.Add(new TestBallObject()
 					  .SetInertia((float)(5f * random.NextDouble()), 0, (float)(5f * random.NextDouble()))
