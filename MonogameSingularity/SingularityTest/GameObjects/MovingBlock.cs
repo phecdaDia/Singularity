@@ -21,6 +21,7 @@ namespace SingularityTest.GameObjects
 		{
 			this.SetPosition(targets[0]);
 
+			DrawChildren = false;
 			this.Targets = new Queue<Vector3>();
 			foreach (var vector in targets) this.Targets.Enqueue(vector);
 			this.Speed = speed;

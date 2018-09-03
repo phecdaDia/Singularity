@@ -41,6 +41,8 @@ namespace Singularity
 		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
 
+		public bool DrawChildren { get; protected set; } = true;
+
 		public Texture2D Texture
 		{
 			get { return ModelManager.GetTexture(this.ModelPath); }
@@ -1143,7 +1145,8 @@ namespace Singularity
 			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				Draw2D(spriteBatch);
 
-			foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
+			if(DrawChildren)
+				foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
 		}
 
 		public void DrawLogicWithEffect(
@@ -1161,8 +1164,9 @@ namespace Singularity
 			    GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				Draw2D(spriteBatch);
 
-			foreach (var obj in ChildObjects)
-				obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
+			if(DrawChildren)
+				foreach (var obj in ChildObjects)
+					obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
 
 		public virtual void Draw2D(SpriteBatch spriteBatch)
