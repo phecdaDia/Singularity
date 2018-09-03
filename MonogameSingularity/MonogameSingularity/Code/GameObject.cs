@@ -42,6 +42,7 @@ namespace Singularity
 		public Collision Collision { get; private set; }
 
 		public bool DrawChildren { get; protected set; } = true;
+		public bool UpdateChildren { get; protected set; } = true;
 
 		public Texture2D Texture
 		{
@@ -1098,8 +1099,9 @@ namespace Singularity
 			this.MoveInOctree(scene, gameTime, true);
 			
 			// update Child Positions in Octree
-			foreach (var obj in ChildObjects.ToArray())
-				obj.MoveInOctree(scene, gameTime, false);
+			if(UpdateChildren)
+				foreach (var obj in ChildObjects.ToArray())
+					obj.MoveInOctree(scene, gameTime, false);
 			
 		}
 
