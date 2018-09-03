@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Singularity.GameObjects;
 
 namespace Singularity.Utilities
 {
@@ -94,7 +95,7 @@ namespace Singularity.Utilities
 				else
 				{
 					// this is the smallest Octree we may create, add as leaf
-					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+					//Console.WriteLine($"Adding {position} ({(obj is CollidableModelObject ? "Block" : "Player")}) to octree {this.Min} {this.Max}");
 					Leafs.Add(obj);
 				}
 			}
@@ -116,7 +117,7 @@ namespace Singularity.Utilities
 				else
 				{
 					// this quad is small enough for this object
-					//Console.WriteLine($"Adding leaf to octree of size {this.CurrentSize}");
+					//Console.WriteLine($"Adding {position} ({(obj is CollidableModelObject ? "Block" : "Player")}) to octree {this.Min} {this.Max}");
 					Leafs.Add(obj);
 				}
 			}
@@ -162,7 +163,12 @@ namespace Singularity.Utilities
 		/// <returns></returns>
 		public bool RemoveObject(T obj, Vector3 position)
 		{
-			if (Leafs.Remove(obj)) return true;
+			if (Leafs.Remove(obj))
+			{
+				//Console.WriteLine($"Removed {position} ({(obj is CollidableModelObject ? "Block" : "Player")}) from {this.Min} {this.Max}");
+
+				return true;
+			}
 
 			// it's not in this part, get the children.
 
@@ -201,9 +207,7 @@ namespace Singularity.Utilities
 				else
 				{
 					// Describe the OT where it was found in
-					Console.WriteLine($"Found Object in OT: {ot.Min} {ot.Max}");
-					Console.WriteLine($"Octree Information: {ot.CurrentSize} / {ot.MinimumSize}");
-					Console.WriteLine($"Expected position: {position1}");
+					Console.WriteLine($"Found Object ({position1}) in OT: {ot.Min} {ot.Max}");
 				}
 			}
 		}

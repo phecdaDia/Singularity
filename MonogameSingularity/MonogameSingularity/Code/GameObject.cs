@@ -1055,6 +1055,8 @@ namespace Singularity
 
 		#region Logic Methods
 
+		private Vector3 BeginUpdatePosition;
+
 		/// <summary>
 		///     Calls <seealso cref="Update" />, and calls back to the scene.
 		///     After that all <see cref="ChildObjects" /> will be updated.
@@ -1063,18 +1065,26 @@ namespace Singularity
 		/// <param name="gameTime"></param>
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
-			// get a copy of the position
-			var position = GetHierarchyPosition();
+			// save update position
+			this.BeginUpdatePosition = this.GetHierarchyPosition();
 
+			// begin updating children
+			foreach (var obj in ChildObjects.ToArray())
+				obj.UpdateLogic(scene, gameTime);
+
+			// This update procedure
+
+			// copy ChildrenBuffer to array to allow new children
 			var cbArray = ChildrenBuffer.ToArray();
 			ChildrenBuffer.Clear();
 
+			// invoke update method
 			Update(scene, gameTime);
 
-			ChildObjects.AddRange(ChildrenBuffer);
-			//scene.AddObject(this.ChildrenBuffer);
-			ChildrenBuffer.Clear();
+			// add previously buffered children to the ChildObjects
+			ChildObjects.AddRange(cbArray);
 
+			// check if we're an inertia object
 			// add inertia.
 			if (this is IInertia)
 				AddPosition(this.Inertia, gameTime);
@@ -1083,23 +1093,32 @@ namespace Singularity
 			foreach (var actionScript in ObjectScripts) actionScript(scene, this, gameTime);
 
 
-			// check if we are even able to stay here.
-			scene.HandleCollision(gameTime, this, GetHierarchyPosition());
+			this.MoveInOctree(scene, gameTime, true);
+			
+			// update Child Positions in Octree
+			foreach (var obj in ChildObjects.ToArray())
+				obj.MoveInOctree(scene, gameTime, false);
+			
+		}
 
-			// did we move?
-			if (GetHierarchyPosition() != position) scene.MoveOctree(this, position);
+		private void MoveInOctree(GameScene scene, GameTime gameTime, Boolean checkCollision)
+		{
+			if (checkCollision)
+				scene.HandleCollision(gameTime, this, GetHierarchyPosition());
+
+			var cPosition = this.GetHierarchyPosition();
+			if (cPosition  != this.BeginUpdatePosition)
+			{
+				scene.MoveOctree(this, this.BeginUpdatePosition);
+				this.BeginUpdatePosition = cPosition;
+			}
+
 
 			// if we are allowed to move the camera, do it
 
 			scene.CameraLocked = false;
 			if (this is ICameraController controller) controller.SetCamera(scene);
-
 			scene.CameraLocked = true;
-
-			foreach (var obj in ChildObjects.ToArray())
-				obj.UpdateLogic(scene, gameTime);
-
-			ChildObjects.AddRange(cbArray);
 		}
 
 		/// <summary>
