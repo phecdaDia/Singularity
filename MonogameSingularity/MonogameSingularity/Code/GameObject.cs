@@ -256,6 +256,20 @@ namespace Singularity
 			return this;
 		}
 
+		public GameObject SetAbsolutePosition(Vector3 position)
+		{
+			if (ParentObject == null) return this.SetPosition(position);
+
+			var mat = Matrix.Identity;
+
+			if (ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= ParentObject.RotationMatrix;
+			if (ChildProperties.HasFlag(ChildProperties.Translation)) mat *= ParentObject.TranslationMatrix;
+
+			Position = Vector3.Transform(position, Matrix.Invert(mat));
+
+			return this;
+		}
+
 		public GameObject SetPositionAt(Axis axis, float value)
 		{
 

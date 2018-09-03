@@ -35,7 +35,7 @@ namespace SingularityTest.GameObjects
 			this.CollisionFrames = 0;
 
 
-			Console.WriteLine($"{e.Position} | {e.Position - e.Collidable.Position}");
+			//Console.WriteLine($"{e.Position} | {e.Position - e.Collidable.Position}");
 			//get angle of the slope
 			var angleOfSlope =
 				Math.Acos(e.Normal.Y); // we can do this, as this is a very special case. |n| is always 1 and the angle we're comparing against is (0, 1, 0), UnitY

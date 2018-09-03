@@ -292,7 +292,7 @@ namespace Singularity
 							//Console.WriteLine("Collision");
 
 							if (gameObject.EnablePushCollision)
-								gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+								gameObject.SetAbsolutePosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 
 							gameObject.OnCollision(gameTime, gameObject, go, this, pos, nor);
 							go.OnCollision(gameTime, gameObject, go, this, pos, nor);

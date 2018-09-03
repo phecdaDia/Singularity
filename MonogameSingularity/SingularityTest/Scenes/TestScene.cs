@@ -46,12 +46,17 @@ namespace SingularityTest.Scenes
 
 			AddObject(new ModelObject("cubes/cube1").SetPosition(-51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
 
-			AddObject(new BasicCamera()
+			int frame = 0;
+			AddObject(new EmptyGameObject().SetPosition(-5, -5, -5)
+				.AddChild(new EmptyGameObject().SetPosition(10, 10, 10)
+					.AddChild(new BasicCamera()
 				.Set3DEnabled(true)
 				.SetCameraTarget(camTarget)
 				.SetPosition(camPosition)
+				.AddCollisionEvent((e) => Console.WriteLine($"Collision on frame {frame}"))
 				.AddScript((scene, obj, time) =>
 				{
+					frame += 1;
 					// enable or disable 3d.
 					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
@@ -100,8 +105,8 @@ namespace SingularityTest.Scenes
 						if (rcp.DidCollide)
 							this.RemoveObject(rcp.Collidable);
 					}
-				})
-			);
+				}), ChildProperties.Translation
+			), ChildProperties.TranslationRotation));
 
 			//AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
 			//AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
