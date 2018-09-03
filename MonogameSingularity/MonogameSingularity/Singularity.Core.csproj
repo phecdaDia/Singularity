@@ -134,7 +134,6 @@
     <Compile Include="Code\GameObjects\ICollidable.cs" />
     <Compile Include="Code\GameObjects\ICollider.cs" />
     <Compile Include="Code\GameObjects\IInertia.cs" />
-    <Compile Include="Code\GameObjects\StaticCamera.cs" />
     <Compile Include="Code\GameScene.cs" />
     <Compile Include="Code\Helpers\VectorHelper.cs" />
     <Compile Include="Code\ImageManager.cs" />

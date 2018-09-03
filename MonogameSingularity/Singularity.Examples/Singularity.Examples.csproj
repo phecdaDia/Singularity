@@ -48,6 +48,7 @@
     <Compile Include="GameObjects\EmptyGameObject.cs" />
     <Compile Include="GameObjects\ModelObject.cs" />
     <Compile Include="GameObjects\SpriteObject.cs" />
+    <Compile Include="GameObjects\StaticCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Singularity.Collisions;
-using Singularity.GameObjects.Interfaces;
+using Singularity.Core;
+using Singularity.Core.Collisions;
+using Singularity.Core.GameObjects;
 
-namespace Singularity.GameObjects
+namespace Singularity.Examples.GameObjects
 {
 	public class StaticCamera : GameObject, ICollider, ICameraController
 	{
