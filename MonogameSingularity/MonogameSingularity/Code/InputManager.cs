@@ -35,7 +35,7 @@ namespace Singularity
 		private Point _mouseStartPos = new Point(200,200);
 		private bool _lockMouse = false;
 		private Vector2 _mouseMovement = new Vector2(0);
-		private float _mouseSensitivity = 200;
+		private float _mouseSensitivity = 200f;
 
 		//Mouse buttons
 		private bool _leftMouseLastFrame = false;
@@ -57,6 +57,7 @@ namespace Singularity
 		private GamePadDeadZone _deadZone = GamePadDeadZone.IndependentAxes;
 		private Vector2 _gamepadStickLeft = new Vector2(0);
 		private Vector2 _gamepadStickRight = new Vector2(0);
+		private float _gamepadStickSensitivity = 100f;
 
 		//Gamepad Trigger
 		private float _gamepadTriggerLeft = 0f;
@@ -109,7 +110,7 @@ namespace Singularity
 		/// </summary>
 		/// <returns>Percentage Mouse moved in relation to sensitivity</returns>
 		public static Vector2 GetMouseMovement() => Instance._GetMouseMovement();
-		private Vector2 _GetMouseMovement() => _lockMouse? _mouseMovement : new Vector2(0);
+		private Vector2 _GetMouseMovement() => _lockMouse? (_mouseMovement / _mouseSensitivity) : new Vector2(0);
 
 		/// <summary>
 		/// Set Mousesensitivity
@@ -226,16 +227,23 @@ namespace Singularity
 		}
 
 		/// <summary>
+		/// Set Sensitivity of GamePadSticks. Movement will be divided by this value
+		/// </summary>
+		/// <param name="value"></param>
+		public static void SetGamePadStickSensitivity(float value) => Instance._SetGamePadStickSensitivity(value);
+		private void _SetGamePadStickSensitivity(float value) => _gamepadStickSensitivity = value;
+
+		/// <summary>
 		/// Value of Left Thumbstick - x and y = percentage of movement in direction
 		/// </summary>
-		public static Vector2 GetGamePadLeftStick => Instance._GetGamePadLeftStick();
-		private Vector2 _GetGamePadLeftStick() => _gamepadStickLeft;
+		public static Vector2 GetGamePadLeftStick() => Instance._GetGamePadLeftStick();
+		private Vector2 _GetGamePadLeftStick() => _gamepadStickLeft/_gamepadStickSensitivity;
 
 		/// <summary>
 		/// Value of Right Thumbstick - x and y = percentage of movement in direction
 		/// </summary>
-		public static Vector2 GetGamePadRightStick => Instance._GetGamePadRightStick();
-		private Vector2 _GetGamePadRightStick() => _gamepadStickRight;
+		public static Vector2 GetGamePadRightStick() => Instance._GetGamePadRightStick();
+		private Vector2 _GetGamePadRightStick() => _gamepadStickRight/_gamepadStickSensitivity;
 
 		/// <summary>
 		/// Check if Button is down in current Frame - also false if it is not supported by Device
@@ -376,11 +384,9 @@ namespace Singularity
 			if (_lockMouse)
 			{
 				
-
-				//Movement TODO
 				var moved = mouseState.Position - _mouseStartPos;
-				var x = moved.X / _mouseSensitivity;
-				var y = moved.Y / _mouseSensitivity;
+				var x = moved.X;
+				var y = moved.Y;
 
 				_mouseMovement = new Vector2(x,y);
 

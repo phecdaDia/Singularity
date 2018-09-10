@@ -84,7 +84,7 @@ namespace SingularityTest.Scenes
 					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
 
 
-					if (KeyboardManager.IsKeyDown(Keys.M))
+					if (KeyboardManager.IsKeyDown(Keys.M) || InputManager.IsDownGamePad(Buttons.A))
 					{
 						// run a ray and get the closest collision
 						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
