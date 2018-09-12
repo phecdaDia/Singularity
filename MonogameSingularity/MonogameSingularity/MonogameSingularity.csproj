@@ -143,7 +143,7 @@
     <Compile Include="Code\Utilities\SettingsTemplate.cs" />
     <Compile Include="Code\Utilities\VectorMathHelper.cs" />
     <Compile Include="Code\Utilities\XmlManager.cs" />
-    <Compile Include="InputManager.cs" />
+    <Compile Include="Code\InputManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
