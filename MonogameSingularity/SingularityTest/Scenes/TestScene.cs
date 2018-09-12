@@ -47,8 +47,8 @@ namespace SingularityTest.Scenes
 			AddObject(new ModelObject("cubes/cube1").SetPosition(-51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
 
 			int frame = 0;
-			AddObject(new EmptyGameObject().SetPosition(-5, -5, -5)
-				.AddChild(new EmptyGameObject().SetPosition(10, 10, 10)
+			AddObject(new GameObject().SetPosition(-5, -5, -5)
+				.AddChild(new GameObject().SetPosition(10, 10, 10)
 					.AddChild(new BasicCamera()
 				.Set3DEnabled(true)
 				.SetCameraTarget(camTarget)
@@ -158,7 +158,7 @@ namespace SingularityTest.Scenes
 			);
 
 			//AddObject(new SpriteObject());
-			AddObject(new EmptyGameObject().AddScript((scene, o, gameTime) =>
+			AddObject(new GameObject().AddScript((scene, o, gameTime) =>
 			{
 				/* Close Game with Settings.ExitKey
 				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
@@ -201,14 +201,14 @@ namespace SingularityTest.Scenes
 				}
 			}));
 
-			AddObject(new EmptyGameObject().SetPosition(0, 10, 0).AddScript(
+			AddObject(new GameObject().SetPosition(0, 10, 0).AddScript(
 				(scene, o, arg3) => o.AddRotation(0, 1, 0, arg3)
 			).AddChild(new CollidableModelObject("sphere").SetPosition(0, 10, 0).SetCollision(new SphereCollision(1)), ChildProperties.TranslationRotation));
 
 
-			this.AddObject(new EmptyGameObject().AddChild(new CollidableModelObject("sphere").SetPosition(10, 10, 0).SetCollision(new SphereCollision(1))));
+			this.AddObject(new GameObject().AddChild(new CollidableModelObject("sphere").SetPosition(10, 10, 0).SetCollision(new SphereCollision(1))));
 
-			AddObject(new EmptyGameObject().AddScript((scene, obj, time) =>
+			AddObject(new GameObject().AddScript((scene, obj, time) =>
 			{
 				if (!obj.CustomData.ContainsKey("timeAlive")) obj.CustomData.SetValue("timeAlive", 0.0f);
 
@@ -229,7 +229,7 @@ namespace SingularityTest.Scenes
 			//AddObject(new ChildBall().SetPosition(19, 00, 1).SetDebugName("Child"));
 			//AddObject(new ChildBall().SetPosition(19, 00, -1).SetDebugName("Child"));
 
-			AddObject(new EmptyGameObject().AddScript(((scene, o, time) =>
+			AddObject(new GameObject().AddScript(((scene, o, time) =>
 			{
 				if (KeyboardManager.IsKeyPressed(Keys.NumPad9))
 				{
@@ -257,7 +257,7 @@ namespace SingularityTest.Scenes
 			SoundManager.RegisterSoundFromFile("LoopA", "Content/sound/Into The Wide World (OST 1) Loop A.wav");
 			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.wav");
 			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
-			AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
+			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
 				if(KeyboardManager.IsKeyPressed(Keys.M))
 					SoundManager.PlayLoopMusic("LoopA", "LoopB");
