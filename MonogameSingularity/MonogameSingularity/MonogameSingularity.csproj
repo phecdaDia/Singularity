@@ -102,6 +102,7 @@
     <Compile Include="Code\Collisions\RingCollision.cs" />
     <Compile Include="Code\Collisions\SphereCollision.cs" />
     <Compile Include="Code\Events\CollisionEventArgs.cs" />
+    <Compile Include="Code\Events\LoggerEventArt.cs" />
     <Compile Include="Code\GameObject.cs" />
     <Compile Include="Code\GameObjectDrawMode.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="Code\Helpers\VectorHelper.cs" />
     <Compile Include="Code\ImageManager.cs" />
     <Compile Include="Code\KeyboardManager.cs" />
+    <Compile Include="Code\Logger.cs" />
+    <Compile Include="Code\LogLevel.cs" />
     <Compile Include="Code\ModelManager.cs" />
     <Compile Include="Code\SceneManager.cs" />
     <Compile Include="Code\Scripting\LoadingScreenTemplate.cs" />
