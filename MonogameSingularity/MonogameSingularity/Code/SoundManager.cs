@@ -144,8 +144,10 @@ namespace Singularity
 				}
 
 				Instance._musicVolume =value;
-				if (Instance._currentMusic != null)
+				if(Instance._activePrimaryEngine && Instance._currentMusic != null)
 					Instance._currentMusic.Volume = value;
+				else if (!Instance._activePrimaryEngine && Instance._currentSecondaryMusic != null)
+					Instance._currentSecondaryMusic.Volume = value;
 			}
 		}
 
