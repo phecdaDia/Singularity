@@ -280,6 +280,30 @@ namespace Singularity
 			!_pressedThisFrame.Contains(button) && _pressedLastFrame.Contains(button);
 
 		/// <summary>
+		/// Returns true if any button on GamePad is down this frame
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsAnyDownGamePad() => Instance._IsAnyDownGamePad();
+		private bool _IsAnyDownGamePad() 
+			=> this._pressedThisFrame.Count > 0;
+
+		/// <summary>
+		/// Returns true if any button on GamePad was released this frame
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsAnyReleasedGamePad() => Instance._IsAnyReleasedGamePad();
+		private bool _IsAnyReleasedGamePad() 
+			=> this._pressedThisFrame.Count < this._pressedLastFrame.Count;
+
+		/// <summary>
+		/// Returns true if any button on GamePad was pressed this frame
+		/// </summary>
+		/// <returns></returns>
+		public static bool IsAnyPressedGamePad() => Instance._IsAnyPressedGamePad();
+		private bool _IsAnyPressedGamePad() 
+			=> this._pressedThisFrame.Count > this._pressedLastFrame.Count;
+
+		/// <summary>
 		/// Apply Vibration to Gamepad (if device supports it)
 		/// </summary>
 		/// <param name="leftMotor"></param>
