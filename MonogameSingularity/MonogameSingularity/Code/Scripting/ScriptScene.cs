@@ -26,7 +26,7 @@ namespace Singularity.Scripting
 			foreach (var gameObject in objs) AddObject(gameObject);
 
 #if DEBUG
-			AddObject(new EmptyGameObject().AddScript((scene, o, time) =>
+			AddObject(new GameObject().AddScript((scene, o, time) =>
 			{
 				if (!KeyboardManager.IsKeyPressed(Keys.O)) return;
 

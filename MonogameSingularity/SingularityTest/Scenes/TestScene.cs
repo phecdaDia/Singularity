@@ -256,6 +256,8 @@ namespace SingularityTest.Scenes
 
 			SoundManager.RegisterSoundFromFile("LoopA", "Content/sound/Into The Wide World (OST 1) Loop A.wav");
 			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.wav");
+			SoundManager.RegisterSoundFromFile("LoopAFilter", "Content/sound/Into The Wide World (OST 1) Loop A Filter.wav");
+			SoundManager.RegisterSoundFromFile("LoopBFilter", "Content/sound/Into The Wide World (OST 1) Loop B Filter.wav");
 			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
@@ -263,6 +265,11 @@ namespace SingularityTest.Scenes
 					SoundManager.PlayLoopMusic("LoopA", "LoopB");
 				if(KeyboardManager.IsKeyPressed(Keys.N))
 					SoundManager.PlayEffect("Jump");
+
+				if(KeyboardManager.IsKeyPressed(Keys.F9))
+					SoundManager.PlayDualLoopMusic("LoopA", "LoopB", "LoopAFilter", "LoopBFilter");
+				if(KeyboardManager.IsKeyPressed(Keys.F10))
+					SoundManager.TogglePrimarySecondary();
 			}));
 
 			AddObject(new MovingBlock("cubes/cube1", 2.0f, new Vector3(-20, 0, 20), new Vector3(20, 0, 20), new Vector3(20, 0, -20), new Vector3(-20, 0, -20))

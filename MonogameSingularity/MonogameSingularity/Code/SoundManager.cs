@@ -5,6 +5,7 @@ using IrrKlang;
 
 namespace Singularity
 {
+	using System.Runtime.CompilerServices;
 	using Microsoft.Xna.Framework;
 
 	public class SoundManager
@@ -17,16 +18,21 @@ namespace Singularity
 		#endregion
 
 		private readonly ISoundEngine _engine;
+		private readonly ISoundEngine _secondaryEngine;
+		private bool _activePrimaryEngine;
 		private readonly Dictionary<string, ISoundSource> _sounds;
 		private ISound _currentMusic;
+		private ISound _currentSecondaryMusic;
 		private float _effectVolume;
 		private float _musicVolume;
 
 		private SoundManager()
 		{
 			_engine = new ISoundEngine();
+			_secondaryEngine = new ISoundEngine();
 			_sounds = new Dictionary<string, ISoundSource>();
 			_currentMusic = null;
+			_currentSecondaryMusic = null;
 			_effectVolume = 1f;
 			_musicVolume = 1f;
 		}
@@ -225,31 +231,55 @@ namespace Singularity
 			_currentMusic = _engine.Play2D(_sounds[name], loop, true, true);
 			_currentMusic.PlaybackSpeed = speed;
 			_currentMusic.Pan           = pan;
-			_currentMusic.Volume        = _musicVolume;
+			_currentMusic.Volume        = _activePrimaryEngine? _musicVolume : 0f;
 			if(onStop != null)
 				_currentMusic.setSoundStopEventReceiver(new SoundStop(onStop));
 			_currentMusic.Paused = startPaused;
 		}
 
+		public static void PlaySecondaryMusic(string name, bool loop, bool startPaused = false, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null, bool enableReset = false) 
+			=> Instance._PlaySecondaryMusic(name, loop, startPaused, speed, pan, onStop, enableReset);
+		private void _PlaySecondaryMusic(string name, bool loop, bool startPaused, float speed, float pan, Action<StopEventCause> onStop, bool enableReset)
+		{
+			CheckSound(name);
+
+			if (_secondaryEngine.IsCurrentlyPlaying(_sounds[name].Name) && !enableReset)
+				return;
+
+			_currentSecondaryMusic?.Stop();
+
+			_currentSecondaryMusic = _engine.Play2D(_sounds[name], loop, true, true);
+			_currentSecondaryMusic.PlaybackSpeed = speed;
+			_currentSecondaryMusic.Pan           = pan;
+			_currentSecondaryMusic.Volume        = !_activePrimaryEngine? _musicVolume : 0f;
+			if (onStop != null)
+				_currentSecondaryMusic.setSoundStopEventReceiver(new SoundStop(onStop));
+			_currentSecondaryMusic.Paused = startPaused;
+		}
 
 		private class LoopHelper : ISoundStopEventReceiver
 		{
-			public LoopHelper(string nameLooppart, float speed, float pan)
+			public LoopHelper(string nameLooppart, float speed, float pan, bool primary)
 			{
 				nameLoop = nameLooppart;
 				this.speed = speed;
 				this.pan = pan;
+				this.primary = primary;
 			}
 
 			private string nameLoop;
 			private float speed;
 			private float pan;
+			private bool primary;
 
 			public void OnSoundStopped(ISound sound, StopEventCause reason, object userData)
 			{
 				if (reason == StopEventCause.SoundFinishedPlaying)
 				{
-					PlayMusic(nameLoop, true, false, speed, pan, null, true);
+					if (primary)
+						PlayMusic(nameLoop, true, false, speed, pan, null, true);
+					else
+						PlaySecondaryMusic(nameLoop, true, false, speed, pan, null, true);
 				}
 			}
 		}
@@ -263,17 +293,17 @@ namespace Singularity
 		/// <param name="speed">playback speed</param>
 		/// <param name="pan">Pan</param>
 		/// <param name="enableReset">If true - reset if already playing</param>
-		public static void PlayLoopMusic(string nameBeginning, string nameLooppart, bool startPaused = false,
+		public static void PlayLoopMusic(string nameBeginning, string nameLoopPart, bool startPaused = false,
 		                                 float  speed = 1f,    float  pan = 0f,     bool enableReset = false)
-			=> Instance._PlayLoopMusic(nameBeginning, nameLooppart, startPaused, speed, pan, enableReset);
-		private void _PlayLoopMusic(string nameBeginning, string nameLooppart, bool startPaused, float speed, float pan,
+			=> Instance._PlayLoopMusic(nameBeginning, nameLoopPart, startPaused, speed, pan, enableReset);
+		private void _PlayLoopMusic(string nameBeginning, string nameLoopPart, bool startPaused, float speed, float pan,
 		                            bool   enableReset)
 		{
 			CheckSound(nameBeginning);
-			CheckSound(nameLooppart);
+			CheckSound(nameLoopPart);
 
 			if ((_engine.IsCurrentlyPlaying(_sounds[nameBeginning].Name) ||
-			     _engine.IsCurrentlyPlaying(_sounds[nameLooppart].Name)) && !enableReset)
+			     _engine.IsCurrentlyPlaying(_sounds[nameLoopPart].Name)) && !enableReset)
 				return;
 
 			_currentMusic?.Stop();
@@ -282,8 +312,71 @@ namespace Singularity
 			_currentMusic.PlaybackSpeed = speed;
 			_currentMusic.Pan = pan;
 			_currentMusic.Volume = _musicVolume;
-			_currentMusic.setSoundStopEventReceiver(new LoopHelper(nameLooppart, speed, pan));
+			_currentMusic.setSoundStopEventReceiver(new LoopHelper(nameLoopPart, speed, pan, true));
 			_currentMusic.Paused = startPaused;
+		}
+
+		public static void PlayDualLoopMusic(string nameBeginningPrimary,   string nameLoopPartPrimary,
+		                                     string nameBeginningSecondary, string nameLoopPartSecondary,
+		                                     float  speed = 1f,             float  pan = 0f, bool enableReset = false)
+			=> Instance._PlayDualLoopMusic(nameBeginningPrimary, nameLoopPartPrimary, nameBeginningSecondary,
+			                               nameLoopPartSecondary, speed, pan, enableReset);
+
+		private void _PlayDualLoopMusic(string nameBeginningPrimary, string nameLoopPartPrimary, string nameBeginningSecondary, string nameLoopPartSecondary, float speed, float pan, bool enableReset)
+		{
+			CheckSound(nameBeginningPrimary);
+			CheckSound(nameLoopPartPrimary);
+			CheckSound(nameBeginningSecondary);
+			CheckSound(nameLoopPartSecondary);
+
+			if((_engine.IsCurrentlyPlaying(_sounds[nameBeginningPrimary].Name) ||
+			    _engine.IsCurrentlyPlaying(_sounds[nameLoopPartPrimary].Name)) && !enableReset)
+				return;
+			if((_secondaryEngine.IsCurrentlyPlaying(_sounds[nameBeginningSecondary].Name) ||
+			    _secondaryEngine.IsCurrentlyPlaying(_sounds[nameLoopPartSecondary].Name)) && !enableReset)
+				return;
+
+			_currentMusic?.Stop();
+			_currentSecondaryMusic?.Stop();
+
+			_currentMusic = _engine.Play2D(_sounds[nameBeginningPrimary], false, true, true);
+			_currentMusic.PlaybackSpeed = speed;
+			_currentMusic.Pan = pan;
+			_currentMusic.Volume = _musicVolume;
+			_currentMusic.setSoundStopEventReceiver(new LoopHelper(nameLoopPartPrimary, speed, pan, true));
+
+			_currentSecondaryMusic = _secondaryEngine.Play2D(_sounds[nameBeginningSecondary], false, true, true);
+			_currentSecondaryMusic.PlaybackSpeed = speed;
+			_currentSecondaryMusic.Pan = pan;
+			_currentSecondaryMusic.Volume = 0;
+			_currentSecondaryMusic.setSoundStopEventReceiver(new LoopHelper(nameLoopPartSecondary, speed, pan, false));
+
+			_activePrimaryEngine = true;
+
+			_currentMusic.Paused = false;
+			_currentSecondaryMusic.Paused = false;
+		}
+
+		public static void TogglePrimarySecondary() => Instance._togglePrimarySecondary();
+
+		private void _togglePrimarySecondary()
+		{
+			if(_currentSecondaryMusic == null || _currentMusic == null)
+				return;
+
+			if (_activePrimaryEngine)
+			{
+				_currentSecondaryMusic.Volume = _currentMusic.Volume;
+				_currentMusic.Volume          = 0;
+				_activePrimaryEngine = false;
+			}
+			else
+			{
+				_currentMusic.Volume = _currentSecondaryMusic.Volume;
+				_currentSecondaryMusic.Volume = 0;
+				_activePrimaryEngine = true;
+			}
+
 		}
 
 		/// <summary>
