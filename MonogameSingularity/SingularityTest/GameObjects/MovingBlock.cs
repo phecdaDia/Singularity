@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Singularity;
+using Singularity.Core;
+using Singularity.Core.Events;
 using Singularity.Events;
-using Singularity.GameObjects;
+using Singularity.Examples.GameObjects;
 
 namespace SingularityTest.GameObjects
 {

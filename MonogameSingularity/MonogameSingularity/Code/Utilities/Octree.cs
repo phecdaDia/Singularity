@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Singularity.GameObjects;
 
 namespace Singularity.Core.Utilities
 {
