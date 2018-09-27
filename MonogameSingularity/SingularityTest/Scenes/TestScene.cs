@@ -48,12 +48,17 @@ namespace SingularityTest.Scenes
 
 			AddObject(new ModelObject("cubes/cube1").SetPosition(-51, 51, 0).SetScale(0.5f, 0.5f, 0.5f));
 
-			AddObject(new BasicCamera()
+			int frame = 0;
+			AddObject(new GameObject().SetPosition(-5, -5, -5)
+				.AddChild(new GameObject().SetPosition(10, 10, 10)
+					.AddChild(new BasicCamera()
 				.Set3DEnabled(true)
 				.SetCameraTarget(camTarget)
 				.SetPosition(camPosition)
+				.AddCollisionEvent((e) => Console.WriteLine($"Collision on frame {frame}"))
 				.AddScript((scene, obj, time) =>
 				{
+					frame += 1;
 					// enable or disable 3d.
 					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
@@ -81,7 +86,7 @@ namespace SingularityTest.Scenes
 					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
 
 
-					if (KeyboardManager.IsKeyDown(Keys.M))
+					if (KeyboardManager.IsKeyDown(Keys.M) || InputManager.IsDownGamePad(Buttons.A))
 					{
 						// run a ray and get the closest collision
 						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
@@ -102,8 +107,8 @@ namespace SingularityTest.Scenes
 						if (rcp.DidCollide)
 							this.RemoveObject(rcp.Collidable);
 					}
-				})
-			);
+				}), ChildProperties.Translation
+			), ChildProperties.TranslationRotation));
 
 			//AddObject(new ModelObject("slopes/slope1").SetPosition(-1.5f, -0.85f, -4));
 			//AddObject(new ModelObject("slopes/slope2").SetPosition(-0.5f, -0.85f, -2));
@@ -111,35 +116,38 @@ namespace SingularityTest.Scenes
 			//AddObject(new ModelObject("slopes/slope4").SetPosition(0, -0.35f, 2));
 			//AddObject(new ModelObject("slopes/slope5").SetPosition(0, 0.65f, 4));
 
-			AddObject(
-				new ModelObject("cubes/cube1")
-					.SetPosition(10, 10, 10)
-
-					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, -2, time))
-					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, -3, time))
-					.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, -5, time))
-					.AddChild(
-					new ModelObject("cubes/cube1")
-						.SetPosition(2, 0, 2)
-						.SetScale(1.5f)
-						.AddScript((scene, go, time) =>
-							{
-								go.CustomData.SetValue("lifeTime", go.CustomData.GetValue<double>("lifeTime") + time.ElapsedGameTime.TotalSeconds);
-								go.SetPositionAt(Axis.Y, (float) Math.Sin(go.CustomData.GetValue<double>("lifeTime")));
-							})
-						.AddChild(
-							new ModelObject("cubes/cube2")
-								.SetPosition(5, 0, 0)
-								.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, 2, time))
-								.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, 3, time))
-								.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, 5, time))
-								.AddChild(
-									new ModelObject("cubes/cube1")
-										.SetPosition(3, 3, 0)
-								, ChildProperties.TranslationRotation)
-					, ChildProperties.Translation | ChildProperties.Scale)
-				, ChildProperties.AllTransform)
-			);
+			//AddObject(
+			//	new FullCollidableModelObject("sphere")
+			//		.SetCollision(new SphereCollision())
+			//		.SetPosition(10, 10, 10)
+			//		.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, -2, time))
+			//		.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, -3, time))
+			//		.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, -5, time))
+			//		.AddChild(
+			//		new FullCollidableModelObject("sphere")
+			//			.SetCollision(new SphereCollision())
+			//			.SetPosition(2, 0, 2)
+			//			.SetScale(1.5f)
+			//			.AddScript((scene, go, time) =>
+			//				{
+			//					go.CustomData.SetValue("lifeTime", go.CustomData.GetValue<double>("lifeTime") + time.ElapsedGameTime.TotalSeconds);
+			//					go.SetPositionAt(Axis.Y, (float)Math.Sin(go.CustomData.GetValue<double>("lifeTime")));
+			//				})
+			//			.AddChild(
+			//				new FullCollidableModelObject("sphere")
+			//					.SetCollision(new SphereCollision())
+			//					.SetPosition(5, 0, 0)
+			//					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Y, 2, time))
+			//					.AddScript((scene, go, time) => go.AddRotationAt(Axis.Z, 3, time))
+			//					.AddScript((scene, go, time) => go.AddRotationAt(Axis.X, 5, time))
+			//					.AddChild(
+			//						new FullCollidableModelObject("sphere")
+			//							.SetCollision(new SphereCollision())
+			//							.SetPosition(3, 3, 0)
+			//					, ChildProperties.TranslationRotation)
+			//		, ChildProperties.Translation | ChildProperties.Scale)
+			//	, ChildProperties.AllTransform)
+			//);
 
 
 			AddObject(new MappingTestObject().SetPosition(0, 30, 0));
@@ -218,10 +226,10 @@ namespace SingularityTest.Scenes
 
 			// Add Child Test
 			AddObject(new ParentBlock().SetPosition(20, -10, 0).SetDebugName("Parent"));
-			AddObject(new ChildBall().SetPosition(21, 00, 1).SetDebugName("Child"));
-			AddObject(new ChildBall().SetPosition(21, 00, -1).SetDebugName("Child"));
-			AddObject(new ChildBall().SetPosition(19, 00, 1).SetDebugName("Child"));
-			AddObject(new ChildBall().SetPosition(19, 00, -1).SetDebugName("Child"));
+			//AddObject(new ChildBall().SetPosition(21, 00, 1).SetDebugName("Child"));
+			//AddObject(new ChildBall().SetPosition(21, 00, -1).SetDebugName("Child"));
+			//AddObject(new ChildBall().SetPosition(19, 00, 1).SetDebugName("Child"));
+			//AddObject(new ChildBall().SetPosition(19, 00, -1).SetDebugName("Child"));
 
 			AddObject(new GameObject().AddScript(((scene, o, time) =>
 			{
@@ -252,12 +260,17 @@ namespace SingularityTest.Scenes
 			SoundManager.RegisterSoundFromFile("LoopB", "Content/sound/Into The Wide World (OST 1) Loop B.wav");
 			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
-			                                          {
-														  if(KeyboardManager.IsKeyPressed(Keys.M))
-															  SoundManager.PlayLoopMusic("LoopA", "LoopB");
-														  if(KeyboardManager.IsKeyPressed(Keys.N))
-															  SoundManager.PlayEffect("Jump");
-			                                          }));
+			{
+				if(KeyboardManager.IsKeyPressed(Keys.M))
+					SoundManager.PlayLoopMusic("LoopA", "LoopB");
+				if(KeyboardManager.IsKeyPressed(Keys.N))
+					SoundManager.PlayEffect("Jump");
+			}));
+
+			AddObject(new MovingBlock("cubes/cube1", 2.0f, new Vector3(-20, 0, 20), new Vector3(20, 0, 20), new Vector3(20, 0, -20), new Vector3(-20, 0, -20))
+			.SetCollision(new BoxCollision(-0.5f, 0.5f)));
+			
+
 		}
 
 		//public override void AddLightningToEffect(Effect eff)

@@ -29,8 +29,8 @@ namespace Singularity.Core
 		/// <param name="sceneSize">Size of the scene in 2^x</param>
 		/// <param name="minPartition">Minimum size of <seealso cref="Octree{T}" /> partitioning</param>
 		/// <param name="precision">Buffer radius for <seealso cref="Octree{T}" /></param>
-		public GameScene(SingularityGame game, string sceneKey, int sceneSize = 16, int minPartition = 2,
-			float precision = 0.0f)
+		public GameScene(SingularityGame game, string sceneKey, int sceneSize = 8, int minPartition = 4,
+			float precision = 1.25f)
 		{
 			this.Game = game;
 
@@ -292,7 +292,7 @@ namespace Singularity.Core
 							//Console.WriteLine("Collision");
 
 							if (gameObject.EnablePushCollision)
-								gameObject.SetPosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
+								gameObject.SetAbsolutePosition(CollisionManager.HandleCollision(collider, collidable, pos, nor));
 
 							gameObject.OnCollision(gameTime, gameObject, go, this, pos, nor);
 							go.OnCollision(gameTime, gameObject, go, this, pos, nor);

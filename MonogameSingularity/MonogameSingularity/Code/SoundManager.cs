@@ -5,6 +5,8 @@ using IrrKlang;
 
 namespace Singularity.Core
 { 
+	using Microsoft.Xna.Framework;
+
 	public class SoundManager
 	{
 		#region Singleton
@@ -384,12 +386,11 @@ namespace Singularity.Core
 		/// <param name="speed">Playbackspeed</param>
 		/// <param name="pan">Pan</param>
 		/// <param name="onStop">Action which is called on Stop</param>
-		public static void PlayEffect3D(string name, Vector3D position, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null) => Instance._playEffect3D(name, position, speed, pan, onStop);
-		private void _playEffect3D(string name, Vector3D position, float speed, float pan, Action<StopEventCause> onStop)
+		public static void PlayEffect3D(string name, Vector3 position, float speed = 1f, float pan = 0f, Action<StopEventCause> onStop = null) => Instance._playEffect3D(name, position, speed, pan, onStop);
+		private void _playEffect3D(string name, Vector3 position, float speed, float pan, Action<StopEventCause> onStop)
 		{
-			this.CheckSound(name);
-
-			var sound = this._engine.Play3D(this._sounds[name], position.X, position.Y, position.Z, false, true, true);
+			CheckSound(name);
+			var sound = _engine.Play3D(_sounds[name], position.X, position.Y, position.Z, false, true, true);
 			sound.PlaybackSpeed = speed;
 			sound.Pan           = pan;
 			sound.Volume        = this._effectVolume;

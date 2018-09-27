@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Singularity.GameObjects;
 
 namespace Singularity.Core.Utilities
 {
@@ -201,9 +202,7 @@ namespace Singularity.Core.Utilities
 				else
 				{
 					// Describe the OT where it was found in
-					Console.WriteLine($"Found Object in OT: {ot.Min} {ot.Max}");
-					Console.WriteLine($"Octree Information: {ot.CurrentSize} / {ot.MinimumSize}");
-					Console.WriteLine($"Expected position: {position1}");
+					Console.WriteLine($"Found Object ({position1}) in OT: {ot.Min} {ot.Max}");
 				}
 			}
 		}

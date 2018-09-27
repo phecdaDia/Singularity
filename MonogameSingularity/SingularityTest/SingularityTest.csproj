@@ -56,6 +56,7 @@
     <Compile Include="GameObjects\ChildTest\ParentBlock.cs" />
     <Compile Include="GameObjects\CofTestObject.cs" />
     <Compile Include="GameObjects\CollidableTestObject.cs" />
+    <Compile Include="GameObjects\MovingBlock.cs" />
     <Compile Include="Scenes\LightGameScene.cs" />
     <Compile Include="Scenes\LightTestScene.cs" />
     <Compile Include="GameObjects\MappingTestObject.cs" />

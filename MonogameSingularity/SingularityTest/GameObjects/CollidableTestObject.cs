@@ -10,7 +10,7 @@ namespace SingularityTest.GameObjects
 		public CollidableTestObject()
 		{
 			SetModel("cylinders/cylinder5");
-			SetScale(1f, 1, 1f);
+			SetScale(1f, 1f, 1f);
 
 
 			//this.SetRotation(MathHelper.PiOver2, 0, 0);

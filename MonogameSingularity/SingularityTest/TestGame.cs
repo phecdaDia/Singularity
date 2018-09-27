@@ -40,6 +40,8 @@ namespace SingularityTest
 
 			Exiting += GameExiting;
 
+			Logger.OnLoggedMessage += (sender, args) => { Console.WriteLine($"[{args.Level}] {args.Message}"); };
+
 			// register scenes
 			//SceneManager.RegisterScene(new CollisionTestScene(this));
 			//SceneManager.AddSceneToStack("collision-test", 0);

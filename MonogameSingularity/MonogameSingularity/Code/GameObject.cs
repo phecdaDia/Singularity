@@ -40,6 +40,9 @@ namespace Singularity.Core
 		public Vector3 Inertia { get; private set; } // only used when implementing IInertia
 		public Collision Collision { get; private set; }
 
+		public bool DrawChildren { get; protected set; } = true;
+		public bool UpdateChildren { get; protected set; } = true;
+
 		public Texture2D Texture
 		{
 			get { return ModelManager.GetTexture(this.ModelPath); }
@@ -249,6 +252,20 @@ namespace Singularity.Core
 			{
 				this.Position = position;
 			}
+
+			return this;
+		}
+
+		public GameObject SetAbsolutePosition(Vector3 position)
+		{
+			if (ParentObject == null) return this.SetPosition(position);
+
+			var mat = Matrix.Identity;
+
+			if (ChildProperties.HasFlag(ChildProperties.Rotation)) mat *= ParentObject.RotationMatrix;
+			if (ChildProperties.HasFlag(ChildProperties.Translation)) mat *= ParentObject.TranslationMatrix;
+
+			Position = Vector3.Transform(position, Matrix.Invert(mat));
 
 			return this;
 		}
@@ -1054,6 +1071,8 @@ namespace Singularity.Core
 
 		#region Logic Methods
 
+		private Vector3 BeginUpdatePosition;
+
 		/// <summary>
 		///     Calls <seealso cref="Update" />, and calls back to the scene.
 		///     After that all <see cref="ChildObjects" /> will be updated.
@@ -1062,18 +1081,26 @@ namespace Singularity.Core
 		/// <param name="gameTime"></param>
 		public void UpdateLogic(GameScene scene, GameTime gameTime)
 		{
-			// get a copy of the position
-			var position = this.GetHierarchyPosition();
+			// save update position
+			this.BeginUpdatePosition = this.GetHierarchyPosition();
 
-			var cbArray = this.ChildrenBuffer.ToArray();
-			this.ChildrenBuffer.Clear();
+			// begin updating children
+			foreach (var obj in ChildObjects.ToArray())
+				obj.UpdateLogic(scene, gameTime);
 
-			this.Update(scene, gameTime);
+			// This update procedure
 
-			this.ChildObjects.AddRange(this.ChildrenBuffer);
-			//scene.AddObject(this.ChildrenBuffer);
-			this.ChildrenBuffer.Clear();
+			// copy ChildrenBuffer to array to allow new children
+			var cbArray = ChildrenBuffer.ToArray();
+			ChildrenBuffer.Clear();
 
+			// invoke update method
+			Update(scene, gameTime);
+
+			// add previously buffered children to the ChildObjects
+			ChildObjects.AddRange(cbArray);
+
+			// check if we're an inertia object
 			// add inertia.
 			if (this is IInertia)
 				this.AddPosition(this.Inertia, gameTime);
@@ -1082,31 +1109,41 @@ namespace Singularity.Core
 			foreach (var actionScript in this.ObjectScripts) actionScript(scene, this, gameTime);
 
 
-			// check if we are even able to stay here.
-			scene.HandleCollision(gameTime, this, this.GetHierarchyPosition());
+			this.MoveInOctree(scene, gameTime, true);
+			
+			// update Child Positions in Octree
+			if(UpdateChildren)
+				foreach (var obj in ChildObjects.ToArray())
+					obj.MoveInOctree(scene, gameTime, false);
+			
+		}
 
-			// did we move?
-			if (this.GetHierarchyPosition() != position) scene.MoveOctree(this, position);
+		private void MoveInOctree(GameScene scene, GameTime gameTime, Boolean checkCollision)
+		{
+			if (checkCollision)
+				scene.HandleCollision(gameTime, this, GetHierarchyPosition());
+
+			var cPosition = this.GetHierarchyPosition();
+			if (cPosition  != this.BeginUpdatePosition)
+			{
+				scene.MoveOctree(this, this.BeginUpdatePosition);
+				this.BeginUpdatePosition = cPosition;
+			}
+
 
 			// if we are allowed to move the camera, do it
 
 			scene.CameraLocked = false;
 			if (this is ICameraController controller) controller.SetCamera(scene);
-
 			scene.CameraLocked = true;
-
-			foreach (var obj in this.ChildObjects.ToArray())
-				obj.UpdateLogic(scene, gameTime);
-
-			this.ChildObjects.AddRange(cbArray);
 		}
 
-	    /// <summary>
-	    ///     Updates the <see cref="GameObject" />
-	    /// </summary>
-	    /// <param name="scene"></param>
-	    /// <param name="gameTime"></param>
-	    public virtual void Update(GameScene scene, GameTime gameTime){}
+		/// <summary>
+		///     Updates the <see cref="GameObject" />
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="gameTime"></param>
+		public virtual void Update(GameScene scene, GameTime gameTime) { }
 
 	    /// <summary>
 		///     Calls <seealso cref="Draw" />
@@ -1123,7 +1160,8 @@ namespace Singularity.Core
 			if (drawMode.HasFlag(GameObjectDrawMode.SpriteBatch) && this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				this.Draw2D(spriteBatch);
 
-			foreach (var obj in this.ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
+			if(DrawChildren)
+				foreach (var obj in ChildObjects) obj.DrawLogic(scene, spriteBatch, drawMode);
 		}
 
 		public void DrawLogicWithEffect(
@@ -1141,8 +1179,9 @@ namespace Singularity.Core
 			    this.GetHierarchyDrawMode().HasFlag(GameObjectDrawMode.SpriteBatch))
 				this.Draw2D(spriteBatch);
 
-			foreach (var obj in this.ChildObjects)
-				obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
+			if(DrawChildren)
+				foreach (var obj in ChildObjects)
+					obj.DrawLogicWithEffect(scene, spriteBatch, effect, effectParams, technique, drawMode);
 		}
 
 		public virtual void Draw2D(SpriteBatch spriteBatch)

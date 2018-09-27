@@ -21,12 +21,14 @@ namespace Singularity.Examples.GameObjects
 			this.HorizontalRotation = 0.0d;
 			this.VerticalRotation = 0.0d;
 
+			/*
+			DefaultX = 200;
+			DefaultY = 200;
+			Mouse.SetPosition(DefaultX, DefaultY); // capture the mouse
+			*/
+			SetCollision(new SphereCollision(0.25f));
 
-			this.DefaultX = 200;
-			this.DefaultY = 200;
-			Mouse.SetPosition(this.DefaultX, this.DefaultY); // capture the mouse
-
-			this.SetCollision(new SphereCollision(0.25f));
+			InputManager.ActivateMouseMovement();
 		}
 
 		public bool Is3DEnabled { get; private set; }
@@ -61,6 +63,7 @@ namespace Singularity.Examples.GameObjects
 				return;
 			}
 
+			/*
 			var mouseState = Mouse.GetState();
 			// Capture Mouse
 			var dx = mouseState.X - this.DefaultX;
@@ -87,16 +90,26 @@ namespace Singularity.Examples.GameObjects
 				Mouse.SetPosition(mouseState.X, 200);
 				this.DefaultY = 200;
 			}
-
+			*/
 			//MouseState ms = Mouse.GetState();
 			//DefaultX = ms.X;
 			//DefaultY = ms.Y;
 
 			// Constraint rotation
 
-			if (this.HorizontalRotation >= MathHelper.Pi) this.HorizontalRotation -= MathHelper.TwoPi;
-			else if (this.HorizontalRotation < -MathHelper.Pi)
-				this.HorizontalRotation += MathHelper.TwoPi;
+			HorizontalRotation += InputManager.GetMouseMovement().X;
+			HorizontalRotation += InputManager.GetGamePadRightStick().X;
+
+			if (Is3DEnabled)
+			{
+				VerticalRotation -= InputManager.GetMouseMovement().Y;
+				VerticalRotation += InputManager.GetGamePadRightStick().Y;
+			}
+				
+
+			if (HorizontalRotation >= MathHelper.Pi) HorizontalRotation -= MathHelper.TwoPi;
+			else if (HorizontalRotation < -MathHelper.Pi)
+				HorizontalRotation += MathHelper.TwoPi;
 
 			if (this.VerticalRotation > MathHelper.PiOver2)
 				this.VerticalRotation = MathHelper.PiOver2;

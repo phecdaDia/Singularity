@@ -17,7 +17,7 @@ namespace Singularity.Core.Scripting
 
 		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
-			this.AddObject(new GameObject().AddScript((scene, o, arg3) =>
+			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
 				if (LoadingScreenTemplate.DoneLoading)
 				{
