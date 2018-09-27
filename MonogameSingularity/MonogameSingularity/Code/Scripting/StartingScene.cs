@@ -17,7 +17,7 @@ namespace Singularity.Core.Scripting
 
 		protected override void AddGameObjects(GameScene previousScene, int entranceId)
 		{
-			this.AddObject(new EmptyGameObject().AddScript((scene, o, arg3) =>
+			this.AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
 				if (LoadingScreenTemplate.DoneLoading)
 				{
@@ -26,9 +26,5 @@ namespace Singularity.Core.Scripting
 				}
 			}));
 		}
-
-		//public override void AddLightningToEffect(Effect effect)
-		//{
-		//}
 	}
 }

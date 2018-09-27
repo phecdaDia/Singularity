@@ -45,13 +45,13 @@
   <ItemGroup>
     <Compile Include="GameObjects\BasicCamera.cs" />
     <Compile Include="GameObjects\CollidableModelObject.cs" />
-    <Compile Include="GameObjects\EmptyGameObject.cs" />
     <Compile Include="GameObjects\ModelObject.cs" />
     <Compile Include="GameObjects\SpriteObject.cs" />
     <Compile Include="GameObjects\StaticCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

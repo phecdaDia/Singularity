@@ -14,7 +14,7 @@ namespace Singularity.Core
 	/// <summary>
 	///     A GameObject can be any object in a GameScene.
 	/// </summary>
-	public abstract class GameObject
+	public class GameObject
 	{
 		public List<GameObject> ChildrenBuffer { get; } = new List<GameObject>();
 
@@ -24,7 +24,7 @@ namespace Singularity.Core
 		///     Initializing Constructor
 		///     Sets default values for all properties
 		/// </summary>
-		protected GameObject()
+		public GameObject()
 		{}
 
 		public String ModelPath { get; private set; }
@@ -1101,14 +1101,14 @@ namespace Singularity.Core
 			this.ChildObjects.AddRange(cbArray);
 		}
 
-		/// <summary>
-		///     Updates the <see cref="GameObject" />
-		/// </summary>
-		/// <param name="scene"></param>
-		/// <param name="gameTime"></param>
-		public abstract void Update(GameScene scene, GameTime gameTime);
+	    /// <summary>
+	    ///     Updates the <see cref="GameObject" />
+	    /// </summary>
+	    /// <param name="scene"></param>
+	    /// <param name="gameTime"></param>
+	    public virtual void Update(GameScene scene, GameTime gameTime){}
 
-		/// <summary>
+	    /// <summary>
 		///     Calls <seealso cref="Draw" />
 		///     After that draws all <see cref="ChildObjects" />
 		/// </summary>

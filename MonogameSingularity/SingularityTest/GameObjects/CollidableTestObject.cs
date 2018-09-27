@@ -1,10 +1,11 @@
-﻿using Singularity.Core.GameObjects;
+﻿using Singularity.Core;
+using Singularity.Core.GameObjects;
 using Singularity.Core.Utilities;
 using Singularity.Examples.GameObjects;
 
 namespace SingularityTest.GameObjects
 {
-	public class CollidableTestObject : EmptyGameObject, ICollidable, IGlobal
+	public class CollidableTestObject : GameObject, ICollidable, IGlobal
 	{
 		public CollidableTestObject()
 		{

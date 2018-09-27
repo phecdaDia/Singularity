@@ -34,7 +34,7 @@ namespace SingularityTest.Scenes
 				width /= 1.1f;
 			}
 
-			AddObject(new EmptyGameObject()
+			AddObject(new GameObject()
 				.SetPosition(0, 10, 0)
 				.AddChild(
 					new ModelObject("sphere")
