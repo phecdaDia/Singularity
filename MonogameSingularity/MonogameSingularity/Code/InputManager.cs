@@ -34,6 +34,7 @@ namespace Singularity
 		//Mouse movement
 		private Point _mouseStartPos = new Point(200,200);
 		private bool _lockMouse = false;
+		private bool _relock = false;
 		private Vector2 _mouseMovement = new Vector2(0);
 		private float _mouseSensitivity = 200f;
 
@@ -346,8 +347,8 @@ namespace Singularity
 		/// <summary>
 		/// Update all values - called each Frame
 		/// </summary>
-		public static void Update() => Instance._Update();
-		private void _Update()
+		public static void Update(SingularityGame game) => Instance._Update(game);
+		private void _Update(SingularityGame game)
 		{
 			//GAMEPAD
 			var capa = GamePad.GetCapabilities(PlayerIndex.One);
@@ -441,6 +442,18 @@ namespace Singularity
 			}
 
 			//Mouse
+			if (!game.IsActive && _lockMouse)
+			{
+				_relock = true;
+				this._DeactivateMouseMovement();
+			}
+
+			if (game.IsActive && _relock)
+			{
+				_relock = false;
+				this._ActivateMouseMovement();
+			}
+
 			var mouseState = Mouse.GetState();
 			if (_lockMouse)
 			{
