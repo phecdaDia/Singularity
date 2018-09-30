@@ -37,5 +37,12 @@ namespace Singularity.Scripting
 		/// </summary>
 		/// <param name="effect">BasicEffect</param>
 		public abstract void AddLightningToEffect(Effect effect);
+
+		/// <summary>
+		///		Define own draw-Method
+		/// </summary>
+		/// <param name="spriteBatch"></param>
+		/// <param name="finalTarget"></param>
+		public virtual void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget) { }
 	}
 }
