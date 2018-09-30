@@ -9,14 +9,16 @@ namespace Singularity.Scripting
 	public abstract class ScriptingTemplate
 	{
 		public SingularityGame Game { get; private set; }
+		public GameScene Scene { get; private set; }
 
 		/// <summary>
 		///     Initialize - gets called after construction
 		/// </summary>
 		/// <param name="game">SingularityGame</param>
-		public virtual void Init(SingularityGame game)
+		public virtual void Init(SingularityGame game, GameScene scene)
 		{
 			Game = game;
+			Scene = scene;
 		}
 
 		/// <summary>

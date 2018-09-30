@@ -21,7 +21,7 @@ namespace Singularity.Scripting
 			_owndraw = script.GetSettings().OwnDraw ?? false;
 			_scriptKey = path;
 			Script = script;
-			Script.Init(game);
+			Script.Init(game, this);
 		}
 
 		protected override void AddGameObjects(GameScene previousScene, int entranceId)
