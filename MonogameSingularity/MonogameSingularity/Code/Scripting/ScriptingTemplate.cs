@@ -9,14 +9,16 @@ namespace Singularity.Scripting
 	public abstract class ScriptingTemplate
 	{
 		public SingularityGame Game { get; private set; }
+		public GameScene Scene { get; private set; }
 
 		/// <summary>
 		///     Initialize - gets called after construction
 		/// </summary>
 		/// <param name="game">SingularityGame</param>
-		public virtual void Init(SingularityGame game)
+		public virtual void Init(SingularityGame game, GameScene scene)
 		{
 			Game = game;
+			Scene = scene;
 		}
 
 		/// <summary>
@@ -37,5 +39,12 @@ namespace Singularity.Scripting
 		/// </summary>
 		/// <param name="effect">BasicEffect</param>
 		public abstract void AddLightningToEffect(Effect effect);
+
+		/// <summary>
+		///		Define own draw-Method
+		/// </summary>
+		/// <param name="spriteBatch"></param>
+		/// <param name="finalTarget"></param>
+		public virtual void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget) { }
 	}
 }

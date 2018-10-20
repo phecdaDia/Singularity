@@ -61,8 +61,8 @@ namespace SingularityTest.Scenes
 					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
 					// some more movement options
-					if (KeyboardManager.IsKeyDown(Keys.Q)) obj.AddPosition(new Vector3(0, 5, 0), time);
-					if (KeyboardManager.IsKeyDown(Keys.E)) obj.AddPosition(new Vector3(0, -5, 0), time);
+					if (KeyboardManager.IsKeyDown(Keys.Q) || InputManager.IsDownGamePad(Buttons.LeftThumbstickUp)) obj.AddPosition(new Vector3(0, 5, 0), time);
+					if (KeyboardManager.IsKeyDown(Keys.E) || InputManager.IsDownGamePad(Buttons.LeftThumbstickDown)) obj.AddPosition(new Vector3(0, -5, 0), time);
 
 					// screen effects
 

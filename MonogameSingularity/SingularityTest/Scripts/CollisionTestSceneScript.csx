@@ -13,14 +13,14 @@ public class CollisionTestSceneScript : ScriptingTemplate
 {
     public override SceneSettings GetSettings()
     {
-        return new SceneSettings(){SceneSize = 10, MinPartition = -2, Precision = 0.1f};
+        return new SceneSettings(){SceneSize = 10, MinPartition = -2, Precision = 0.1f, OwnDraw = false};
     }
 
     public override List<GameObject> AddGameObjects(int entranceId)
     {
         var objList = new List<GameObject>();
 
-		objList.Add(new EmptyGameObject().AddScript((scene, o, arg3) =>
+		objList.Add(new GameObject().AddScript((scene, o, arg3) =>
 		{
 			if (KeyboardManager.IsKeyPressed(Keys.Escape))
 				SceneManager.CloseScene();

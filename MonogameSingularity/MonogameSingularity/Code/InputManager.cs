@@ -34,6 +34,7 @@ namespace Singularity
 		//Mouse movement
 		private Point _mouseStartPos = new Point(200,200);
 		private bool _lockMouse = false;
+		private bool _relock = false;
 		private Vector2 _mouseMovement = new Vector2(0);
 		private float _mouseSensitivity = 200f;
 
@@ -58,6 +59,18 @@ namespace Singularity
 		private Vector2 _gamepadStickLeft = new Vector2(0);
 		private Vector2 _gamepadStickRight = new Vector2(0);
 		private float _gamepadStickSensitivity = 100f;
+		private float _gamepadStickBorderValue = 0.2f;
+		public float GamepadStickBorderValue
+		{
+			get => _gamepadStickBorderValue;
+			set
+			{
+				if (_gamepadStickBorderValue >= 0 || _gamepadStickBorderValue <= 1)
+					_gamepadStickBorderValue = value;
+				else
+					throw new ArgumentOutOfRangeException(nameof(GamepadStickBorderValue), value, "Value has to be between 0 and 1");
+			}
+		}
 
 		//Gamepad Trigger
 		private float _gamepadTriggerLeft = 0f;
@@ -334,8 +347,8 @@ namespace Singularity
 		/// <summary>
 		/// Update all values - called each Frame
 		/// </summary>
-		public static void Update() => Instance._Update();
-		private void _Update()
+		public static void Update(SingularityGame game) => Instance._Update(game);
+		private void _Update(SingularityGame game)
 		{
 			//GAMEPAD
 			var capa = GamePad.GetCapabilities(PlayerIndex.One);
@@ -343,17 +356,42 @@ namespace Singularity
 			if (capa.IsConnected)
 			{
 				var state = GamePad.GetState(PlayerIndex.One, _deadZone);
-				
-				//Thumbstick movement
-				if (capa.HasLeftXThumbStick && capa.HasLeftYThumbStick)
-					_gamepadStickLeft = state.ThumbSticks.Left;
-				if (capa.HasRightXThumbStick && capa.HasRightYThumbStick)
-					_gamepadStickRight = state.ThumbSticks.Right;
 
 				//Switch pressedLists and clear
 				var helper = _pressedLastFrame;
 				helper.Clear();
 				_pressedLastFrame = _pressedThisFrame;
+
+				//Thumbstick movement
+				if (capa.HasLeftXThumbStick && capa.HasLeftYThumbStick)
+				{
+					_gamepadStickLeft = state.ThumbSticks.Left;
+
+					if (_gamepadStickLeft.Y > _gamepadStickBorderValue)
+						helper.Add(Buttons.LeftThumbstickUp);
+					if(_gamepadStickLeft.Y < -_gamepadStickBorderValue)
+						helper.Add(Buttons.LeftThumbstickDown);
+					if(_gamepadStickLeft.X < -_gamepadStickBorderValue)
+						helper.Add(Buttons.LeftThumbstickLeft);
+					if(_gamepadStickLeft.X > _gamepadStickBorderValue)
+						helper.Add(Buttons.LeftThumbstickRight);
+				}
+
+				if (capa.HasRightXThumbStick && capa.HasRightYThumbStick)
+				{
+					_gamepadStickRight = state.ThumbSticks.Right;
+
+					if(_gamepadStickRight.Y > _gamepadStickBorderValue)
+						helper.Add(Buttons.RightThumbstickUp);
+					if(_gamepadStickRight.Y < -_gamepadStickBorderValue)
+						helper.Add(Buttons.RightThumbstickDown);
+					if(_gamepadStickRight.X < -_gamepadStickBorderValue)
+						helper.Add(Buttons.RightThumbstickLeft);
+					if(_gamepadStickRight.X > _gamepadStickBorderValue)
+						helper.Add(Buttons.RightThumbstickRight);
+				}
+
+
 
 				//Buttons
 				if (capa.HasAButton && state.Buttons.A == ButtonState.Pressed)
@@ -404,6 +442,18 @@ namespace Singularity
 			}
 
 			//Mouse
+			if (!game.IsActive && _lockMouse)
+			{
+				_relock = true;
+				this._DeactivateMouseMovement();
+			}
+
+			if (game.IsActive && _relock)
+			{
+				_relock = false;
+				this._ActivateMouseMovement();
+			}
+
 			var mouseState = Mouse.GetState();
 			if (_lockMouse)
 			{

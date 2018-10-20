@@ -3,10 +3,13 @@ using Singularity.GameObjects;
 
 namespace Singularity.Scripting
 {
+	using Microsoft.Xna.Framework.Graphics;
+
 	public class ScriptScene : GameScene
 	{
 		private readonly string _scriptKey;
 		public ScriptingTemplate Script;
+		private bool _owndraw;
 
 		public ScriptScene(SingularityGame game, string path, ScriptingTemplate script)
 			: base(game,
@@ -15,9 +18,10 @@ namespace Singularity.Scripting
 				script.GetSettings().MinPartition == null ? 2 : script.GetSettings().MinPartition.Value,
 				script.GetSettings().Precision == null ? 0f : script.GetSettings().Precision.Value)
 		{
+			_owndraw = script.GetSettings().OwnDraw ?? false;
 			_scriptKey = path;
 			Script = script;
-			Script.Init(game);
+			Script.Init(game, this);
 		}
 
 		protected override void AddGameObjects(GameScene previousScene, int entranceId)
@@ -36,9 +40,12 @@ namespace Singularity.Scripting
 #endif
 		}
 
-		//public override void AddLightningToEffect(Effect effect)
-		//{
-		//    Script.AddLightningToEffect(effect);
-		//}
+		public override void Draw(SpriteBatch spriteBatch, RenderTarget2D finalTarget)
+		{
+			if(_owndraw)
+				Script.Draw(spriteBatch, finalTarget);
+			else
+				base.Draw(spriteBatch, finalTarget);
+		}
 	}
 }

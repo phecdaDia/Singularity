@@ -8,5 +8,6 @@
 		public int? SceneSize;
 		public int? MinPartition;
 		public float? Precision;
+		public bool? OwnDraw;
 	}
 }
