@@ -42,7 +42,11 @@ namespace Singularity.Collisions
 
 		public Vector3 Normal
 		{
-			get { return Vector3.Transform(_normal, Parent.TransformationMatrix); }
+		    get
+		    {
+		        var normal2 = Vector3.Transform(_normal, Parent.TransformationMatrix);
+		        return normal2 / normal2.Length();
+		    }
 		}
 
 		public override object Clone()

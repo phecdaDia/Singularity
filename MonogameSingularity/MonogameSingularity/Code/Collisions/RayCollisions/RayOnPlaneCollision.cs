@@ -20,8 +20,12 @@ namespace Singularity.Collisions.RayCollisions
 				scale1 = eq.Y;
 				scale2 = eq.Z;
 
+                // get normal
+			    var normal_eq = VectorMathHelper.SolveLinearEquation(plane.Normal, plane.SpanVector1, plane.SpanVector2,
+			        ray.Position - plane.Origin);
 
-				return new RayCollisionPoint(plane.Parent, poc, plane.Normal, eq.X);
+
+                return new RayCollisionPoint(plane.Parent, poc, Math.Sign(normal_eq.X) * plane.Normal, eq.X);
 			}
 			catch (Exception ex)
 			{
