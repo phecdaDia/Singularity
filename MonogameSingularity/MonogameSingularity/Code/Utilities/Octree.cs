@@ -195,21 +195,21 @@ namespace Singularity.Utilities
 			{
 				AddObject(obj, scale, position2);
 			}
-			else
-			{
-				Console.WriteLine($"Something went wrong in the octree!");
-				// Now try to find the object in the octree manually
-				var ot = FindObjectInOctrees(obj);
-				if (ot == null)
-				{
-					Console.WriteLine("Couldn't find object in Octree at all.");
-				}
-				else
-				{
-					// Describe the OT where it was found in
-					Console.WriteLine($"Found Object ({position1}) in OT: {ot.Min} {ot.Max}");
-				}
-			}
+			//else
+			//{
+			//	//Console.WriteLine($"Something went wrong in the octree!");
+			//	//// Now try to find the object in the octree manually
+			//	//var ot = FindObjectInOctrees(obj);
+			//	//if (ot == null)
+			//	//{
+			//	//	Console.WriteLine("Couldn't find object in Octree at all.");
+			//	//}
+			//	//else
+			//	//{
+			//	//	// Describe the OT where it was found in
+			//	//	Console.WriteLine($"Found Object ({position1}) in OT: {ot.Min} {ot.Max}");
+			//	//}
+			//}
 		}
 
 		private Octree<T> FindObjectInOctrees(T obj)
