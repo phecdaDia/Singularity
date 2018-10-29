@@ -107,6 +107,7 @@
     <Compile Include="Code\GameObjectDrawMode.cs" />
     <Compile Include="Code\GameObjects\BasicCamera.cs" />
     <Compile Include="Code\GameObjects\CollidableModelObject.cs" />
+    <Compile Include="Code\Utilities\ControllerVibration.cs" />
     <Compile Include="Code\GameObjects\FullCollidableModelObject.cs" />
     <Compile Include="Code\GameObjects\Interfaces\ICameraController.cs" />
     <Compile Include="Code\GameObjects\Interfaces\ICollidable.cs" />

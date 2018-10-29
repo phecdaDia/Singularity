@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Singularity;
@@ -104,6 +106,11 @@ namespace SingularityTest.Scenes
 						var rcp = scene.CollideRay(r);
 						if (rcp.DidCollide)
 							this.RemoveObject(rcp.Collidable);
+					}
+
+					if (KeyboardManager.IsKeyPressed(Keys.H))
+					{
+						this.SpawnObject(new ControllerVibration(0.2f, new StaticVibration(1,1)));
 					}
 				}), ChildProperties.Translation
 			), ChildProperties.TranslationRotation));

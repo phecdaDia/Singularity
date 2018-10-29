@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Singularity.GameObjects;
+using Singularity.Utilities;
+
 namespace Singularity
 {
 	using Microsoft.Xna.Framework;
@@ -321,13 +324,13 @@ namespace Singularity
 		/// </summary>
 		/// <param name="leftMotor"></param>
 		/// <param name="rightMotor"></param>
-		public static void SetVibration(float leftMotor, float rightMotor) 
-			=> Instance._SetVibration(leftMotor, rightMotor);
-		private void _SetVibration(float leftMotor, float rightMotor)
+		public static void SetVibration(float lfMotor, float hfMotor) 
+			=> Instance._SetVibration(lfMotor, hfMotor);
+		private void _SetVibration(float lfMotor, float hfMotor)
 		{
 			var capa = GamePad.GetCapabilities(PlayerIndex.One);
-			GamePad.SetVibration(PlayerIndex.One, capa.HasLeftVibrationMotor ? leftMotor : 0f,
-			                     capa.HasRightVibrationMotor ? rightMotor : 0);
+			GamePad.SetVibration(PlayerIndex.One, capa.HasLeftVibrationMotor ? lfMotor : 0f,
+			                     capa.HasRightVibrationMotor ? hfMotor : 0);
 		}
 
 		/// <summary>
@@ -350,6 +353,7 @@ namespace Singularity
 		public static void Update(SingularityGame game) => Instance._Update(game);
 		private void _Update(SingularityGame game)
 		{
+
 			//GAMEPAD
 			var capa = GamePad.GetCapabilities(PlayerIndex.One);
 
