@@ -160,12 +160,27 @@ namespace Singularity
 			SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
 				DepthStencilState.Default, RasterizerState.CullNone);
 
-			var width = ratioWidth * GraphicsDeviceManager.PreferredBackBufferHeight / ratioHeight;
+			Rectangle destinationRectangle;
+			if ((GraphicsDeviceManager.PreferredBackBufferWidth * 1f) /
+			    GraphicsDeviceManager.PreferredBackBufferHeight >= ((ratioWidth - 0.01f) / ratioHeight))
+			{
+				var width = ratioWidth * GraphicsDeviceManager.PreferredBackBufferHeight / ratioHeight;
+				destinationRectangle = new Rectangle(
+					new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width) / 2, 0),
+					new Point(width, GraphicsDeviceManager.PreferredBackBufferHeight)
+					);
+			}
+			else
+			{
+				var height = ratioHeight * GraphicsDeviceManager.PreferredBackBufferWidth / ratioWidth;
+				destinationRectangle = new Rectangle(
+					new Point(0, (GraphicsDeviceManager.PreferredBackBufferHeight - height) / 2), 
+					new Point(GraphicsDeviceManager.PreferredBackBufferWidth, height)
+					);
+			}
 
 			SpriteBatch.Draw(RenderTarget,
-				new Rectangle(new Point((GraphicsDeviceManager.PreferredBackBufferWidth - width)/2, 0),
-					new Point(width,
-						GraphicsDeviceManager.PreferredBackBufferHeight)),
+				destinationRectangle,
 				new Rectangle(new Point(0, 0),
 					new Point(RenderTarget.Width, RenderTarget.Height)),
 				Color.White);

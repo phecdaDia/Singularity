@@ -18,7 +18,7 @@ namespace SingularityTest
 			IsMouseVisible = false;
 			SettingsManager.SetUp<Settings>();
 			ScriptManager.SetUp<LoadingScreen>(Assembly.GetCallingAssembly(), this);
-
+			
 			MinimumFramerate = 0.0166d;
 		}
 
@@ -54,6 +54,7 @@ namespace SingularityTest
 
 			//ScriptManager.AddScript(paths: "Scripts/CollisionTestSceneScript.csx");
 			//ScriptManager.LoadAllAndStart("Scripts/CollisionTestSceneScript.csx", 0);
+			Window.AllowUserResizing = true;
 		}
 
 		private void GameExiting(object sender, EventArgs e)
