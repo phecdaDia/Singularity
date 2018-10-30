@@ -19,7 +19,7 @@ namespace SingularityTest.Scenes
 		{
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
+				if (InputManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
 
 				if (Mouse.GetState().LeftButton == ButtonState.Pressed)
 					SetCullingDistance(0.01f, MaximumCullingDistance + (float) arg3.ElapsedGameTime.TotalSeconds);

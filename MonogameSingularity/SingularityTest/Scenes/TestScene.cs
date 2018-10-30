@@ -60,33 +60,33 @@ namespace SingularityTest.Scenes
 				{
 					frame += 1;
 					// enable or disable 3d.
-					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
+					if (InputManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
 					// some more movement options
-					if (KeyboardManager.IsKeyDown(Keys.Q) || InputManager.IsDownGamePad(Buttons.LeftThumbstickUp)) obj.AddPosition(new Vector3(0, 5, 0), time);
-					if (KeyboardManager.IsKeyDown(Keys.E) || InputManager.IsDownGamePad(Buttons.LeftThumbstickDown)) obj.AddPosition(new Vector3(0, -5, 0), time);
+					if (InputManager.IsKeyDown(Keys.Q) || InputManager.IsDownGamePad(Buttons.LeftThumbstickUp)) obj.AddPosition(new Vector3(0, 5, 0), time);
+					if (InputManager.IsKeyDown(Keys.E) || InputManager.IsDownGamePad(Buttons.LeftThumbstickDown)) obj.AddPosition(new Vector3(0, -5, 0), time);
 
 					// screen effects
 
-					if (KeyboardManager.IsKeyPressed(Keys.Y))
+					if (InputManager.IsKeyPressed(Keys.Y))
 						Game.ScreenEffectList.Add(ShakeScreenEffect.GetNewShakeScreenEffect(0.5f, 4).GetEffectData);
-					if (KeyboardManager.IsKeyPressed(Keys.X))
+					if (InputManager.IsKeyPressed(Keys.X))
 						Game.ScreenEffectList.Add(ColorScreenEffect.GetNewColorScreenEffect(1, Color.Red).GetEffectData);
-					if (KeyboardManager.IsKeyPressed(Keys.C))
+					if (InputManager.IsKeyPressed(Keys.C))
 						Game.SaveScreenshot(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
 
 
-					if (KeyboardManager.IsKeyPressed(Keys.O))
+					if (InputManager.IsKeyPressed(Keys.O))
 						SceneManager.AddSceneToStack("transparency");
 
-					if (KeyboardManager.IsKeyPressed(Keys.R)) obj.SetEnableCollision(!obj.EnablePushCollision);
+					if (InputManager.IsKeyPressed(Keys.R)) obj.SetEnableCollision(!obj.EnablePushCollision);
 
 					// savegame stuff
 					sg.Position = obj.Position;
 					sg.CameraTarget = ((BasicCamera) obj).GetCameraTarget();
 
 
-					if (KeyboardManager.IsKeyDown(Keys.M) || InputManager.IsDownGamePad(Buttons.A))
+					if (InputManager.IsKeyDown(Keys.M) || InputManager.IsDownGamePad(Buttons.A))
 					{
 						// run a ray and get the closest collision
 						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
@@ -95,11 +95,11 @@ namespace SingularityTest.Scenes
 							SpawnObject(new ModelObject("cubes/cube1").SetPosition(rcp.Position).SetScale(0.1f).AddScript(
 								(s, o, t) =>
 								{
-									if (KeyboardManager.IsKeyPressed(Keys.OemSemicolon)) s.RemoveObject(o);
+									if (InputManager.IsKeyPressed(Keys.OemSemicolon)) s.RemoveObject(o);
 								}));
 					}
 
-					if (KeyboardManager.IsKeyPressed(Keys.N))
+					if (InputManager.IsKeyPressed(Keys.N))
 					{
 						// run a ray and get the closest collision
 						var r = new Ray(obj.Position, ((BasicCamera)obj).GetCameraTarget());
@@ -108,7 +108,7 @@ namespace SingularityTest.Scenes
 							this.RemoveObject(rcp.Collidable);
 					}
 
-					if (KeyboardManager.IsKeyPressed(Keys.H))
+					if (InputManager.IsKeyPressed(Keys.H))
 					{
 						this.SpawnObject(new ControllerVibration(0.2f, new StaticVibration(1,1)));
 					}
@@ -170,12 +170,12 @@ namespace SingularityTest.Scenes
 				/* Close Game with Settings.ExitKey
 				 * tempary Change ExitKey to P (didn't call SettingsManager.SaveSetting() so it will NOT be permanent, just for the time the application is running)
 				 */
-				if (KeyboardManager.IsKeyPressed(Settings.ExitKey))
+				if (InputManager.IsKeyPressed(Settings.ExitKey))
 					SceneManager.CloseScene();
-				if (KeyboardManager.IsKeyPressed(Keys.I))
+				if (InputManager.IsKeyPressed(Keys.I))
 					SettingsManager.SetSetting("exitKey", Keys.P);
 
-				if (KeyboardManager.IsKeyPressed(Keys.NumPad1))
+				if (InputManager.IsKeyPressed(Keys.NumPad1))
 				{
 					// create a plane that spans over the x axis
 
@@ -238,13 +238,13 @@ namespace SingularityTest.Scenes
 
 			AddObject(new GameObject().AddScript(((scene, o, time) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.NumPad9))
+				if (InputManager.IsKeyPressed(Keys.NumPad9))
 				{
 					o.CustomData.SetValue("millisToSleep", o.CustomData.GetValue<int>("millisToSleep") + 1);
 					// REPLACE THIS WITH WHATEVER SYSTEM YOU USE FOR NOTIFICATIONS: 
 					//MessageBoxUtil.Notify("SLEEPING " + millisToSleep + " PER FRAME");
 				}
-				else if (KeyboardManager.IsKeyPressed(Keys.NumPad8))
+				else if (InputManager.IsKeyPressed(Keys.NumPad8))
 				{
 					o.CustomData.SetValue("millisToSleep", o.CustomData.GetValue<int>("millisToSleep") - 1);
 					//MessageBoxUtil.Notify("SLEEPING " + millisToSleep + " PER FRAME");
@@ -268,14 +268,14 @@ namespace SingularityTest.Scenes
 			SoundManager.RegisterSoundFromFile("Jump", "Content/sound/Jump1.wav");
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
-				if(KeyboardManager.IsKeyPressed(Keys.M))
+				if(InputManager.IsKeyPressed(Keys.M))
 					SoundManager.PlayLoopMusic("LoopA", "LoopB");
-				if(KeyboardManager.IsKeyPressed(Keys.N))
+				if(InputManager.IsKeyPressed(Keys.N))
 					SoundManager.PlayEffect("Jump");
 
-				if(KeyboardManager.IsKeyPressed(Keys.F9))
+				if(InputManager.IsKeyPressed(Keys.F9))
 					SoundManager.PlayDualLoopMusic("LoopA", "LoopB", "LoopAFilter", "LoopBFilter");
-				if(KeyboardManager.IsKeyPressed(Keys.F10))
+				if(InputManager.IsKeyPressed(Keys.F10))
 					SoundManager.TogglePrimarySecondary();
 			}));
 

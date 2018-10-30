@@ -83,6 +83,10 @@ namespace Singularity
 		private List<Buttons> _pressedLastFrame = new List<Buttons>();
 		private List<Buttons> _pressedThisFrame = new List<Buttons>();
 
+		//Keyboard
+		private List<Keys> _pressedThisFrameKeys = new List<Keys>();
+		private List<Keys> _pressedLastFrameKeys = new List<Keys>();
+
 		/// <summary>
 		/// Set Point on which the mouse is reset to to handle mouse-movement
 		/// </summary>
@@ -281,10 +285,15 @@ namespace Singularity
 		/// Check if Button was pressed down in current Frame - also false if it is not supported by Device
 		/// </summary>
 		/// <param name="button"></param>
+		/// <param name="consume">if true wont return pressed-status until released and pressed again</param>
 		/// <returns></returns>
-		public static bool IsPressedGamePad(Buttons button) => Instance._IsPressedGamePad(button);
-		private bool _IsPressedGamePad(Buttons button) =>
-			_pressedThisFrame.Contains(button) && !_pressedLastFrame.Contains(button);
+		public static bool IsPressedGamePad(Buttons button, bool consume = false) => Instance._IsPressedGamePad(button, consume);
+		private bool _IsPressedGamePad(Buttons button, bool consume)
+		{
+			var val = _pressedThisFrame.Contains(button) && !_pressedLastFrame.Contains(button);
+			if(consume && val) _pressedLastFrame.Add(button);
+			return val;
+		}
 
 		/// <summary>
 		/// Check if Button was released in current Frame - also false if it is not supported by Device
@@ -346,6 +355,49 @@ namespace Singularity
 		/// <returns></returns>
 		public static float GetRightTrigger() => Instance._GetRightTrigger();
 		private float _GetRightTrigger() => _gamepadTriggerRight;
+
+		/// <summary>
+		///     Returns true, if the <seealso cref="Keys" /> have been pressed this frame, but not last one.
+		///     Only returns true, if the <seealso cref="Keys" /> have been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="consume">if true wont return true-pressed-status until released and pressed again</param>
+		/// <returns></returns>
+		public static bool IsKeyPressed(Keys key, bool consume = false) => Instance._IsKeyPressed(key, consume);
+		private bool _IsKeyPressed(Keys key, bool consume)
+		{
+			var val = _pressedThisFrameKeys.Contains(key) && !_pressedLastFrameKeys.Contains(key);
+			if(consume && val) _pressedLastFrameKeys.Add(key);
+			return val;
+		}
+
+		/// <summary>
+		///     Returns true, if the <seealso cref="Keys" /> have been released this frame, but not last one.
+		///     Only returns true, if the <seealso cref="Keys" /> have been released this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool IsKeyReleased(Keys key) => Instance._IsKeyReleased(key);
+		private bool _IsKeyReleased(Keys key)
+			=> !_pressedThisFrameKeys.Contains(key) && _pressedLastFrameKeys.Contains(key);
+
+		/// <summary>
+		///     Returns true, if the <seealso cref="Keys" /> have been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool IsKeyDown(Keys key) => Instance._IsKeyDown(key);
+		private bool _IsKeyDown(Keys key)
+			=> _pressedThisFrameKeys.Contains(key);
+
+		/// <summary>
+		///	    Returns true, if the <seealso cref="Keys" /> have not been pressed this frame.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool IsKeyUp(Keys key) => Instance._IsKeyUp(key);
+		private bool _IsKeyUp(Keys key)
+			=> !_pressedThisFrameKeys.Contains(key);
 
 		/// <summary>
 		/// Update all values - called each Frame
@@ -488,6 +540,11 @@ namespace Singularity
 			_mouseWheelLastFrame = _mouseWheelThisFrame;
 			_mouseWheelThisFrame = mouseState.ScrollWheelValue;
 
+
+			//Keyboard
+			var ks = Keyboard.GetState();
+			_pressedLastFrameKeys = _pressedThisFrameKeys;
+			_pressedThisFrameKeys = ks.GetPressedKeys().ToList();
 		}
 	}
 }

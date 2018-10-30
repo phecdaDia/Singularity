@@ -48,12 +48,12 @@ namespace SingularityTest.Scenes
 				.AddScript((scene, obj, time) =>
 				{
 					// enable or disable 3d.
-					if (KeyboardManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
+					if (InputManager.IsKeyPressed(Keys.F1)) ((BasicCamera) obj).Set3DEnabled(!((BasicCamera) obj).Is3DEnabled);
 
 					// some more movement options
-					if (KeyboardManager.IsKeyDown(Keys.Q))
+					if (InputManager.IsKeyDown(Keys.Q))
 						obj.AddPosition(0, 1, 0, time);
-					if (KeyboardManager.IsKeyDown(Keys.E))
+					if (InputManager.IsKeyDown(Keys.E))
 						obj.AddPosition(0, -1, 0, time);
 
 					((LightGameScene) scene).SetLightPosition(obj.Position + new Vector3(70, 40, 70));

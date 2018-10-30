@@ -191,7 +191,6 @@ namespace Singularity
 
 			base.Update(gameTime);
 			SceneManager.Update(gameTime);
-			KeyboardManager.Update();
 
 			OnPostUpdateEvent(gameTime);
 		}

@@ -7,6 +7,7 @@ using Singularity;
 using Singularity.Collisions;
 using Singularity.GameObjects;
 using Singularity.Scripting;
+using Singularity.Utilities;
 using SingularityTest.GameObjects;
 
 public class CollisionTestSceneScript : ScriptingTemplate
@@ -22,10 +23,10 @@ public class CollisionTestSceneScript : ScriptingTemplate
 
 		objList.Add(new GameObject().AddScript((scene, o, arg3) =>
 		{
-			if (KeyboardManager.IsKeyPressed(Keys.Escape))
+			if (InputManager.IsKeyPressed(Keys.Escape))
 				SceneManager.CloseScene();
 
-			if (KeyboardManager.IsKeyPressed(Keys.F4))
+			if (InputManager.IsKeyPressed(Keys.F4))
 				SceneManager.ClearStack();
 		}));
 
@@ -85,7 +86,7 @@ public class CollisionTestSceneScript : ScriptingTemplate
 
 		// add balls
 
-		Random random = new Random();
+		Random random = RandomProvider.Random;
 
 		for (int i = 0; i <= 5; i++)
 		{

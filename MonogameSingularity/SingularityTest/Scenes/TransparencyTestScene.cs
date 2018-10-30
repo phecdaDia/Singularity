@@ -17,7 +17,7 @@ namespace SingularityTest.Scenes
 		{
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
+				if (InputManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
 			}));
 
 			AddObject(new ModelObject("cubes/cube1").AddScript((scene, o, arg3) =>

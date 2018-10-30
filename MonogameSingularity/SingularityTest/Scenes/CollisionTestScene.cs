@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using Singularity;
 using Singularity.Collisions;
 using Singularity.GameObjects;
+using Singularity.Utilities;
+
 using SingularityTest.GameObjects;
 
 namespace SingularityTest.Scenes
@@ -24,9 +26,9 @@ namespace SingularityTest.Scenes
 		{
 			AddObject(new GameObject().AddScript((scene, o, arg3) =>
 			{
-				if (KeyboardManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
-				if (KeyboardManager.IsKeyPressed(Keys.O)) SceneManager.ChangeScene("collision-test");
-				if (KeyboardManager.IsKeyPressed(Keys.F4))
+				if (InputManager.IsKeyPressed(Keys.Escape)) SceneManager.CloseScene();
+				if (InputManager.IsKeyPressed(Keys.O)) SceneManager.ChangeScene("collision-test");
+				if (InputManager.IsKeyPressed(Keys.F4))
 					SceneManager.ClearStack();
 			}));
 
@@ -86,7 +88,7 @@ namespace SingularityTest.Scenes
 
 			// add balls
 
-			var random = new Random();
+			var random = RandomProvider.Random;
 
 			for (var i = 0; i <= 20; i++)
 				AddObject(new TestBallObject().SetInertia((float) (5f * random.NextDouble()), 0, (float) (5f * random.NextDouble()))

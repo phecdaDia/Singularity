@@ -32,7 +32,7 @@ namespace Singularity.Scripting
 #if DEBUG
 			AddObject(new GameObject().AddScript((scene, o, time) =>
 			{
-				if (!KeyboardManager.IsKeyPressed(Keys.O)) return;
+				if (!InputManager.IsKeyPressed(Keys.O)) return;
 
 				ScriptManager.ReloadScript(_scriptKey);
 				SceneManager.ChangeScene(_scriptKey, entranceId);

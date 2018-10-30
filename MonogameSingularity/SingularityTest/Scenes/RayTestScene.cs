@@ -42,19 +42,19 @@ namespace SingularityTest.Scenes
 
 			AddObject(new ModelObject("cubes/cube2").SetPosition(-1, 0, 0).SetScale(0.025f).AddScript((scene, obj, time) =>
 			{
-				if (KeyboardManager.IsKeyDown(Keys.W))
+				if (InputManager.IsKeyDown(Keys.W))
 					obj.AddPosition(0, 1, 0, time);
 
-				if (KeyboardManager.IsKeyDown(Keys.S))
+				if (InputManager.IsKeyDown(Keys.S))
 					obj.AddPosition(0, -1, 0, time);
 
-				if (KeyboardManager.IsKeyDown(Keys.A))
+				if (InputManager.IsKeyDown(Keys.A))
 					obj.AddPosition(0, 0, 1, time);
 
-				if (KeyboardManager.IsKeyDown(Keys.D))
+				if (InputManager.IsKeyDown(Keys.D))
 					obj.AddPosition(0, 0, -1, time);
 
-				if (KeyboardManager.IsKeyDown(Keys.M))
+				if (InputManager.IsKeyDown(Keys.M))
 				{
 					// cast a ray
 

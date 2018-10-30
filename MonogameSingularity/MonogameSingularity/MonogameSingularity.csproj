@@ -119,7 +119,6 @@
     <Compile Include="Code\GameScene.cs" />
     <Compile Include="Code\Helpers\VectorHelper.cs" />
     <Compile Include="Code\ImageManager.cs" />
-    <Compile Include="Code\KeyboardManager.cs" />
     <Compile Include="Code\Logger.cs" />
     <Compile Include="Code\LogLevel.cs" />
     <Compile Include="Code\ModelManager.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="Code\Utilities\CustomData.cs" />
     <Compile Include="Code\Utilities\IGlobal.cs" />
     <Compile Include="Code\Utilities\Octree.cs" />
+    <Compile Include="Code\Utilities\RandomProvider.cs" />
     <Compile Include="Code\Utilities\RotationMode.cs" />
     <Compile Include="Code\Utilities\ScreenEffect.cs" />
     <Compile Include="Code\Utilities\ScreenEffectData.cs" />
